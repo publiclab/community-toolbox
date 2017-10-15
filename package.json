@@ -1,0 +1,38 @@
+{
+  "name": "community-portrait",
+  "version": "0.0.1",
+  "description": "A JavaScript... ",
+  "main": "src/community-portrait.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jywarren/community-portrait.git"
+  },
+  "keywords": [
+  ],
+  "author": "jywarren",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jywarren/community-portriat/issues"
+  },
+  "dependencies": {
+    "bootstrap": "~3.2.0",
+    "chart.js": "~2.7.0",
+    "font-awesome": "~4.5.0",
+    "jquery": "~2"
+  },
+  "devDependencies": {
+    "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-1",
+    "browserify": "13.0.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "matchdep": "^0.3.0",
+    "tap-spec": "^4.1.1",
+    "tape": ">=4.7.0",
+    "tape-run": "^3.0.0"
+  },
+  "homepage": "https://github.com/jywarren/community-portrait"
+}
