@@ -75870,29 +75870,109 @@ function extend() {
 }
 
 },{}],397:[function(require,module,exports){
+// view-source:http://www.chartjs.org/samples/latest/charts/bar/vertical.html
+function generateChart(args) {
+
+  args = args || {};
+  args.data = args.data || [];
+  args.label = args.label || "";
+  args.title = args.title || "";
+
+  var colors = {
+    "blue":   "rgb(54, 162, 235)",
+    "red":    "rgb(255, 99, 132)",
+    "green":  "rgb(75, 192, 192)",
+    "grey":   "rgb(201, 203, 207)",
+    "orange": "rgb(255, 159, 64)",
+    "purple": "rgb(153, 102, 255)",
+    "yellow": "rgb(255, 205, 86)"
+  }
+  var colorNames = Object.keys(colors);
+
+  var barChartData = {
+    // labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+      label: args.label,
+      backgroundColor: colors['red'],
+      borderColor: colors['red'],
+      borderWidth: 1,
+      data: args.data
+    }]
+  }
+
+  var ctx = document.getElementById("canvas").getContext("2d");
+  var chart = new Chart(ctx, {
+    type: 'bar',
+    data: barChartData,
+    options: {
+      responsive: true,
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: args.title
+      }
+    }
+  });
+
+  return chart;
+
+}
+
+module.exports = generateChart;
+
+},{}],398:[function(require,module,exports){
 CommunityPortrait = function CommunityPortrait(org, repo) {
 
   var SimpleApi = require("github-api-simple")
 
   var api = new SimpleApi();
 
+  var options = {
+    'qs': {
+      'sort': 'pushed',
+      'direction': 'desc', // optional, GitHub API uses 'desc' by default for 'pushed' 
+      'per_page': 100
+    }
+  }
 
+  function getIssuesForRepo() {
+    api.Issues.getIssuesForRepo(org, repo, options)
+      .then(function(issues) {
+        console.log('This repo has %d issues', issues.length);
+        // display
+        $('.output').val(JSON.stringify(issues));
+      });
+  }
 
-  api.Issues.getIssuesForRepo(org, repo)
-    .then(function(issues) {
-      console.log('This repo has %d issues', issues.length);
-      // display
-      $('.output').html(JSON.stringify(issues));
+  function getCommitsForRepo() {
+    api.Repositories.getRepoCommits(org, repo, options)
+      .then(function(commits) {
+        console.log(commits)
+      });
+  }
+
+  api.Repositories.getRepoContributors(org, repo, options)
+    .then(function(contributors) {
+        console.log('This repo has %d contributors', contributors.length);
+        var usernames = contributors.map(function(c) { return '@' + c.login });
+        $('.output').val(usernames.join(', '));
     });
 
+  var chart = require('./chart');
 
+  //var graphContributorsByIssue = require('./graphContributorsByPR');
+
+  getCommitsForRepo()
 
   return {
-    api: api
+    api: api,
+    chart: chart
   }
 
 }
 
 module.exports = CommunityPortrait;
 
-},{"github-api-simple":154}]},{},[397]);
+},{"./chart":397,"github-api-simple":154}]},{},[398]);
