@@ -3,6 +3,7 @@ CommunityPortrait = function CommunityPortrait(org, repo) {
   var SimpleApi = require("github-api-simple")
 
   var api = new SimpleApi();
+  var urlHash = require('urlhash');
 
   var options = {
     'qs': {
