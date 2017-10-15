@@ -1,0 +1,9 @@
+{
+	"moz": true,
+	"globalstrict": true,
+	"node": true,
+	"unused": true,
+	"globals": {
+		"Promise": true
+	}
+}
