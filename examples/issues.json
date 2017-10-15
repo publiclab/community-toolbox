@@ -1,0 +1,46 @@
+{
+  "url": "https://api.github.com/repos/publiclab/plots2/issues/1691",
+  "repository_url": "https://api.github.com/repos/publiclab/plots2",
+  "labels_url": "https://api.github.com/repos/publiclab/plots2/issues/1691/labels{/name}",
+  "comments_url": "https://api.github.com/repos/publiclab/plots2/issues/1691/comments",
+  "events_url": "https://api.github.com/repos/publiclab/plots2/issues/1691/events",
+  "html_url": "https://github.com/publiclab/plots2/issues/1691",
+  "id": 265492202,
+  "number": 1691,
+  "title": "Overflow of Title in Dashboard ",
+  "user": {
+    "login": "sagarpreet-chadha",
+    "id": 14952645,
+    "avatar_url": "https://avatars1.githubusercontent.com/u/14952645?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/sagarpreet-chadha",
+    "html_url": "https://github.com/sagarpreet-chadha",
+    "followers_url": "https://api.github.com/users/sagarpreet-chadha/followers",
+    "following_url": "https://api.github.com/users/sagarpreet-chadha/following{/other_user}",
+    "gists_url": "https://api.github.com/users/sagarpreet-chadha/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/sagarpreet-chadha/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/sagarpreet-chadha/subscriptions",
+    "organizations_url": "https://api.github.com/users/sagarpreet-chadha/orgs",
+    "repos_url": "https://api.github.com/users/sagarpreet-chadha/repos",
+    "events_url": "https://api.github.com/users/sagarpreet-chadha/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/sagarpreet-chadha/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignee": null,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2017-10-14T13:45:19Z",
+  "updated_at": "2017-10-14T15:15:45Z",
+  "closed_at": null,
+  "author_association": "CONTRIBUTOR",
+  "body": "### What happened just before the problem occurred\r\nAs there is no limit on Title length and on the format of title so , a title for example : \"This_is_an_example_title_which_will_overflow_in_the_dashboard_\" will overflow as seen here :\r\n\r\n<img width=\"1438\" alt=\"screen shot 2017-10-14 at 7 08 17 pm\" src=\"https://user-images.githubusercontent.com/14952645/31576186-9531d02e-b113-11e7-91e0-8eaf82e042ef.png\">\r\n\r\n\r\n### Relevant URLs\r\n\r\nhttps://github.com/publiclab/plots2/blob/master/app/controllers/home_controller.rb\r\n\r\n### Browser, version, and operating system\r\nBrowser : Google Chrome Version 61.0.3163.100 (Official Build) (64-bit)\r\noperating system : MacOS\r\n\r\n"
+}
