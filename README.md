@@ -12,6 +12,8 @@ To develop and build out Community Portrait, you'l need to have `npm` installed 
 
 Community Portrait is built using a Grunt task from the source files in `/src/`, and the compiled file is saved to `/dist/community-portrait.js`. To build, run `grunt build`. To watch files for changes, and build whenever they occur, run `grunt`. 
 
+API calls are based on: https://www.npmjs.com/package/github-api-simple
+
 
 ## Testing
 
