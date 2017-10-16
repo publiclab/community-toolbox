@@ -10,16 +10,16 @@ Try at: http://jywarren.github.io/community-toolbox
 
 Community Toolbox lets you view issues of a specific repository for embedding on another site, with the following URL:
 
-https://jywarren.github.io/community-toolbox/examples/embed.html
+https://jywarren.github.io/community-toolbox/examples/embed.html#o=orgname&r=repository
 
 For issues with a specific label, use, for example: 
 
-https://jywarren.github.io/community-toolbox/examples/embed.html#l=first-timers-only
+https://jywarren.github.io/community-toolbox/examples/embed.html#o=orgname&r=repository&l=first-timers-only
 
 To embed these on your site, use an `<iframe>` like this:
 
 ```html
-<iframe src="https://jywarren.github.io/community-toolbox/examples/embed.html#l=first-timers-only" style="border:none;" width="100%" height="600px"></iframe>
+<iframe src="https://jywarren.github.io/community-toolbox/examples/embed.html#o=orgname&r=repository" style="border:none;" width="100%" height="600px"></iframe>
 ```
 
 

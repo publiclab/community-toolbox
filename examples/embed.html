@@ -36,7 +36,7 @@
 
         var org = urlHash().getUrlHashParameter('o') || 'publiclab';
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
-        var labels = urlHash().getUrlHashParameter('l') || 'help-wanted';
+        var labels = urlHash().getUrlHashParameter('l');
     
         toolbox = CommunityToolbox(org, repo);
 
