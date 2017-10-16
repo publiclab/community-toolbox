@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
+
+    <title>Community toolbox</title>
+
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/urlhash/urlHash.js"></script>
+    <script src="../dist/community-toolbox.js" charset="utf-8"></script>
+
+  </head>
+
+  <body>
+
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../examples/demo.css">
+
+    <div class="container-fluid">
+
+      <div class="row issues"></div>
+
+    </div>
+
+    <script type="text/javascript">
+
+      var toolbox;
+
+      (function() {
+
+        var org = urlHash().getUrlHashParameter('o') || 'publiclab';
+        var repo = urlHash().getUrlHashParameter('r') || 'plots2';
+        var labels = urlHash().getUrlHashParameter('l') || 'help-wanted';
+    
+        toolbox = CommunityToolbox(org, repo);
+
+        toolbox.api.Issues
+               .getIssuesForRepo(org, repo, { qs: { labels: labels } })
+               .then(function(issues) {
+                 issues.forEach(function(issue) {
+                   toolbox.ui.insertIssue(issue, '.issues');
+                 });
+               });
+
+      })();
+
+    </script>
+
+  </body>
+
+</html>
