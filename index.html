@@ -7,17 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="text/html; charset=UTF8">
 
-    <title>Community portrait</title>
+    <title>Community toolbox</title>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="node_modules/chart.js/dist/Chart.js"></script>
-    <script src="dist/community-portrait.js" charset="utf-8"></script>
-    <script src="examples/urlHash.js" charset="utf-8"></script>
-    <script src="examples/demo.js" charset="utf-8"></script>
+    <script src="node_modules/urlhash/urlHash.js"></script>
+    <script src="dist/community-toolbox.js" charset="utf-8"></script>
 
   </head>
-
 
   <body>
 
@@ -28,21 +26,89 @@
     <div class="container-fluid">
 
       <header class="text-center">
-        <h1>Community Portrait</h1>
+        <h1>Welcome to Public Lab!</h1>
         <p>
-          <a href="https://github.com/jywarren/community-portrait"><i class="fa fa-github"></i></a> Open Source
+          Powered by Commmunity Toolbox
+          <a href="https://github.com/jywarren/community-toolbox"><i class="fa fa-github"></i></a> Open Source
         </p>
       </header>
 
-      <div class="row">
-        <textarea class="form-control output" rows="25"></textarea>
-      </div>
+      <hr />
+
+      <h4 style="text-align:center;font-weight:bold;">We're so happy to meet you! This page is to welcome new contributors. </h4>
+
+      <hr />
+
+      <p>We especially welcome contributions from people from <b>groups underrepresented</b> in free and open source software!</p>
+
+      <p>Our community aspires to be a respectful place. Please read and abide by our <a href="https://publiclab.org/conduct">Code of Conduct</a>.</p>
+
+      <p>If you're new, and looking to get involved, you're in the right place. Check out <a href="https://github.com/publiclab/plots2/">our README</a> to get started.</p>
+
+      <hr />
+
+
+      <h2>First-timers-only issues</h2>
+
+      <p>Here are a selection of issues we've made especially for first-timers. We're here to help, so just ask if one looks interesting!</p>
+
+      <div class="row first-timers-only"></div>
+
+      <p>No issues left? See the almost-as-good "candidates" below, or learn how to <a href="">prepare new <b>first-timers-only</b> issues here</a>.</p>
+
+
+      <h2>Candidates</h2>
+
+      <p>We put a lot of work into our first-timer-only issues. But if we haven't been able to prepare any recently, here's a set of candidates we haven't yet had time to prepare, but which have most of the needed information:</p>
+
+      <div class="row candidates"></div>
+
+
+      <h2>Contributors</h2>
+
+      <p>This project was made possible by many contributors, including the following GitHub users:</p>
+
+      <p class="well contributors"></p>
 
     </div>
 
     <script type="text/javascript">
 
-      var portrait;
+      var toolbox;
+
+      (function() {
+
+        var org = urlHash().getUrlHashParameter('o') || 'publiclab';
+        var repo = urlHash().getUrlHashParameter('r') || 'plots2';
+    
+        toolbox = CommunityToolbox(org, repo);
+
+        toolbox.api.Issues
+               .getIssuesForRepo(org, repo, { qs: { labels: 'first-timers-only' } })
+               .then(function(issues) {
+                 issues.forEach(function(issue) {
+                   toolbox.ui.insertIssue(issue, '.first-timers-only');
+                 });
+               });
+ 
+        toolbox.api.Issues
+               .getIssuesForRepo(org, repo, { qs: { labels: 'fto-candidate' } })
+               .then(function(issues) {
+                 issues.forEach(function(issue) {
+                   toolbox.ui.insertIssue(issue, '.candidates');
+                 });
+               });
+ 
+        toolbox.api.Repositories
+               .getRepoContributors(org, repo)
+               .then(function(contributors) {
+                 var usernames = contributors.map(function(c) { 
+                   return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
+                 });
+                 $('.contributors').html(usernames.join(', '));
+               });
+
+      })();
 
     </script>
 
