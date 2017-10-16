@@ -24,8 +24,8 @@ module.exports = function(grunt) {
 
       browserify: {
           dist: {
-            src: ['src/community-portrait.js'],
-            dest: 'dist/community-portrait.js'
+            src: ['src/community-toolbox.js'],
+            dest: 'dist/community-toolbox.js'
           }
       }
 

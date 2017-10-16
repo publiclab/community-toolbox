@@ -18,9 +18,11 @@ body {
   background: #f8f8fa;
 }
 
-h1 {
+h1, h2 {
   font-family: 'League Spartan';
   color: #445;
+  padding-top: 20px;
+  text-align: center;
 }
 
 .header {
