@@ -1,6 +1,6 @@
 Community Toolbox
 ====
-
+ 
 A toolbox of a GitHub organization's contributor community.
 
 Try at: http://jywarren.github.io/community-toolbox
