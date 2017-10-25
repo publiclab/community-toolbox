@@ -106,7 +106,12 @@
                  var usernames = contributors.map(function(c) { 
                    return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
                  });
+                 var avatars = contributors.map(function(c) { 
+                   return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+                 });
                  $('.contributors').html(usernames.join(', '));
+                 $('.contributors').append('<hr />');
+                 $('.contributors').append(avatars.join());
                });
 
       })();
