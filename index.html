@@ -101,7 +101,7 @@
                });
  
         toolbox.api.Repositories
-               .getRepoContributors(org, repo)
+               .getRepoContributors(org, repo, { qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
                .then(function(contributors) {
                  var usernames = contributors.map(function(c) { 
                    return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
