@@ -17,22 +17,35 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   // in externally available methods for convenience but at the 
   // moment they're not quite complex enough to merit it. 
 
-  function getIssuesForRepo(callback) {
+  function getIssuesForRepo(callback, _options) {
+    _options = _options || options;
     api.Issues
-       .getIssuesForRepo(org, repo, options)
+       .getIssuesForRepo(org, repo, _options)
        .then(callback);
   }
 
-  function getCommitsForRepo(callback) {
+  function getCommitsForRepo(callback, _options) {
+    _options = _options || options;
     api.Repositories
-       .getRepoCommits(org, repo, options)
+       .getRepoCommits(org, repo, _options)
        .then(callback);
   }
 
-  function getRepoContributors(callback) {
+  function getRepoContributors(callback, _options) {
+    _options = _options || options;
     api.Repositories
-       .getRepoContributors(org, repo, options)
+       .getRepoContributors(org, repo, _options)
        .then(callback);
+  }
+
+  function displayIssuesForRepo(org, repo, label, selector) {
+    toolbox.api.Issues
+           .getIssuesForRepo(org, repo, { qs: { labels: label } })
+           .then(function onGotIssues(issues) {
+             issues.forEach(function(issue) {
+               toolbox.ui.insertIssue(issue, selector);
+             });
+           });
   }
 
   var chart = require('./chart');
@@ -42,7 +55,12 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     api:     api,
     ui:      ui,
     chart:   chart,
-    options: options
+    options: options,
+    getIssuesForRepo: getIssuesForRepo,
+    // getIssuesForOrg: getIssuesForOrg,
+    getCommitsForRepo: getCommitsForRepo,
+    getRepoContributors: getRepoContributors,
+    displayIssuesForRepo: displayIssuesForRepo
   }
 
 }

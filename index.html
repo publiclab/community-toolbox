@@ -84,13 +84,7 @@
     
         toolbox = CommunityToolbox(org, repo);
 
-        toolbox.api.Issues
-               .getIssuesForRepo(org, repo, { qs: { labels: 'first-timers-only' } })
-               .then(function(issues) {
-                 issues.forEach(function(issue) {
-                   toolbox.ui.insertIssue(issue, '.first-timers-only');
-                 });
-               });
+        toolbox.displayIssuesForRepo(org, repo, 'first-timers-only', '.first-timers-only');
  
         toolbox.api.Issues
                .getIssuesForRepo(org, repo, { qs: { labels: 'fto-candidate' } })
