@@ -118,14 +118,26 @@
     
         toolbox = CommunityToolbox(org, repo);
 
-        toolbox.api.Issues
-               .getIssuesForRepo(org, repo, { qs: { labels: 'first-timers-only' } })
-               .then(function(issues) {
-                 issues.forEach(function(issue) {
-                   toolbox.ui.insertIssue(issue, '.first-timers-only');
-                 });
-               });
- 
+	if (repo) {
+
+          toolbox.api.Issues
+                 .getIssuesForRepo(org, repo, { qs: { labels: 'first-timers-only' } })
+                 .then(displayIssues);
+
+	} else {
+
+      	  toolbox.getIssuesForOrg(org, { qs: { labels: 'first-timers-only' } })
+                 .then(displayIssues);
+
+	}
+
+        function displayIssues(issues) {
+          issues = JSON.parse(issues).items;
+          issues.forEach(function(issue) {
+            toolbox.ui.insertIssue(issue, '.first-timers-only');
+          });
+        }
+
         toolbox.api.Issues
                .getIssuesForRepo(org, repo, { qs: { labels: 'fto-candidate' } })
                .then(function(issues) {
@@ -133,7 +145,8 @@
                    toolbox.ui.insertIssue(issue, '.candidates');
                  });
                });
- 
+
+        // compile and display all contributors for given org/repo:
         toolbox.api.Repositories
                .getRepoContributors(org, repo, { qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
                .then(function(contributors) {
