@@ -79283,7 +79283,7 @@ function generateIssueHtml(title, body, githubUrl, repo) {
       repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
       html = '<div class="panel panel-default">\
     <div class="panel-heading">\
-      <h3 class="panel-title float-right"><b><a href="' + repoUrl + '">' + repoName + '</a></b></h3>\
+      <h3 class="panel-title" style="float:right;"><a href="' + repoUrl + '">' + repoName + '</a></h3>\
       <h3 class="panel-title"><b><a href="' + githubUrl + '">' + title + '</a></b></h3>\
     </div>\
     <div class="panel-body">\
