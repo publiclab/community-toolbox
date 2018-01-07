@@ -79278,9 +79278,12 @@ module.exports = CommunityToolbox;
 },{"./chart":396,"./ui":398,"github-api-simple":151,"request-promise":319}],398:[function(require,module,exports){
 var moment = require('moment');
 
-function generateIssueHtml(title, body, githubUrl) {
-  var html = '<div class="panel panel-default">\
+function generateIssueHtml(title, body, githubUrl, repo) {
+  var repoName = githubUrl.split('/')[4],
+      repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
+      html = '<div class="panel panel-default">\
     <div class="panel-heading">\
+      <h3 class="panel-title float-right"><b><a href="' + repoUrl + '">' + repoName + '</a></b></h3>\
       <h3 class="panel-title"><b><a href="' + githubUrl + '">' + title + '</a></b></h3>\
     </div>\
     <div class="panel-body">\
@@ -79300,7 +79303,7 @@ function insertIssue(issue, el) {
   body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ago ";
   body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
   body += " <i class='fa fa-comment-o'></i> " + issue.comments;
-  $(el).append(generateIssueHtml(issue.title, body, issue.html_url));
+  $(el).append(generateIssueHtml(issue.title, body, issue.html_url, issue));
 }
 
 module.exports = {

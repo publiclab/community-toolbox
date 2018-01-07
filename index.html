@@ -115,51 +115,54 @@
 
         var org = urlHash().getUrlHashParameter('o') || 'publiclab';
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
+        var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
+        var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
     
         toolbox = CommunityToolbox(org, repo);
 
-	if (repo) {
+	if (repo === 'all') {
 
-          toolbox.api.Issues
-                 .getIssuesForRepo(org, repo, { qs: { labels: 'first-timers-only' } })
-                 .then(displayIssues);
+      	  toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
+                 .then(displayIssues('.first-timers-only'));
+
+          toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
+                 .then(displayIssues('.candidates'));
 
 	} else {
 
-      	  toolbox.getIssuesForOrg(org, { qs: { labels: 'first-timers-only' } })
-                 .then(displayIssues);
+          toolbox.api.Issues
+                 .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
+                 .then(displayIssues('.first-timers-only'));
+
+          toolbox.api.Issues
+                 .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
+                 .then(displayIssues('.candidates'));
+
+          // compile and display all contributors for given org/repo:
+          toolbox.api.Repositories
+                 .getRepoContributors(org, repo, { qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+                 .then(function(contributors) {
+                   var usernames = contributors.map(function(c) { 
+                     return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
+                   });
+                   var avatars = contributors.map(function(c) { 
+                     return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+                   });
+                   $('.contributors').html(usernames.join(', '));
+                   $('.contributors').append('<hr />');
+                   $('.contributors').append(avatars.join());
+                 });
 
 	}
 
-        function displayIssues(issues) {
-          issues = JSON.parse(issues).items;
-          issues.forEach(function(issue) {
-            toolbox.ui.insertIssue(issue, '.first-timers-only');
-          });
+        function displayIssues(selector) {
+          return function displayIssues(issues) {
+            if (typeof issues === "string") issues = JSON.parse(issues).items;
+	    issues.forEach(function(issue) {
+              toolbox.ui.insertIssue(issue, selector);
+            });
+	  }
         }
-
-        toolbox.api.Issues
-               .getIssuesForRepo(org, repo, { qs: { labels: 'fto-candidate' } })
-               .then(function(issues) {
-                 issues.forEach(function(issue) {
-                   toolbox.ui.insertIssue(issue, '.candidates');
-                 });
-               });
-
-        // compile and display all contributors for given org/repo:
-        toolbox.api.Repositories
-               .getRepoContributors(org, repo, { qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-               .then(function(contributors) {
-                 var usernames = contributors.map(function(c) { 
-                   return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
-                 });
-                 var avatars = contributors.map(function(c) { 
-                   return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
-                 });
-                 $('.contributors').html(usernames.join(', '));
-                 $('.contributors').append('<hr />');
-                 $('.contributors').append(avatars.join());
-               });
 
       })();
 
