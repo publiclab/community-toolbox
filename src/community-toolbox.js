@@ -4,6 +4,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   var api = new SimpleApi();
   var ui = require('./ui');
+  const requestP = require('request-promise');
 
   var options = {
     'qs': {
@@ -22,6 +23,12 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     api.Issues
        .getIssuesForRepo(org, repo, _options)
        .then(callback);
+  }
+
+  function getIssuesForOrg(_org, _options) {
+    _options = _options || options;
+    var _url = "https://api.github.com/search/issues?q=is%3Aopen+org%3A" + _org + "+label%3A" + _options.qs.labels;
+    return requestP({ uri: _url });
   }
 
   function getCommitsForRepo(callback, _options) {
@@ -57,7 +64,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     chart:   chart,
     options: options,
     getIssuesForRepo: getIssuesForRepo,
-    // getIssuesForOrg: getIssuesForOrg,
+    getIssuesForOrg: getIssuesForOrg,
     getCommitsForRepo: getCommitsForRepo,
     getRepoContributors: getRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo

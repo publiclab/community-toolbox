@@ -24,7 +24,7 @@
     "urlhash": "~0.1.1"
   },
   "devDependencies": {
-    "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-1",
+    "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "moment": "~2.10.6",
     "browserify": "13.0.0",
     "grunt": "^0.4.5",

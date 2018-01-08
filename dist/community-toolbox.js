@@ -104,6 +104,7 @@ var META_SUPPORT_DATA = ['/properties'];
 function Ajv(opts) {
   if (!(this instanceof Ajv)) return new Ajv(opts);
   opts = this._opts = util.copy(opts) || {};
+  setLogger(this);
   this._schemas = {};
   this._refs = {};
   this._fragments = {};
@@ -177,11 +178,12 @@ function compile(schema, _meta) {
  * @param {String} key Optional schema key. Can be passed to `validate` method instead of schema object or id/ref. One schema per instance can have empty `id` and `key`.
  * @param {Boolean} _skipValidation true to skip schema validation. Used internally, option validateSchema should be used instead.
  * @param {Boolean} _meta true if schema is a meta-schema. Used internally, addMetaSchema should be used instead.
+ * @return {Ajv} this for method chaining
  */
 function addSchema(schema, key, _skipValidation, _meta) {
   if (Array.isArray(schema)){
     for (var i=0; i<schema.length; i++) this.addSchema(schema[i], undefined, _skipValidation, _meta);
-    return;
+    return this;
   }
   var id = this._getId(schema);
   if (id !== undefined && typeof id != 'string')
@@ -189,6 +191,7 @@ function addSchema(schema, key, _skipValidation, _meta) {
   key = resolve.normalizeId(key || id);
   checkUnique(this, key);
   this._schemas[key] = this._addSchema(schema, _skipValidation, _meta, true);
+  return this;
 }
 
 
@@ -199,9 +202,11 @@ function addSchema(schema, key, _skipValidation, _meta) {
  * @param {Object} schema schema object
  * @param {String} key optional schema key
  * @param {Boolean} skipValidation true to skip schema validation, can be used to override validateSchema option for meta-schema
+ * @return {Ajv} this for method chaining
  */
 function addMetaSchema(schema, key, skipValidation) {
   this.addSchema(schema, key, skipValidation, true);
+  return this;
 }
 
 
@@ -218,7 +223,7 @@ function validateSchema(schema, throwOrLogError) {
     throw new Error('$schema must be a string');
   $schema = $schema || this._opts.defaultMeta || defaultMeta(this);
   if (!$schema) {
-    console.warn('meta-schema not available');
+    this.logger.warn('meta-schema not available');
     this.errors = null;
     return true;
   }
@@ -231,7 +236,7 @@ function validateSchema(schema, throwOrLogError) {
   finally { this._formats.uri = currentUriFormat; }
   if (!valid && throwOrLogError) {
     var message = 'schema is invalid: ' + this.errorsText();
-    if (this._opts.validateSchema == 'log') console.error(message);
+    if (this._opts.validateSchema == 'log') this.logger.error(message);
     else throw new Error(message);
   }
   return valid;
@@ -298,25 +303,26 @@ function _getSchemaObj(self, keyRef) {
  * Even if schema is referenced by other schemas it still can be removed as other schemas have local references.
  * @this   Ajv
  * @param  {String|Object|RegExp} schemaKeyRef key, ref, pattern to match key/ref or schema object
+ * @return {Ajv} this for method chaining
  */
 function removeSchema(schemaKeyRef) {
   if (schemaKeyRef instanceof RegExp) {
     _removeAllSchemas(this, this._schemas, schemaKeyRef);
     _removeAllSchemas(this, this._refs, schemaKeyRef);
-    return;
+    return this;
   }
   switch (typeof schemaKeyRef) {
     case 'undefined':
       _removeAllSchemas(this, this._schemas);
       _removeAllSchemas(this, this._refs);
       this._cache.clear();
-      return;
+      return this;
     case 'string':
       var schemaObj = _getSchemaObj(this, schemaKeyRef);
       if (schemaObj) this._cache.del(schemaObj.cacheKey);
       delete this._schemas[schemaKeyRef];
       delete this._refs[schemaKeyRef];
-      return;
+      return this;
     case 'object':
       var serialize = this._opts.serialize;
       var cacheKey = serialize ? serialize(schemaKeyRef) : schemaKeyRef;
@@ -328,6 +334,7 @@ function removeSchema(schemaKeyRef) {
         delete this._refs[id];
       }
   }
+  return this;
 }
 
 
@@ -430,15 +437,15 @@ function chooseGetId(opts) {
   }
 }
 
-
+/* @this   Ajv */
 function _getId(schema) {
-  if (schema.$id) console.warn('schema $id ignored', schema.$id);
+  if (schema.$id) this.logger.warn('schema $id ignored', schema.$id);
   return schema.id;
 }
 
-
+/* @this   Ajv */
 function _get$Id(schema) {
-  if (schema.id) console.warn('schema id ignored', schema.id);
+  if (schema.id) this.logger.warn('schema id ignored', schema.id);
   return schema.$id;
 }
 
@@ -478,10 +485,12 @@ function errorsText(errors, options) {
  * @this   Ajv
  * @param {String} name format name
  * @param {String|RegExp|Function} format string is converted to RegExp; function should return boolean (true when valid)
+ * @return {Ajv} this for method chaining
  */
 function addFormat(name, format) {
   if (typeof format == 'string') format = new RegExp(format);
   this._formats[name] = format;
+  return this;
 }
 
 
@@ -528,7 +537,23 @@ function getMetaSchemaOptions(self) {
   return metaOpts;
 }
 
-},{"./$data":1,"./cache":3,"./compile":8,"./compile/async":5,"./compile/error_classes":6,"./compile/formats":7,"./compile/resolve":9,"./compile/rules":10,"./compile/schema_obj":11,"./compile/util":13,"./keyword":37,"./patternGroups":38,"./refs/$data.json":39,"./refs/json-schema-draft-06.json":40,"co":103,"fast-json-stable-stringify":148}],3:[function(require,module,exports){
+
+function setLogger(self) {
+  var logger = self._opts.logger;
+  if (logger === false) {
+    self.logger = {log: noop, warn: noop, error: noop};
+  } else {
+    if (logger === undefined) logger = console;
+    if (!(typeof logger == 'object' && logger.log && logger.warn && logger.error))
+      throw new Error('logger must implement log, warn and error methods');
+    self.logger = logger;
+  }
+}
+
+
+function noop() {}
+
+},{"./$data":1,"./cache":3,"./compile":8,"./compile/async":5,"./compile/error_classes":6,"./compile/formats":7,"./compile/resolve":9,"./compile/rules":10,"./compile/schema_obj":11,"./compile/util":13,"./keyword":37,"./patternGroups":38,"./refs/$data.json":39,"./refs/json-schema-draft-06.json":40,"co":103,"fast-json-stable-stringify":147}],3:[function(require,module,exports){
 'use strict';
 
 
@@ -961,6 +986,7 @@ function compile(schema, root, localRefs, baseId) {
       useCustomRule: useCustomRule,
       opts: opts,
       formats: formats,
+      logger: self.logger,
       self: self
     });
 
@@ -1003,7 +1029,7 @@ function compile(schema, root, localRefs, baseId) {
 
       refVal[0] = validate;
     } catch(e) {
-      console.error('Error compiling schema, function code:', sourceCode);
+      self.logger.error('Error compiling schema, function code:', sourceCode);
       throw e;
     }
 
@@ -1117,7 +1143,7 @@ function compile(schema, root, localRefs, baseId) {
       var valid = validateSchema(schema);
       if (!valid) {
         var message = 'keyword schema is invalid: ' + self.errorsText(validateSchema.errors);
-        if (self._opts.validateSchema == 'log') console.error(message);
+        if (self._opts.validateSchema == 'log') self.logger.error(message);
         else throw new Error(message);
       }
     }
@@ -1235,7 +1261,7 @@ function vars(arr, statement) {
   return code;
 }
 
-},{"../dotjs/validate":36,"./error_classes":6,"./resolve":9,"./util":13,"co":103,"fast-deep-equal":147,"fast-json-stable-stringify":148}],9:[function(require,module,exports){
+},{"../dotjs/validate":36,"./error_classes":6,"./resolve":9,"./util":13,"co":103,"fast-deep-equal":146,"fast-json-stable-stringify":147}],9:[function(require,module,exports){
 'use strict';
 
 var url = require('url')
@@ -1508,7 +1534,7 @@ function resolveIds(schema) {
   return localRefs;
 }
 
-},{"./schema_obj":11,"./util":13,"fast-deep-equal":147,"json-schema-traverse":221,"url":382}],10:[function(require,module,exports){
+},{"./schema_obj":11,"./util":13,"fast-deep-equal":146,"json-schema-traverse":221,"url":382}],10:[function(require,module,exports){
 'use strict';
 
 var ruleModules = require('./_rules')
@@ -1531,7 +1557,7 @@ module.exports = function rules() {
 
   var ALL = [ 'type' ];
   var KEYWORDS = [
-    'additionalItems', '$schema', 'id', 'title',
+    'additionalItems', '$schema', '$id', 'id', 'title',
     'description', 'default', 'definitions'
   ];
   var TYPES = [ 'number', 'integer', 'string', 'array', 'object', 'boolean', 'null' ];
@@ -1870,7 +1896,7 @@ function unescapeJsonPointer(str) {
   return str.replace(/~1/g, '/').replace(/~0/g, '~');
 }
 
-},{"./ucs2length":12,"fast-deep-equal":147}],14:[function(require,module,exports){
+},{"./ucs2length":12,"fast-deep-equal":146}],14:[function(require,module,exports){
 'use strict';
 module.exports = function generate__limit(it, $keyword, $ruleType) {
   var out = ' ';
@@ -3042,7 +3068,7 @@ module.exports = function generate_format(it, $keyword, $ruleType) {
     var $format = it.formats[$schema];
     if (!$format) {
       if ($unknownFormats == 'ignore') {
-        console.warn('unknown format "' + $schema + '" ignored in schema at path "' + it.errSchemaPath + '"');
+        it.logger.warn('unknown format "' + $schema + '" ignored in schema at path "' + it.errSchemaPath + '"');
         if ($breakOnError) {
           out += ' if (true) { ';
         }
@@ -4166,7 +4192,7 @@ module.exports = function generate_ref(it, $keyword, $ruleType) {
     if ($refVal === undefined) {
       var $message = it.MissingRefError.message(it.baseId, $schema);
       if (it.opts.missingRefs == 'fail') {
-        console.error($message);
+        it.logger.error($message);
         var $$outStack = $$outStack || [];
         $$outStack.push(out);
         out = ''; /* istanbul ignore else */
@@ -4197,7 +4223,7 @@ module.exports = function generate_ref(it, $keyword, $ruleType) {
           out += ' if (false) { ';
         }
       } else if (it.opts.missingRefs == 'ignore') {
-        console.warn($message);
+        it.logger.warn($message);
         if ($breakOnError) {
           out += ' if (true) { ';
         }
@@ -4735,7 +4761,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
       throw new Error('$ref: validation keywords used in schema at path "' + it.errSchemaPath + '" (see option extendRefs)');
     } else if (it.opts.extendRefs !== true) {
       $refKeywords = false;
-      console.warn('$ref: keywords ignored in schema at path "' + it.errSchemaPath + '"');
+      it.logger.warn('$ref: keywords ignored in schema at path "' + it.errSchemaPath + '"');
     }
   }
   if ($typeSchema) {
@@ -4893,7 +4919,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
     }
   } else {
     if (it.opts.v5 && it.schema.patternGroups) {
-      console.warn('keyword "patternGroups" is deprecated and disabled. Use option patternGroups: true to enable.');
+      it.logger.warn('keyword "patternGroups" is deprecated and disabled. Use option patternGroups: true to enable.');
     }
     var arr2 = it.RULES;
     if (arr2) {
@@ -5058,10 +5084,10 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
   }
 
   function $shouldUseRule($rule) {
-    return it.schema[$rule.keyword] !== undefined || ($rule.implements && $ruleImlementsSomeKeyword($rule));
+    return it.schema[$rule.keyword] !== undefined || ($rule.implements && $ruleImplementsSomeKeyword($rule));
   }
 
-  function $ruleImlementsSomeKeyword($rule) {
+  function $ruleImplementsSomeKeyword($rule) {
     var impl = $rule.implements;
     for (var i = 0; i < impl.length; i++)
       if (it.schema[impl[i]] !== undefined) return true;
@@ -5086,6 +5112,7 @@ module.exports = {
  * @this  Ajv
  * @param {String} keyword custom keyword, should be unique (including different from all standard, custom and macro keywords).
  * @param {Object} definition keyword definition object with properties `type` (type(s) which the keyword applies to), `validate` or `compile`.
+ * @return {Ajv} this for method chaining
  */
 function addKeyword(keyword, definition) {
   /* jshint validthis: true */
@@ -5163,6 +5190,8 @@ function addKeyword(keyword, definition) {
   function checkDataType(dataType) {
     if (!RULES.types[dataType]) throw new Error('Unknown type ' + dataType);
   }
+
+  return this;
 }
 
 
@@ -5183,6 +5212,7 @@ function getKeyword(keyword) {
  * Remove keyword
  * @this  Ajv
  * @param {String} keyword pre-defined or custom keyword.
+ * @return {Ajv} this for method chaining
  */
 function removeKeyword(keyword) {
   /* jshint validthis: true */
@@ -5199,6 +5229,7 @@ function removeKeyword(keyword) {
       }
     }
   }
+  return this;
 }
 
 },{"./dotjs/custom":22}],38:[function(require,module,exports){
@@ -5318,6 +5349,10 @@ module.exports={
             "type": "string"
         },
         "default": {},
+        "examples": {
+            "type": "array",
+            "items": {}
+        },
         "multipleOf": {
             "type": "number",
             "exclusiveMinimum": 0
@@ -5602,7 +5637,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base":44,"buffer":158,"inherits":215}],44:[function(require,module,exports){
+},{"../base":44,"buffer":157,"inherits":215}],44:[function(require,module,exports){
 var base = exports;
 
 base.Reporter = require('./reporter').Reporter;
@@ -6817,7 +6852,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":49,"buffer":158,"inherits":215}],52:[function(require,module,exports){
+},{"./der":49,"buffer":157,"inherits":215}],52:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -7114,7 +7149,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../../asn1":41,"buffer":158,"inherits":215}],53:[function(require,module,exports){
+},{"../../asn1":41,"buffer":157,"inherits":215}],53:[function(require,module,exports){
 var encoders = exports;
 
 encoders.der = require('./der');
@@ -7452,7 +7487,7 @@ Reader.prototype._readTag = function(tag) {
 module.exports = Reader;
 
 }).call(this,require("buffer").Buffer)
-},{"./errors":55,"./types":58,"assert":154,"buffer":158}],58:[function(require,module,exports){
+},{"./errors":55,"./types":58,"assert":153,"buffer":157}],58:[function(require,module,exports){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
 
@@ -7810,7 +7845,7 @@ Writer.prototype._ensure = function(len) {
 module.exports = Writer;
 
 }).call(this,require("buffer").Buffer)
-},{"./errors":55,"./types":58,"assert":154,"buffer":158}],60:[function(require,module,exports){
+},{"./errors":55,"./types":58,"assert":153,"buffer":157}],60:[function(require,module,exports){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
 // If you have no idea what ASN.1 or BER is, see this:
@@ -8047,7 +8082,7 @@ function _setExports(ndebug) {
 module.exports = _setExports(process.env.NODE_NDEBUG);
 
 }).call(this,{"isBuffer":require("../is-buffer/index.js")},require('_process'))
-},{"../is-buffer/index.js":217,"_process":285,"assert":154,"stream":366,"util":387}],62:[function(require,module,exports){
+},{"../is-buffer/index.js":217,"_process":285,"assert":153,"stream":366,"util":387}],62:[function(require,module,exports){
 
 /*!
  *  Copyright 2010 LearnBoost <dev@learnboost.com>
@@ -8261,7 +8296,7 @@ function canonicalizeResource (resource) {
 }
 module.exports.canonicalizeResource = canonicalizeResource
 
-},{"crypto":112,"url":382}],63:[function(require,module,exports){
+},{"crypto":158,"url":382}],63:[function(require,module,exports){
 (function (process,Buffer){
 var aws4 = exports,
     url = require('url'),
@@ -8597,7 +8632,7 @@ aws4.sign = function(request, credentials) {
 }
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"./lru":64,"_process":285,"buffer":158,"crypto":112,"querystring":300,"url":382}],64:[function(require,module,exports){
+},{"./lru":64,"_process":285,"buffer":157,"crypto":158,"querystring":300,"url":382}],64:[function(require,module,exports){
 module.exports = function(size) {
   return new LruCache(size)
 }
@@ -18249,7 +18284,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":71,"./authCipher":72,"./modes":84,"./streamCipher":87,"cipher-base":101,"evp_bytestokey":144,"inherits":215,"safe-buffer":333}],75:[function(require,module,exports){
+},{"./aes":71,"./authCipher":72,"./modes":84,"./streamCipher":87,"cipher-base":101,"evp_bytestokey":143,"inherits":215,"safe-buffer":333}],75:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -18365,7 +18400,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":71,"./authCipher":72,"./modes":84,"./streamCipher":87,"cipher-base":101,"evp_bytestokey":144,"inherits":215,"safe-buffer":333}],76:[function(require,module,exports){
+},{"./aes":71,"./authCipher":72,"./modes":84,"./streamCipher":87,"cipher-base":101,"evp_bytestokey":143,"inherits":215,"safe-buffer":333}],76:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -18872,7 +18907,7 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158,"buffer-xor":98}],87:[function(require,module,exports){
+},{"buffer":157,"buffer-xor":98}],87:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -18976,7 +19011,7 @@ function getCiphers () {
 }
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":73,"browserify-aes/modes":84,"browserify-des":89,"browserify-des/modes":90,"evp_bytestokey":144}],89:[function(require,module,exports){
+},{"browserify-aes/browser":73,"browserify-aes/modes":84,"browserify-des":89,"browserify-des/modes":90,"evp_bytestokey":143}],89:[function(require,module,exports){
 (function (Buffer){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
@@ -19023,7 +19058,7 @@ DES.prototype._final = function () {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158,"cipher-base":101,"des.js":114,"inherits":215}],90:[function(require,module,exports){
+},{"buffer":157,"cipher-base":101,"des.js":113,"inherits":215}],90:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -19093,7 +19128,7 @@ function getr(priv) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":68,"buffer":158,"randombytes":301}],92:[function(require,module,exports){
+},{"bn.js":68,"buffer":157,"randombytes":301}],92:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
 },{"./browser/algorithms.json":93}],93:[function(require,module,exports){
@@ -19355,7 +19390,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./algorithms.json":93,"./sign":96,"./verify":97,"buffer":158,"create-hash":107,"inherits":215,"stream":366}],96:[function(require,module,exports){
+},{"./algorithms.json":93,"./sign":96,"./verify":97,"buffer":157,"create-hash":107,"inherits":215,"stream":366}],96:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var createHmac = require('create-hmac')
@@ -19504,7 +19539,7 @@ module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
 }).call(this,require("buffer").Buffer)
-},{"./curves.json":94,"bn.js":68,"browserify-rsa":91,"buffer":158,"create-hmac":110,"elliptic":127,"parse-asn1":276}],97:[function(require,module,exports){
+},{"./curves.json":94,"bn.js":68,"browserify-rsa":91,"buffer":157,"create-hmac":110,"elliptic":126,"parse-asn1":276}],97:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var BN = require('bn.js')
@@ -19591,7 +19626,7 @@ function checkValue (b, q) {
 module.exports = verify
 
 }).call(this,require("buffer").Buffer)
-},{"./curves.json":94,"bn.js":68,"buffer":158,"elliptic":127,"parse-asn1":276}],98:[function(require,module,exports){
+},{"./curves.json":94,"bn.js":68,"buffer":157,"elliptic":126,"parse-asn1":276}],98:[function(require,module,exports){
 (function (Buffer){
 module.exports = function xor (a, b) {
   var length = Math.min(a.length, b.length)
@@ -19605,7 +19640,7 @@ module.exports = function xor (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158}],99:[function(require,module,exports){
+},{"buffer":157}],99:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -20305,7 +20340,7 @@ CombinedStream.prototype._emitError = function(err) {
 };
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":217,"delayed-stream":113,"stream":366,"util":387}],105:[function(require,module,exports){
+},{"../../is-buffer/index.js":217,"delayed-stream":112,"stream":366,"util":387}],105:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -20542,7 +20577,7 @@ function formatReturnValue(bn, enc, len) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":68,"buffer":158,"elliptic":127}],107:[function(require,module,exports){
+},{"bn.js":68,"buffer":157,"elliptic":126}],107:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var inherits = require('inherits')
@@ -20598,7 +20633,7 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./md5":109,"buffer":158,"cipher-base":101,"inherits":215,"ripemd160":332,"sha.js":335}],108:[function(require,module,exports){
+},{"./md5":109,"buffer":157,"cipher-base":101,"inherits":215,"ripemd160":332,"sha.js":335}],108:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var intSize = 4
@@ -20632,7 +20667,7 @@ module.exports = function hash (buf, fn) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158}],109:[function(require,module,exports){
+},{"buffer":157}],109:[function(require,module,exports){
 'use strict'
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -20898,105 +20933,6 @@ Hmac.prototype._final = function () {
 module.exports = Hmac
 
 },{"cipher-base":101,"inherits":215,"safe-buffer":333}],112:[function(require,module,exports){
-'use strict'
-
-exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
-exports.createHash = exports.Hash = require('create-hash')
-exports.createHmac = exports.Hmac = require('create-hmac')
-
-var algos = require('browserify-sign/algos')
-var algoKeys = Object.keys(algos)
-var hashes = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160'].concat(algoKeys)
-exports.getHashes = function () {
-  return hashes
-}
-
-var p = require('pbkdf2')
-exports.pbkdf2 = p.pbkdf2
-exports.pbkdf2Sync = p.pbkdf2Sync
-
-var aes = require('browserify-cipher')
-
-exports.Cipher = aes.Cipher
-exports.createCipher = aes.createCipher
-exports.Cipheriv = aes.Cipheriv
-exports.createCipheriv = aes.createCipheriv
-exports.Decipher = aes.Decipher
-exports.createDecipher = aes.createDecipher
-exports.Decipheriv = aes.Decipheriv
-exports.createDecipheriv = aes.createDecipheriv
-exports.getCiphers = aes.getCiphers
-exports.listCiphers = aes.listCiphers
-
-var dh = require('diffie-hellman')
-
-exports.DiffieHellmanGroup = dh.DiffieHellmanGroup
-exports.createDiffieHellmanGroup = dh.createDiffieHellmanGroup
-exports.getDiffieHellman = dh.getDiffieHellman
-exports.createDiffieHellman = dh.createDiffieHellman
-exports.DiffieHellman = dh.DiffieHellman
-
-var sign = require('browserify-sign')
-
-exports.createSign = sign.createSign
-exports.Sign = sign.Sign
-exports.createVerify = sign.createVerify
-exports.Verify = sign.Verify
-
-exports.createECDH = require('create-ecdh')
-
-var publicEncrypt = require('public-encrypt')
-
-exports.publicEncrypt = publicEncrypt.publicEncrypt
-exports.privateEncrypt = publicEncrypt.privateEncrypt
-exports.publicDecrypt = publicEncrypt.publicDecrypt
-exports.privateDecrypt = publicEncrypt.privateDecrypt
-
-// the least I can do is make error messages for the rest of the node.js/crypto api.
-// ;[
-//   'createCredentials'
-// ].forEach(function (name) {
-//   exports[name] = function () {
-//     throw new Error([
-//       'sorry, ' + name + ' is not implemented yet',
-//       'we accept pull requests',
-//       'https://github.com/crypto-browserify/crypto-browserify'
-//     ].join('\n'))
-//   }
-// })
-
-var rf = require('randomfill')
-
-exports.randomFill = rf.randomFill
-exports.randomFillSync = rf.randomFillSync
-
-exports.createCredentials = function () {
-  throw new Error([
-    'sorry, createCredentials is not implemented yet',
-    'we accept pull requests',
-    'https://github.com/crypto-browserify/crypto-browserify'
-  ].join('\n'))
-}
-
-exports.constants = {
-  'DH_CHECK_P_NOT_SAFE_PRIME': 2,
-  'DH_CHECK_P_NOT_PRIME': 1,
-  'DH_UNABLE_TO_CHECK_GENERATOR': 4,
-  'DH_NOT_SUITABLE_GENERATOR': 8,
-  'NPN_ENABLED': 1,
-  'ALPN_ENABLED': 1,
-  'RSA_PKCS1_PADDING': 1,
-  'RSA_SSLV23_PADDING': 2,
-  'RSA_NO_PADDING': 3,
-  'RSA_PKCS1_OAEP_PADDING': 4,
-  'RSA_X931_PADDING': 5,
-  'RSA_PKCS1_PSS_PADDING': 6,
-  'POINT_CONVERSION_COMPRESSED': 2,
-  'POINT_CONVERSION_UNCOMPRESSED': 4,
-  'POINT_CONVERSION_HYBRID': 6
-}
-
-},{"browserify-cipher":88,"browserify-sign":95,"browserify-sign/algos":92,"create-ecdh":106,"create-hash":107,"create-hmac":110,"diffie-hellman":120,"pbkdf2":278,"public-encrypt":286,"randombytes":301,"randomfill":302}],113:[function(require,module,exports){
 var Stream = require('stream').Stream;
 var util = require('util');
 
@@ -21105,7 +21041,7 @@ DelayedStream.prototype._checkIfMaxDataSizeExceeded = function() {
   this.emit('error', new Error(message));
 };
 
-},{"stream":366,"util":387}],114:[function(require,module,exports){
+},{"stream":366,"util":387}],113:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -21114,7 +21050,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-},{"./des/cbc":115,"./des/cipher":116,"./des/des":117,"./des/ede":118,"./des/utils":119}],115:[function(require,module,exports){
+},{"./des/cbc":114,"./des/cipher":115,"./des/des":116,"./des/ede":117,"./des/utils":118}],114:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -21181,7 +21117,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":215,"minimalistic-assert":268}],116:[function(require,module,exports){
+},{"inherits":215,"minimalistic-assert":268}],115:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -21324,7 +21260,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":268}],117:[function(require,module,exports){
+},{"minimalistic-assert":268}],116:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -21469,7 +21405,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"../des":114,"inherits":215,"minimalistic-assert":268}],118:[function(require,module,exports){
+},{"../des":113,"inherits":215,"minimalistic-assert":268}],117:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -21526,7 +21462,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"../des":114,"inherits":215,"minimalistic-assert":268}],119:[function(require,module,exports){
+},{"../des":113,"inherits":215,"minimalistic-assert":268}],118:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -21784,7 +21720,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-},{}],120:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 (function (Buffer){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -21830,7 +21766,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this,require("buffer").Buffer)
-},{"./lib/dh":121,"./lib/generatePrime":122,"./lib/primes.json":123,"buffer":158}],121:[function(require,module,exports){
+},{"./lib/dh":120,"./lib/generatePrime":121,"./lib/primes.json":122,"buffer":157}],120:[function(require,module,exports){
 (function (Buffer){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -21998,7 +21934,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./generatePrime":122,"bn.js":68,"buffer":158,"miller-rabin":264,"randombytes":301}],122:[function(require,module,exports){
+},{"./generatePrime":121,"bn.js":68,"buffer":157,"miller-rabin":264,"randombytes":301}],121:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -22105,7 +22041,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":68,"miller-rabin":264,"randombytes":301}],123:[function(require,module,exports){
+},{"bn.js":68,"miller-rabin":264,"randombytes":301}],122:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -22140,7 +22076,7 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],124:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 (function (Buffer){
 var crypto = require("crypto");
 var BigInteger = require("jsbn").BigInteger;
@@ -22201,7 +22137,7 @@ exports.ECKey = function(curve, key, isPublic)
 
 
 }).call(this,require("buffer").Buffer)
-},{"./lib/ec.js":125,"./lib/sec.js":126,"buffer":158,"crypto":112,"jsbn":220}],125:[function(require,module,exports){
+},{"./lib/ec.js":124,"./lib/sec.js":125,"buffer":157,"crypto":158,"jsbn":220}],124:[function(require,module,exports){
 // Basic Javascript Elliptic Curve implementation
 // Ported loosely from BouncyCastle's Java EC code
 // Only Fp curves implemented for now
@@ -22764,7 +22700,7 @@ var exports = {
 
 module.exports = exports
 
-},{"jsbn":220}],126:[function(require,module,exports){
+},{"jsbn":220}],125:[function(require,module,exports){
 // Named EC curves
 
 // Requires ec.js, jsbn.js, and jsbn2.js
@@ -22936,7 +22872,7 @@ module.exports = {
   "secp256r1":secp256r1
 }
 
-},{"./ec.js":125,"jsbn":220}],127:[function(require,module,exports){
+},{"./ec.js":124,"jsbn":220}],126:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -22951,7 +22887,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":142,"./elliptic/curve":130,"./elliptic/curves":133,"./elliptic/ec":134,"./elliptic/eddsa":137,"./elliptic/utils":141,"brorand":69}],128:[function(require,module,exports){
+},{"../package.json":141,"./elliptic/curve":129,"./elliptic/curves":132,"./elliptic/ec":133,"./elliptic/eddsa":136,"./elliptic/utils":140,"brorand":69}],127:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -23328,7 +23264,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../../elliptic":127,"bn.js":68}],129:[function(require,module,exports){
+},{"../../elliptic":126,"bn.js":68}],128:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -23763,7 +23699,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../../elliptic":127,"../curve":130,"bn.js":68,"inherits":215}],130:[function(require,module,exports){
+},{"../../elliptic":126,"../curve":129,"bn.js":68,"inherits":215}],129:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -23773,7 +23709,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":128,"./edwards":129,"./mont":131,"./short":132}],131:[function(require,module,exports){
+},{"./base":127,"./edwards":128,"./mont":130,"./short":131}],130:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -23955,7 +23891,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../../elliptic":127,"../curve":130,"bn.js":68,"inherits":215}],132:[function(require,module,exports){
+},{"../../elliptic":126,"../curve":129,"bn.js":68,"inherits":215}],131:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -24895,7 +24831,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../../elliptic":127,"../curve":130,"bn.js":68,"inherits":215}],133:[function(require,module,exports){
+},{"../../elliptic":126,"../curve":129,"bn.js":68,"inherits":215}],132:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -25102,7 +25038,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"../elliptic":127,"./precomputed/secp256k1":140,"hash.js":194}],134:[function(require,module,exports){
+},{"../elliptic":126,"./precomputed/secp256k1":139,"hash.js":194}],133:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -25344,7 +25280,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../../elliptic":127,"./key":135,"./signature":136,"bn.js":68,"hmac-drbg":207}],135:[function(require,module,exports){
+},{"../../elliptic":126,"./key":134,"./signature":135,"bn.js":68,"hmac-drbg":207}],134:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -25465,7 +25401,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../../elliptic":127,"bn.js":68}],136:[function(require,module,exports){
+},{"../../elliptic":126,"bn.js":68}],135:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -25602,7 +25538,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../../elliptic":127,"bn.js":68}],137:[function(require,module,exports){
+},{"../../elliptic":126,"bn.js":68}],136:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -25722,7 +25658,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../../elliptic":127,"./key":138,"./signature":139,"hash.js":194}],138:[function(require,module,exports){
+},{"../../elliptic":126,"./key":137,"./signature":138,"hash.js":194}],137:[function(require,module,exports){
 'use strict';
 
 var elliptic = require('../../elliptic');
@@ -25820,7 +25756,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../../elliptic":127}],139:[function(require,module,exports){
+},{"../../elliptic":126}],138:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -25888,7 +25824,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../../elliptic":127,"bn.js":68}],140:[function(require,module,exports){
+},{"../../elliptic":126,"bn.js":68}],139:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -26670,7 +26606,7 @@ module.exports = {
   }
 };
 
-},{}],141:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -26792,7 +26728,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":68,"minimalistic-assert":268,"minimalistic-crypto-utils":269}],142:[function(require,module,exports){
+},{"bn.js":68,"minimalistic-assert":268,"minimalistic-crypto-utils":269}],141:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -26916,7 +26852,7 @@ module.exports={
   "version": "6.4.0"
 }
 
-},{}],143:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27220,7 +27156,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],144:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var MD5 = require('md5.js')
 
@@ -27267,7 +27203,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":262,"safe-buffer":333}],145:[function(require,module,exports){
+},{"md5.js":262,"safe-buffer":333}],144:[function(require,module,exports){
 'use strict';
 
 var hasOwn = Object.prototype.hasOwnProperty;
@@ -27355,7 +27291,7 @@ module.exports = function extend() {
 	return target;
 };
 
-},{}],146:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 (function (process){
 /*
  * extsprintf.js: extended POSIX-style sprintf
@@ -27542,7 +27478,7 @@ function dumpException(ex)
 }
 
 }).call(this,require('_process'))
-},{"_process":285,"assert":154,"util":387}],147:[function(require,module,exports){
+},{"_process":285,"assert":153,"util":387}],146:[function(require,module,exports){
 'use strict';
 
 module.exports = function equal(a, b) {
@@ -27587,7 +27523,7 @@ module.exports = function equal(a, b) {
   return false;
 };
 
-},{}],148:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 'use strict';
 
 module.exports = function (data, opts) {
@@ -27648,7 +27584,7 @@ module.exports = function (data, opts) {
     })(data);
 };
 
-},{}],149:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 module.exports = ForeverAgent
 ForeverAgent.SSL = ForeverAgentSSL
 
@@ -27788,11 +27724,11 @@ function createConnectionSSL (port, host, options) {
   return tls.connect(options);
 }
 
-},{"http":367,"https":159,"net":157,"tls":157,"util":387}],150:[function(require,module,exports){
+},{"http":367,"https":159,"net":156,"tls":156,"util":387}],149:[function(require,module,exports){
 /* eslint-env browser */
 module.exports = typeof self == 'object' ? self.FormData : window.FormData;
 
-},{}],151:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 module.exports={
 	"Users": [
 		{
@@ -27808,6 +27744,10 @@ module.exports={
 		{
 			"method": "getReposForUser",
 			"uri": "/users/%s/repos"
+		},
+		{
+			"method": "getReposForOrg",
+			"uri": "/orgs/%s/repos"
 		},
 		{
 			"method": "getRepo",
@@ -27894,7 +27834,7 @@ module.exports={
 	]
 }
 
-},{}],152:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 "use strict";
 
 const path = require('path');
@@ -27950,61 +27890,61 @@ let GithubService = function(options) {
 
 exports = module.exports = GithubService;
 
-},{"./assets/routes.json":151,"./package":153,"extend":145,"path":277,"request-promise":319}],153:[function(require,module,exports){
+},{"./assets/routes.json":150,"./package":152,"extend":144,"path":277,"request-promise":319}],152:[function(require,module,exports){
 module.exports={
   "_args": [
     [
       {
-        "raw": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-1",
+        "raw": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
         "scope": null,
         "escapedName": "github-api-simple",
         "name": "github-api-simple",
-        "rawSpec": "git://github.com/jywarren/github-api-simple.git#patch-1",
-        "spec": "git://github.com/jywarren/github-api-simple.git#patch-1",
+        "rawSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
+        "spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
         "type": "hosted",
         "hosted": {
           "type": "github",
-          "ssh": "git@github.com:jywarren/github-api-simple.git#patch-1",
-          "sshUrl": "git+ssh://git@github.com/jywarren/github-api-simple.git#patch-1",
-          "httpsUrl": "git+https://github.com/jywarren/github-api-simple.git#patch-1",
-          "gitUrl": "git://github.com/jywarren/github-api-simple.git#patch-1",
-          "shortcut": "github:jywarren/github-api-simple#patch-1",
-          "directUrl": "https://raw.githubusercontent.com/jywarren/github-api-simple/patch-1/package.json"
+          "ssh": "git@github.com:jywarren/github-api-simple.git#patch-2",
+          "sshUrl": "git+ssh://git@github.com/jywarren/github-api-simple.git#patch-2",
+          "httpsUrl": "git+https://github.com/jywarren/github-api-simple.git#patch-2",
+          "gitUrl": "git://github.com/jywarren/github-api-simple.git#patch-2",
+          "shortcut": "github:jywarren/github-api-simple#patch-2",
+          "directUrl": "https://raw.githubusercontent.com/jywarren/github-api-simple/patch-2/package.json"
         }
       },
       "/home/warren/sites/community-toolbox"
     ]
   ],
-  "_from": "git://github.com/jywarren/github-api-simple.git#patch-1",
-  "_id": "github-api-simple@0.0.6",
+  "_from": "git://github.com/jywarren/github-api-simple.git#patch-2",
+  "_id": "github-api-simple@0.1.0",
   "_inCache": true,
   "_location": "/github-api-simple",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-1",
+    "raw": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
     "scope": null,
     "escapedName": "github-api-simple",
     "name": "github-api-simple",
-    "rawSpec": "git://github.com/jywarren/github-api-simple.git#patch-1",
-    "spec": "git://github.com/jywarren/github-api-simple.git#patch-1",
+    "rawSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
+    "spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "type": "hosted",
     "hosted": {
       "type": "github",
-      "ssh": "git@github.com:jywarren/github-api-simple.git#patch-1",
-      "sshUrl": "git+ssh://git@github.com/jywarren/github-api-simple.git#patch-1",
-      "httpsUrl": "git+https://github.com/jywarren/github-api-simple.git#patch-1",
-      "gitUrl": "git://github.com/jywarren/github-api-simple.git#patch-1",
-      "shortcut": "github:jywarren/github-api-simple#patch-1",
-      "directUrl": "https://raw.githubusercontent.com/jywarren/github-api-simple/patch-1/package.json"
+      "ssh": "git@github.com:jywarren/github-api-simple.git#patch-2",
+      "sshUrl": "git+ssh://git@github.com/jywarren/github-api-simple.git#patch-2",
+      "httpsUrl": "git+https://github.com/jywarren/github-api-simple.git#patch-2",
+      "gitUrl": "git://github.com/jywarren/github-api-simple.git#patch-2",
+      "shortcut": "github:jywarren/github-api-simple#patch-2",
+      "directUrl": "https://raw.githubusercontent.com/jywarren/github-api-simple/patch-2/package.json"
     }
   },
   "_requiredBy": [
     "#DEV:/"
   ],
-  "_resolved": "git://github.com/jywarren/github-api-simple.git#07e54076168539d67d5df84815f0e1f00a9c4fd5",
-  "_shasum": "42e526376fe256aed1acac122eea2f3e3f616a24",
+  "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
+  "_shasum": "dfe41ab5f7198d07537766042c515c53740269ab",
   "_shrinkwrap": null,
-  "_spec": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-1",
+  "_spec": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
   "_where": "/home/warren/sites/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
@@ -28014,12 +27954,12 @@ module.exports={
     "url": "https://github.com/MichielvdVelde/github-api-simple/issues"
   },
   "dependencies": {
-    "debug": "^2.2.0",
+    "debug": "^2.6.9",
     "request-promise": "^1.0.2"
   },
   "description": "Simple Github API wrapper for unauthenticated end points",
   "devDependencies": {},
-  "gitHead": "07e54076168539d67d5df84815f0e1f00a9c4fd5",
+  "gitHead": "cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "homepage": "https://github.com/MichielvdVelde/github-api-simple#readme",
   "keywords": [
     "github",
@@ -28031,7 +27971,7 @@ module.exports={
   "main": "github-api.js",
   "name": "github-api-simple",
   "optionalDependencies": {},
-  "readme": "# Simple GitHub API wrapper for node.js\r\n\r\nLots of times you don't need a full-fledged GitHub API client with authentication and what-not. Maybe you just want to load public data, or index and process your public repositories somehow. This simple GitHub API 'wrapper' provides the basics and can access all non-restricted API end points. And it's easily extendable too!\r\n\r\nThe wrapper loads a JSON file (`routes.json`) which contains a name space, a method name and an end point URI. Together, all methods are dynamically created at startup-time. This makes it very easy to add new end points in the future. The library makes use of promises through [request-promise](https://github.com/request/request-promise).\r\n\r\nCurrently _not all suitable end points_ have been added. You can either wait for me to add them to `routes.json`, or you can do it yourself (and submit a pull request, of course! ;)).\r\n\r\n## Install\r\n\r\n```\r\nnpm install github-api-simple\r\n```\r\n\r\n## Usage\r\n\r\n```js\r\nconst SimpleApi = require('github-api-simple');\r\nlet api = new SimpleApi(); // takes an options argument, see below\r\n\r\nsimpleApi.Repositories.getReposForUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\nThe constructor takes an options argument, which is fed to [request-promise](https://github.com/request/request-promise). The defaults are:\r\n\r\n```js\r\nconst DEFAULT_OPTIONS = {\r\n\t'baseUrl': 'https://api.github.com',\r\n\t'headers': {\r\n\t\t'User-Agent': 'github-api-simple v' + pkg.version + ' [nodejs] [https://github.com/MichielvdVelde/github-api-simple]'\r\n\t},\r\n\t'json': true\r\n};\r\n```\r\n\r\nYou can change the `User-Agent` header to set your own, the GitHub API requires one.\r\n\r\n## Routes\r\n\r\n### Users\r\n\r\n#### Single user\r\n\r\nAll route methods take an optional `options` object as the last argument. This object is `extend()`-ed with the options you gave when usig `new`. For example, if you want to get all your repositories sorted by when it was last pushed to, you can:\r\n\r\n```js\r\nlet options = {\r\n\t'qs': {\r\n\t\t'sort': 'pushed',\r\n\t\t'direction': 'desc' // optional, GitHub API uses 'desc' by default for 'pushed'\r\n\t}\r\n}\r\nsimpleApi.Users.getUser('MichielvdVelde', options)\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/#get-a-single-user)\r\n\r\n```js\r\nsimpleApi.Users.getUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n#### All users\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/#get-all-users)\r\n\r\n```js\r\nsimpleApi.Users.getUsers()\r\n\t.then(function(users) {\r\n\t\tconsole.log('I got %d users', users.length);\r\n\t});\r\n```\r\n\r\n### Repositories\r\n\r\n#### Repositories for a single user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-user-repositories)\r\n\r\n```js\r\nsimpleApi.Repositories.getReposForUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n#### Single repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#get)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepo('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(repo) {\r\n\t\tconsole.log('This repo has %d watchers', repo.watchers_count);\r\n\t});\r\n```\r\n\r\n\r\n#### Contributors\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-contributors)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoContributors('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(contributors) {\r\n\t\tconsole.log('This repo has %d contributors', contributors.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Languages\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-languages)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoLanguages('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(languages) {\r\n\t\tfor(let language of languages) {\r\n\t\t\tconsole.log('language %s, %d bytes', language, languages[language]);\r\n\t\t}\r\n\t});\r\n```\r\n\r\n\r\n#### Teams\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-teams)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoTeams('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(teams) {\r\n\t\tif(teams) {\r\n\t\t\tconsole.log('This repo has %d teams', teams.length);\r\n\t\t}\r\n\t});\r\n```\r\n\r\n\r\n#### Tags\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-tags)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoTags('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(tags) {\r\n\t\tconsole.log('This repo has %d tags', tags.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Branches\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-branches)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoBranches('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(branches) {\r\n\t\tconsole.log('This repo has %d branches', branches.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Single branch\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#get-branche)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoBranche('MichielvdVelde', 'github-api-simple', 'master')\r\n\t.then(function(branche) {\r\n\t\tconsole.log('Latest commit on master is %s', branche.commit.sha);\r\n\t});\r\n```\r\n\r\n\r\n#### Contents of a repository file\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/contents/#get-contents)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoFile('MichielvdVelde', 'github-api-simple', 'README.md')\r\n\t.then(function(content) {\r\n\t\tconsole.log('Readme sha is %s', content.sha);\r\n\t});\r\n```\r\n\r\n\r\n#### Repository commits\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoCommits('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(commits) {\r\n\t\tconsole.log('This repo has %d commits', commits.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Repository single commit\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/commits/#get-a-single-commit)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoCommit('MichielvdVelde', 'github-api-simple', '6dcb09b5b57875f334f61aebed695e2e4193db5e')\r\n\t.then(function(commit) {\r\n\t\tconsole.log('Commit %s says %s', commit.sha, commit.commit.message);\r\n\t});\r\n```\r\n\r\n### Followers\r\n\r\n\r\n#### Get followers for user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/followers/#list-followers-of-a-user)\r\n\r\n```js\r\nsimpleApi.Followers.getFollowersForUser('MichielvdVelde')\r\n\t.then(function(followers) {\r\n\t\tconsole.log('This user has %d followers', followers.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get followers by user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/followers/#list-followers-of-a-user)\r\n\r\n```js\r\nsimpleApi.Followers.getFollowersByUser('MichielvdVelde')\r\n\t.then(function(followers) {\r\n\t\tconsole.log('This user follows %d others', followers.length);\r\n\t});\r\n```\r\n\r\n### Issues\r\n\r\n\r\n#### Get issues for repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/#list-issues-for-a-repository)\r\n\r\n```js\r\nsimpleApi.Issues.getIssuesForRepo('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(issues) {\r\n\t\tconsole.log('This repo has %d issues', issues.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get a single issue\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/#get-a-single-issue)\r\n\r\n```js\r\nsimpleApi.Issues.getIssue('MichielvdVelde', 'github-api-simple', 138)\r\n\t.then(function(issue) {\r\n\t\tconsole.log('This issue is %s', issue.state);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comments\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#list-comments-on-an-issue)\r\n\r\n```js\r\nsimpleApi.Issues.getIssueComments('MichielvdVelde', 'github-api-simple', 138)\r\n\t.then(function(comments) {\r\n\t\tconsole.log('This issue has %d comments', comments.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comments\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#list-comments-in-a-repository)\r\n\r\n```js\r\nsimpleApi.Issues.getRepoIssues('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(issues) {\r\n\t\tconsole.log('This repo has %d issues', issues.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comment\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#get-a-single-comment)\r\n\r\n```js\r\nsimpleApi.Issues.getIssueComment('MichielvdVelde', 'github-api-simple', 96)\r\n\t.then(function(comment) {\r\n\t\tconsole.log('Comment by %s', comment.owner.login);\r\n\t});\r\n```\r\n\r\n### Milestones\r\n\r\n\r\n#### Get all milestones for a repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/milestones/#list-milestones-for-a-repository)\r\n\r\n```js\r\nsimpleApi.Milestones.getRepoMilestones('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(milestones) {\r\n\t\tconsole.log('This repo has %d milestones', milestones.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get a single milestone\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/milestones/#get-a-single-milestone)\r\n\r\n```js\r\nsimpleApi.Milestones.getMilestone('MichielvdVelde', 'github-api-simple', 544)\r\n\t.then(function(milestone) {\r\n\t\tconsole.log('Milestone title i %s', milestone.title);\r\n\t});\r\n```\r\n\r\n# To do\r\n\r\n* Add the rest of the applicable API end points to the routes file\r\n* Add paging support\r\n* Make rate limiting headers available\r\n* Write some tests\r\n\r\n# Changelog\r\n\r\n* 0.0.4 - 0.0.5 10 December 2015\r\n  * (0.0.6) Added `Repositories.getRepoCommits()` and `Repositories.getRepoCommit()`\r\n  * (0.0.5) Added `Repositories.getRepositoryFile(username, reponame, filename)`\r\n  * (0.0.4) Added a lot of new end points to `routes.json`\r\n  * (0.0.4) Fixed some readme mistakes\r\n* 0.0.1 - 0.0.3 - 9 December 2015\r\n  * (0.0.3) Improved readme\r\n  * (0.0.2) Moved `routes.json` to dir `assets`\r\n  * (0.0.2) Fixed stupid-ass path error\r\n  * (0.0.1) Initial commit\r\n\r\n## License\r\n\r\nCopyright 2015 Michiel van der Velde.\r\n\r\nThis software is licensed under [the MIT License](LICENSE).\r\n",
+  "readme": "# Simple GitHub API wrapper for node.js\r\n\r\nLots of times you don't need a full-fledged GitHub API client with authentication and what-not. Maybe you just want to load public data, or index and process your public repositories somehow. This simple GitHub API 'wrapper' provides the basics and can access all non-restricted API end points. And it's easily extendable too!\r\n\r\nThe wrapper loads a JSON file (`routes.json`) which contains a name space, a method name and an end point URI. Together, all methods are dynamically created at startup-time. This makes it very easy to add new end points in the future. The library makes use of promises through [request-promise](https://github.com/request/request-promise).\r\n\r\nCurrently _not all suitable end points_ have been added. You can either wait for me to add them to `routes.json`, or you can do it yourself (and submit a pull request, of course! ;)).\r\n\r\n## Install\r\n\r\n```\r\nnpm install github-api-simple\r\n```\r\n\r\n## Usage\r\n\r\n```js\r\nconst SimpleApi = require('github-api-simple');\r\nlet api = new SimpleApi(); // takes an options argument, see below\r\n\r\nsimpleApi.Repositories.getReposForUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\nThe constructor takes an options argument, which is fed to [request-promise](https://github.com/request/request-promise). The defaults are:\r\n\r\n```js\r\nconst DEFAULT_OPTIONS = {\r\n\t'baseUrl': 'https://api.github.com',\r\n\t'headers': {\r\n\t\t'User-Agent': 'github-api-simple v' + pkg.version + ' [nodejs] [https://github.com/MichielvdVelde/github-api-simple]'\r\n\t},\r\n\t'json': true\r\n};\r\n```\r\n\r\nYou can change the `User-Agent` header to set your own, the GitHub API requires one.\r\n\r\n## Routes\r\n\r\n### Users\r\n\r\n#### Single user\r\n\r\nAll route methods take an optional `options` object as the last argument. This object is `extend()`-ed with the options you gave when usig `new`. For example, if you want to get all your repositories sorted by when it was last pushed to, you can:\r\n\r\n```js\r\nlet options = {\r\n\t'qs': {\r\n\t\t'sort': 'pushed',\r\n\t\t'direction': 'desc' // optional, GitHub API uses 'desc' by default for 'pushed'\r\n\t}\r\n}\r\nsimpleApi.Users.getUser('MichielvdVelde', options)\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/#get-a-single-user)\r\n\r\n```js\r\nsimpleApi.Users.getUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n#### All users\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/#get-all-users)\r\n\r\n```js\r\nsimpleApi.Users.getUsers()\r\n\t.then(function(users) {\r\n\t\tconsole.log('I got %d users', users.length);\r\n\t});\r\n```\r\n\r\n### Repositories\r\n\r\n#### Repositories for a single user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-user-repositories)\r\n\r\n```js\r\nsimpleApi.Repositories.getReposForUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n#### Single repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#get)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepo('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(repo) {\r\n\t\tconsole.log('This repo has %d watchers', repo.watchers_count);\r\n\t});\r\n```\r\n\r\n\r\n#### Contributors\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-contributors)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoContributors('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(contributors) {\r\n\t\tconsole.log('This repo has %d contributors', contributors.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Languages\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-languages)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoLanguages('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(languages) {\r\n\t\tfor(let language of languages) {\r\n\t\t\tconsole.log('language %s, %d bytes', language, languages[language]);\r\n\t\t}\r\n\t});\r\n```\r\n\r\n\r\n#### Teams\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-teams)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoTeams('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(teams) {\r\n\t\tif(teams) {\r\n\t\t\tconsole.log('This repo has %d teams', teams.length);\r\n\t\t}\r\n\t});\r\n```\r\n\r\n\r\n#### Tags\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-tags)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoTags('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(tags) {\r\n\t\tconsole.log('This repo has %d tags', tags.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Branches\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-branches)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoBranches('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(branches) {\r\n\t\tconsole.log('This repo has %d branches', branches.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Single branch\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#get-branche)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoBranche('MichielvdVelde', 'github-api-simple', 'master')\r\n\t.then(function(branche) {\r\n\t\tconsole.log('Latest commit on master is %s', branche.commit.sha);\r\n\t});\r\n```\r\n\r\n\r\n#### Contents of a repository file\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/contents/#get-contents)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoFile('MichielvdVelde', 'github-api-simple', 'README.md')\r\n\t.then(function(content) {\r\n\t\tconsole.log('Readme sha is %s', content.sha);\r\n\t});\r\n```\r\n\r\n\r\n#### Repository commits\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoCommits('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(commits) {\r\n\t\tconsole.log('This repo has %d commits', commits.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Repository single commit\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/commits/#get-a-single-commit)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoCommit('MichielvdVelde', 'github-api-simple', '6dcb09b5b57875f334f61aebed695e2e4193db5e')\r\n\t.then(function(commit) {\r\n\t\tconsole.log('Commit %s says %s', commit.sha, commit.commit.message);\r\n\t});\r\n```\r\n\r\n### Followers\r\n\r\n\r\n#### Get followers for user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/followers/#list-followers-of-a-user)\r\n\r\n```js\r\nsimpleApi.Followers.getFollowersForUser('MichielvdVelde')\r\n\t.then(function(followers) {\r\n\t\tconsole.log('This user has %d followers', followers.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get followers by user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/followers/#list-followers-of-a-user)\r\n\r\n```js\r\nsimpleApi.Followers.getFollowersByUser('MichielvdVelde')\r\n\t.then(function(followers) {\r\n\t\tconsole.log('This user follows %d others', followers.length);\r\n\t});\r\n```\r\n\r\n### Issues\r\n\r\n\r\n#### Get issues for repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/#list-issues-for-a-repository)\r\n\r\n```js\r\nsimpleApi.Issues.getIssuesForRepo('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(issues) {\r\n\t\tconsole.log('This repo has %d issues', issues.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get a single issue\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/#get-a-single-issue)\r\n\r\n```js\r\nsimpleApi.Issues.getIssue('MichielvdVelde', 'github-api-simple', 138)\r\n\t.then(function(issue) {\r\n\t\tconsole.log('This issue is %s', issue.state);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comments\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#list-comments-on-an-issue)\r\n\r\n```js\r\nsimpleApi.Issues.getIssueComments('MichielvdVelde', 'github-api-simple', 138)\r\n\t.then(function(comments) {\r\n\t\tconsole.log('This issue has %d comments', comments.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comments\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#list-comments-in-a-repository)\r\n\r\n```js\r\nsimpleApi.Issues.getRepoIssues('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(issues) {\r\n\t\tconsole.log('This repo has %d issues', issues.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comment\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#get-a-single-comment)\r\n\r\n```js\r\nsimpleApi.Issues.getIssueComment('MichielvdVelde', 'github-api-simple', 96)\r\n\t.then(function(comment) {\r\n\t\tconsole.log('Comment by %s', comment.owner.login);\r\n\t});\r\n```\r\n\r\n### Milestones\r\n\r\n\r\n#### Get all milestones for a repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/milestones/#list-milestones-for-a-repository)\r\n\r\n```js\r\nsimpleApi.Milestones.getRepoMilestones('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(milestones) {\r\n\t\tconsole.log('This repo has %d milestones', milestones.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get a single milestone\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/milestones/#get-a-single-milestone)\r\n\r\n```js\r\nsimpleApi.Milestones.getMilestone('MichielvdVelde', 'github-api-simple', 544)\r\n\t.then(function(milestone) {\r\n\t\tconsole.log('Milestone title i %s', milestone.title);\r\n\t});\r\n```\r\n\r\n# To do\r\n\r\n* Add the rest of the applicable API end points to the routes file\r\n* Add paging support\r\n* Make rate limiting headers available\r\n* Write some tests\r\n\r\n# Changelog\r\n\r\n* 0.1.0 - 25 October 2017\r\n  * Drop fs and .readFileSync() to support Browserify (thanks to [jywarren](https://github.com/jywarren))\r\n* 0.0.4 - 0.0.5 10 December 2015\r\n  * (0.0.6) Added `Repositories.getRepoCommits()` and `Repositories.getRepoCommit()`\r\n  * (0.0.5) Added `Repositories.getRepositoryFile(username, reponame, filename)`\r\n  * (0.0.4) Added a lot of new end points to `routes.json`\r\n  * (0.0.4) Fixed some readme mistakes\r\n* 0.0.1 - 0.0.3 - 9 December 2015\r\n  * (0.0.3) Improved readme\r\n  * (0.0.2) Moved `routes.json` to dir `assets`\r\n  * (0.0.2) Fixed stupid-ass path error\r\n  * (0.0.1) Initial commit\r\n\r\n## License\r\n\r\nCopyright 2015 Michiel van der Velde.\r\n\r\nThis software is licensed under [the MIT License](LICENSE).\r\n",
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
@@ -28040,10 +27980,10 @@ module.exports={
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.0.6"
+  "version": "0.1.0"
 }
 
-},{}],154:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -28537,7 +28477,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"util/":387}],155:[function(require,module,exports){
+},{"util/":387}],154:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 /* eslint camelcase: "off" */
@@ -28949,7 +28889,7 @@ Zlib.prototype._reset = function () {
 
 exports.Zlib = Zlib;
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":285,"assert":154,"buffer":158,"pako/lib/zlib/constants":162,"pako/lib/zlib/deflate.js":164,"pako/lib/zlib/inflate.js":166,"pako/lib/zlib/zstream":170}],156:[function(require,module,exports){
+},{"_process":285,"assert":153,"buffer":157,"pako/lib/zlib/constants":162,"pako/lib/zlib/deflate.js":164,"pako/lib/zlib/inflate.js":166,"pako/lib/zlib/zstream":170}],155:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -29561,9 +29501,9 @@ util.inherits(DeflateRaw, Zlib);
 util.inherits(InflateRaw, Zlib);
 util.inherits(Unzip, Zlib);
 }).call(this,require('_process'))
-},{"./binding":155,"_process":285,"assert":154,"buffer":158,"stream":366,"util":387}],157:[function(require,module,exports){
+},{"./binding":154,"_process":285,"assert":153,"buffer":157,"stream":366,"util":387}],156:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"dup":70}],158:[function(require,module,exports){
+},{"dup":70}],157:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -31279,7 +31219,106 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":65,"ieee754":213}],159:[function(require,module,exports){
+},{"base64-js":65,"ieee754":213}],158:[function(require,module,exports){
+'use strict'
+
+exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
+exports.createHash = exports.Hash = require('create-hash')
+exports.createHmac = exports.Hmac = require('create-hmac')
+
+var algos = require('browserify-sign/algos')
+var algoKeys = Object.keys(algos)
+var hashes = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160'].concat(algoKeys)
+exports.getHashes = function () {
+  return hashes
+}
+
+var p = require('pbkdf2')
+exports.pbkdf2 = p.pbkdf2
+exports.pbkdf2Sync = p.pbkdf2Sync
+
+var aes = require('browserify-cipher')
+
+exports.Cipher = aes.Cipher
+exports.createCipher = aes.createCipher
+exports.Cipheriv = aes.Cipheriv
+exports.createCipheriv = aes.createCipheriv
+exports.Decipher = aes.Decipher
+exports.createDecipher = aes.createDecipher
+exports.Decipheriv = aes.Decipheriv
+exports.createDecipheriv = aes.createDecipheriv
+exports.getCiphers = aes.getCiphers
+exports.listCiphers = aes.listCiphers
+
+var dh = require('diffie-hellman')
+
+exports.DiffieHellmanGroup = dh.DiffieHellmanGroup
+exports.createDiffieHellmanGroup = dh.createDiffieHellmanGroup
+exports.getDiffieHellman = dh.getDiffieHellman
+exports.createDiffieHellman = dh.createDiffieHellman
+exports.DiffieHellman = dh.DiffieHellman
+
+var sign = require('browserify-sign')
+
+exports.createSign = sign.createSign
+exports.Sign = sign.Sign
+exports.createVerify = sign.createVerify
+exports.Verify = sign.Verify
+
+exports.createECDH = require('create-ecdh')
+
+var publicEncrypt = require('public-encrypt')
+
+exports.publicEncrypt = publicEncrypt.publicEncrypt
+exports.privateEncrypt = publicEncrypt.privateEncrypt
+exports.publicDecrypt = publicEncrypt.publicDecrypt
+exports.privateDecrypt = publicEncrypt.privateDecrypt
+
+// the least I can do is make error messages for the rest of the node.js/crypto api.
+// ;[
+//   'createCredentials'
+// ].forEach(function (name) {
+//   exports[name] = function () {
+//     throw new Error([
+//       'sorry, ' + name + ' is not implemented yet',
+//       'we accept pull requests',
+//       'https://github.com/crypto-browserify/crypto-browserify'
+//     ].join('\n'))
+//   }
+// })
+
+var rf = require('randomfill')
+
+exports.randomFill = rf.randomFill
+exports.randomFillSync = rf.randomFillSync
+
+exports.createCredentials = function () {
+  throw new Error([
+    'sorry, createCredentials is not implemented yet',
+    'we accept pull requests',
+    'https://github.com/crypto-browserify/crypto-browserify'
+  ].join('\n'))
+}
+
+exports.constants = {
+  'DH_CHECK_P_NOT_SAFE_PRIME': 2,
+  'DH_CHECK_P_NOT_PRIME': 1,
+  'DH_UNABLE_TO_CHECK_GENERATOR': 4,
+  'DH_NOT_SUITABLE_GENERATOR': 8,
+  'NPN_ENABLED': 1,
+  'ALPN_ENABLED': 1,
+  'RSA_PKCS1_PADDING': 1,
+  'RSA_SSLV23_PADDING': 2,
+  'RSA_NO_PADDING': 3,
+  'RSA_PKCS1_OAEP_PADDING': 4,
+  'RSA_X931_PADDING': 5,
+  'RSA_PKCS1_PSS_PADDING': 6,
+  'POINT_CONVERSION_COMPRESSED': 2,
+  'POINT_CONVERSION_UNCOMPRESSED': 4,
+  'POINT_CONVERSION_HYBRID': 6
+}
+
+},{"browserify-cipher":88,"browserify-sign":95,"browserify-sign/algos":92,"create-ecdh":106,"create-hash":107,"create-hmac":110,"diffie-hellman":119,"pbkdf2":278,"public-encrypt":286,"randombytes":301,"randomfill":302}],159:[function(require,module,exports){
 var http = require('http')
 var url = require('url')
 
@@ -38144,7 +38183,7 @@ HashBase.prototype._digest = function () {
 module.exports = HashBase
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158,"inherits":215,"stream":366}],194:[function(require,module,exports){
+},{"buffer":157,"inherits":215,"stream":366}],194:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -41014,7 +41053,7 @@ module.exports = {
 };
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":217,"./utils":211,"assert-plus":61,"crypto":112,"http":367,"jsprim":224,"sshpk":360,"util":387}],211:[function(require,module,exports){
+},{"../../is-buffer/index.js":217,"./utils":211,"assert-plus":61,"crypto":158,"http":367,"jsprim":224,"sshpk":360,"util":387}],211:[function(require,module,exports){
 // Copyright 2012 Joyent, Inc.  All rights reserved.
 
 var assert = require('assert-plus');
@@ -41220,7 +41259,7 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./utils":211,"assert-plus":61,"buffer":158,"crypto":112,"sshpk":360}],213:[function(require,module,exports){
+},{"./utils":211,"assert-plus":61,"buffer":157,"crypto":158,"sshpk":360}],213:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -44001,7 +44040,7 @@ function mergeObjects(provided, overrides, defaults)
 	return (rv);
 }
 
-},{"assert-plus":61,"extsprintf":146,"json-schema":222,"util":387,"verror":393}],225:[function(require,module,exports){
+},{"assert-plus":61,"extsprintf":145,"json-schema":222,"util":387,"verror":393}],225:[function(require,module,exports){
 var arrayEach = require('../internal/arrayEach'),
     baseEach = require('../internal/baseEach'),
     createForEach = require('../internal/createForEach');
@@ -45325,7 +45364,7 @@ function fnI (a, b, c, d, m, k, s) {
 module.exports = MD5
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158,"hash-base":263,"inherits":215}],263:[function(require,module,exports){
+},{"buffer":157,"hash-base":263,"inherits":215}],263:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
@@ -56117,7 +56156,7 @@ exports.rfc3986 = rfc3986
 exports.generateBase = generateBase
 
 
-},{"crypto":112,"querystring":300}],272:[function(require,module,exports){
+},{"crypto":158,"querystring":300}],272:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -56379,7 +56418,7 @@ module.exports = function (okey, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"browserify-aes":73,"buffer":158,"evp_bytestokey":144}],276:[function(require,module,exports){
+},{"browserify-aes":73,"buffer":157,"evp_bytestokey":143}],276:[function(require,module,exports){
 (function (Buffer){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
@@ -56489,7 +56528,7 @@ function decrypt (data, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./aesid.json":272,"./asn1":273,"./fixProc":275,"browserify-aes":73,"buffer":158,"pbkdf2":278}],277:[function(require,module,exports){
+},{"./aesid.json":272,"./asn1":273,"./fixProc":275,"browserify-aes":73,"buffer":157,"pbkdf2":278}],277:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -57265,7 +57304,7 @@ function i2ops(c) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":158,"create-hash":107}],288:[function(require,module,exports){
+},{"buffer":157,"create-hash":107}],288:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
 var mgf = require('./mgf');
@@ -57376,7 +57415,7 @@ function compare(a, b){
   return dif;
 }
 }).call(this,require("buffer").Buffer)
-},{"./mgf":287,"./withPublic":290,"./xor":291,"bn.js":68,"browserify-rsa":91,"buffer":158,"create-hash":107,"parse-asn1":276}],289:[function(require,module,exports){
+},{"./mgf":287,"./withPublic":290,"./xor":291,"bn.js":68,"browserify-rsa":91,"buffer":157,"create-hash":107,"parse-asn1":276}],289:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
 var randomBytes = require('randombytes');
@@ -57474,7 +57513,7 @@ function nonZero(len, crypto) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-},{"./mgf":287,"./withPublic":290,"./xor":291,"bn.js":68,"browserify-rsa":91,"buffer":158,"create-hash":107,"parse-asn1":276,"randombytes":301}],290:[function(require,module,exports){
+},{"./mgf":287,"./withPublic":290,"./xor":291,"bn.js":68,"browserify-rsa":91,"buffer":157,"create-hash":107,"parse-asn1":276,"randombytes":301}],290:[function(require,module,exports){
 (function (Buffer){
 var bn = require('bn.js');
 function withPublic(paddedMsg, key) {
@@ -57487,7 +57526,7 @@ function withPublic(paddedMsg, key) {
 
 module.exports = withPublic;
 }).call(this,require("buffer").Buffer)
-},{"bn.js":68,"buffer":158}],291:[function(require,module,exports){
+},{"bn.js":68,"buffer":157}],291:[function(require,module,exports){
 module.exports = function xor(a, b) {
   var len = a.length;
   var i = -1;
@@ -60177,7 +60216,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":304,"./internal/streams/BufferList":309,"./internal/streams/destroy":310,"./internal/streams/stream":311,"_process":285,"core-util-is":105,"events":143,"inherits":215,"isarray":312,"process-nextick-args":284,"safe-buffer":333,"string_decoder/":313,"util":70}],307:[function(require,module,exports){
+},{"./_stream_duplex":304,"./internal/streams/BufferList":309,"./internal/streams/destroy":310,"./internal/streams/stream":311,"_process":285,"core-util-is":105,"events":142,"inherits":215,"isarray":312,"process-nextick-args":284,"safe-buffer":333,"string_decoder/":313,"util":70}],307:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -61210,7 +61249,7 @@ module.exports = {
 },{"process-nextick-args":284}],311:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":143}],312:[function(require,module,exports){
+},{"events":142}],312:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
@@ -61592,7 +61631,7 @@ Object.defineProperty(request, 'debug', {
   }
 })
 
-},{"./lib/cookies":322,"./lib/helpers":325,"./request":331,"extend":145}],321:[function(require,module,exports){
+},{"./lib/cookies":322,"./lib/helpers":325,"./request":331,"extend":144}],321:[function(require,module,exports){
 'use strict'
 
 var caseless = require('caseless')
@@ -62091,7 +62130,7 @@ Har.prototype.options = function (options) {
 
 exports.Har = Har
 
-},{"extend":145,"fs":157,"har-validator":192,"querystring":300}],325:[function(require,module,exports){
+},{"extend":144,"fs":156,"har-validator":192,"querystring":300}],325:[function(require,module,exports){
 (function (process){
 'use strict'
 
@@ -62161,7 +62200,7 @@ exports.version = version
 exports.defer = defer
 
 }).call(this,require('_process'))
-},{"_process":285,"crypto":112,"json-stringify-safe":223,"safe-buffer":333}],326:[function(require,module,exports){
+},{"_process":285,"crypto":158,"json-stringify-safe":223,"safe-buffer":333}],326:[function(require,module,exports){
 'use strict'
 
 var uuid = require('uuid')
@@ -62425,7 +62464,7 @@ OAuth.prototype.onRequest = function (_oauth) {
 
 exports.OAuth = OAuth
 
-},{"caseless":100,"crypto":112,"oauth-sign":271,"qs":294,"safe-buffer":333,"url":382,"uuid":388}],328:[function(require,module,exports){
+},{"caseless":100,"crypto":158,"oauth-sign":271,"qs":294,"safe-buffer":333,"url":382,"uuid":388}],328:[function(require,module,exports){
 'use strict'
 
 var qs = require('qs')
@@ -64366,7 +64405,7 @@ Request.prototype.toJSON = requestToJSON
 module.exports = Request
 
 }).call(this,require('_process'))
-},{"./lib/auth":321,"./lib/cookies":322,"./lib/getProxyFromURI":323,"./lib/har":324,"./lib/helpers":325,"./lib/multipart":326,"./lib/oauth":327,"./lib/querystring":328,"./lib/redirect":329,"./lib/tunnel":330,"_process":285,"aws-sign2":62,"aws4":63,"caseless":100,"extend":145,"forever-agent":149,"form-data":150,"hawk":206,"http":367,"http-signature":208,"https":159,"is-typedarray":218,"isstream":219,"mime-types":267,"performance-now":283,"safe-buffer":333,"stream":366,"stringstream":371,"url":382,"util":387,"zlib":156}],332:[function(require,module,exports){
+},{"./lib/auth":321,"./lib/cookies":322,"./lib/getProxyFromURI":323,"./lib/har":324,"./lib/helpers":325,"./lib/multipart":326,"./lib/oauth":327,"./lib/querystring":328,"./lib/redirect":329,"./lib/tunnel":330,"_process":285,"aws-sign2":62,"aws4":63,"caseless":100,"extend":144,"forever-agent":148,"form-data":149,"hawk":206,"http":367,"http-signature":208,"https":159,"is-typedarray":218,"isstream":219,"mime-types":267,"performance-now":283,"safe-buffer":333,"stream":366,"stringstream":371,"url":382,"util":387,"zlib":155}],332:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var inherits = require('inherits')
@@ -64661,7 +64700,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 module.exports = RIPEMD160
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158,"hash-base":193,"inherits":215}],333:[function(require,module,exports){
+},{"buffer":157,"hash-base":193,"inherits":215}],333:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -64725,7 +64764,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":158}],334:[function(require,module,exports){
+},{"buffer":157}],334:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -65545,6 +65584,18 @@ function isFunction (funktion) {
 // Default to complaining loudly when things don't go according to plan.
 var logger = console.error.bind(console)
 
+// Sets a property on an object, preserving its enumerability.
+// This function assumes that the property is already writable.
+function defineProperty (obj, name, value) {
+  var enumerable = !!obj[name] && obj.propertyIsEnumerable(name)
+  Object.defineProperty(obj, name, {
+    configurable: true,
+    enumerable: enumerable,
+    writable: true,
+    value: value
+  })
+}
+
 // Keep initialization idempotent.
 function shimmer (options) {
   if (options && options.logger) {
@@ -65573,14 +65624,13 @@ function wrap (nodule, name, wrapper) {
   var original = nodule[name]
   var wrapped = wrapper(original, name)
 
-  wrapped.__original = original
-  wrapped.__unwrap = function () {
-    if (nodule[name] === wrapped) nodule[name] = original
-  }
-  wrapped.__wrapped = true
+  defineProperty(wrapped, '__original', original)
+  defineProperty(wrapped, '__unwrap', function () {
+    if (nodule[name] === wrapped) defineProperty(nodule, name, original)
+  })
+  defineProperty(wrapped, '__wrapped', true)
 
-  nodule[name] = wrapped
-
+  defineProperty(nodule, name, wrapped)
   return wrapped
 }
 
@@ -65619,9 +65669,31 @@ function unwrap (nodule, name) {
   }
 }
 
+function massUnwrap (nodules, names) {
+  if (!nodules) {
+    logger('must provide one or more modules to patch')
+    logger((new Error()).stack)
+    return
+  } else if (!Array.isArray(nodules)) {
+    nodules = [nodules]
+  }
+
+  if (!(names && Array.isArray(names))) {
+    logger('must provide one or more functions to unwrap on modules')
+    return
+  }
+
+  nodules.forEach(function (nodule) {
+    names.forEach(function (name) {
+      unwrap(nodule, name)
+    })
+  })
+}
+
 shimmer.wrap = wrap
 shimmer.massWrap = massWrap
 shimmer.unwrap = unwrap
+shimmer.massUnwrap = massUnwrap
 
 module.exports = shimmer
 
@@ -65797,7 +65869,7 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158}],344:[function(require,module,exports){
+},{"buffer":157}],344:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2016 Joyent, Inc.
 
@@ -66178,7 +66250,7 @@ Certificate._oldVersionDetect = function (obj) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./algs":343,"./errors":347,"./fingerprint":348,"./formats/openssh-cert":350,"./formats/x509":358,"./formats/x509-pem":357,"./identity":359,"./key":361,"./private-key":362,"./signature":363,"./utils":365,"assert-plus":61,"buffer":158,"crypto":112,"util":387}],345:[function(require,module,exports){
+},{"./algs":343,"./errors":347,"./fingerprint":348,"./formats/openssh-cert":350,"./formats/x509":358,"./formats/x509-pem":357,"./identity":359,"./key":361,"./private-key":362,"./signature":363,"./utils":365,"assert-plus":61,"buffer":157,"crypto":158,"util":387}],345:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2017 Joyent, Inc.
 
@@ -66593,7 +66665,7 @@ function generateECDSA(curve) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./algs":343,"./key":361,"./private-key":362,"./utils":365,"assert-plus":61,"buffer":158,"crypto":112,"ecc-jsbn":124,"ecc-jsbn/lib/ec":125,"jsbn":220,"tweetnacl":381}],346:[function(require,module,exports){
+},{"./algs":343,"./key":361,"./private-key":362,"./utils":365,"assert-plus":61,"buffer":157,"crypto":158,"ecc-jsbn":123,"ecc-jsbn/lib/ec":124,"jsbn":220,"tweetnacl":381}],346:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -66693,7 +66765,7 @@ Signer.prototype.sign = function () {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./signature":363,"assert-plus":61,"buffer":158,"stream":366,"tweetnacl":381,"util":387}],347:[function(require,module,exports){
+},{"./signature":363,"assert-plus":61,"buffer":157,"stream":366,"tweetnacl":381,"util":387}],347:[function(require,module,exports){
 // Copyright 2015 Joyent, Inc.
 
 var assert = require('assert-plus');
@@ -66944,7 +67016,7 @@ Fingerprint._oldVersionDetect = function (obj) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./algs":343,"./certificate":344,"./errors":347,"./key":361,"./utils":365,"assert-plus":61,"buffer":158,"crypto":112}],349:[function(require,module,exports){
+},{"./algs":343,"./certificate":344,"./errors":347,"./key":361,"./utils":365,"assert-plus":61,"buffer":157,"crypto":158}],349:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -67021,7 +67093,7 @@ function write(key, options) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../key":361,"../private-key":362,"../utils":365,"./pem":351,"./rfc4253":354,"./ssh":356,"assert-plus":61,"buffer":158}],350:[function(require,module,exports){
+},{"../key":361,"../private-key":362,"../utils":365,"./pem":351,"./rfc4253":354,"./ssh":356,"assert-plus":61,"buffer":157}],350:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2017 Joyent, Inc.
 
@@ -67347,7 +67419,7 @@ function getCertType(key) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../certificate":344,"../identity":359,"../key":361,"../private-key":362,"../signature":363,"../ssh-buffer":364,"../utils":365,"./rfc4253":354,"assert-plus":61,"buffer":158,"crypto":112}],351:[function(require,module,exports){
+},{"../algs":343,"../certificate":344,"../identity":359,"../key":361,"../private-key":362,"../signature":363,"../ssh-buffer":364,"../utils":365,"./rfc4253":354,"assert-plus":61,"buffer":157,"crypto":158}],351:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -67537,7 +67609,7 @@ function write(key, options, type) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../errors":347,"../key":361,"../private-key":362,"../utils":365,"./pkcs1":352,"./pkcs8":353,"./rfc4253":354,"./ssh-private":355,"asn1":60,"assert-plus":61,"buffer":158,"crypto":112}],352:[function(require,module,exports){
+},{"../algs":343,"../errors":347,"../key":361,"../private-key":362,"../utils":365,"./pkcs1":352,"./pkcs8":353,"./rfc4253":354,"./ssh-private":355,"asn1":60,"assert-plus":61,"buffer":157,"crypto":158}],352:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -67861,7 +67933,7 @@ function writePkcs1ECDSAPrivate(der, key) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../key":361,"../private-key":362,"../utils":365,"./pem":351,"./pkcs8":353,"asn1":60,"assert-plus":61,"buffer":158}],353:[function(require,module,exports){
+},{"../algs":343,"../key":361,"../private-key":362,"../utils":365,"./pem":351,"./pkcs8":353,"asn1":60,"assert-plus":61,"buffer":157}],353:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -68370,7 +68442,7 @@ function writePkcs8ECDSAPrivate(key, der) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../key":361,"../private-key":362,"../utils":365,"./pem":351,"asn1":60,"assert-plus":61,"buffer":158}],354:[function(require,module,exports){
+},{"../algs":343,"../key":361,"../private-key":362,"../utils":365,"./pem":351,"asn1":60,"assert-plus":61,"buffer":157}],354:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -68520,7 +68592,7 @@ function write(key, options) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../key":361,"../private-key":362,"../ssh-buffer":364,"../utils":365,"assert-plus":61,"buffer":158}],355:[function(require,module,exports){
+},{"../algs":343,"../key":361,"../private-key":362,"../ssh-buffer":364,"../utils":365,"assert-plus":61,"buffer":157}],355:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -68785,7 +68857,7 @@ function write(key, options) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../errors":347,"../key":361,"../private-key":362,"../ssh-buffer":364,"../utils":365,"./pem":351,"./rfc4253":354,"asn1":60,"assert-plus":61,"bcrypt-pbkdf":66,"buffer":158,"crypto":112}],356:[function(require,module,exports){
+},{"../algs":343,"../errors":347,"../key":361,"../private-key":362,"../ssh-buffer":364,"../utils":365,"./pem":351,"./rfc4253":354,"asn1":60,"assert-plus":61,"bcrypt-pbkdf":66,"buffer":157,"crypto":158}],356:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -68903,7 +68975,7 @@ function write(key, options) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../key":361,"../private-key":362,"../utils":365,"./rfc4253":354,"./ssh-private":355,"assert-plus":61,"buffer":158}],357:[function(require,module,exports){
+},{"../key":361,"../private-key":362,"../utils":365,"./rfc4253":354,"./ssh-private":355,"assert-plus":61,"buffer":157}],357:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2016 Joyent, Inc.
 
@@ -68984,7 +69056,7 @@ function write(cert, options) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../certificate":344,"../identity":359,"../key":361,"../private-key":362,"../signature":363,"../utils":365,"./pem":351,"./x509":358,"asn1":60,"assert-plus":61,"buffer":158}],358:[function(require,module,exports){
+},{"../algs":343,"../certificate":344,"../identity":359,"../key":361,"../private-key":362,"../signature":363,"../utils":365,"./pem":351,"./x509":358,"asn1":60,"assert-plus":61,"buffer":157}],358:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2017 Joyent, Inc.
 
@@ -69714,7 +69786,7 @@ function writeBitField(setBits, bitIndex) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../algs":343,"../certificate":344,"../identity":359,"../key":361,"../private-key":362,"../signature":363,"../utils":365,"./pem":351,"./pkcs8":353,"asn1":60,"assert-plus":61,"buffer":158}],359:[function(require,module,exports){
+},{"../algs":343,"../certificate":344,"../identity":359,"../key":361,"../private-key":362,"../signature":363,"../utils":365,"./pem":351,"./pkcs8":353,"asn1":60,"assert-plus":61,"buffer":157}],359:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2017 Joyent, Inc.
 
@@ -69995,7 +70067,7 @@ Identity._oldVersionDetect = function (obj) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./algs":343,"./errors":347,"./fingerprint":348,"./signature":363,"./utils":365,"asn1":60,"assert-plus":61,"buffer":158,"crypto":112,"util":387}],360:[function(require,module,exports){
+},{"./algs":343,"./errors":347,"./fingerprint":348,"./signature":363,"./utils":365,"asn1":60,"assert-plus":61,"buffer":157,"crypto":158,"util":387}],360:[function(require,module,exports){
 // Copyright 2015 Joyent, Inc.
 
 var Key = require('./key');
@@ -70314,7 +70386,7 @@ Key._oldVersionDetect = function (obj) {
 };
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":217,"./algs":343,"./dhe":345,"./ed-compat":346,"./errors":347,"./fingerprint":348,"./formats/auto":349,"./formats/pem":351,"./formats/pkcs1":352,"./formats/pkcs8":353,"./formats/rfc4253":354,"./formats/ssh":356,"./formats/ssh-private":355,"./private-key":362,"./signature":363,"./utils":365,"assert-plus":61,"crypto":112}],362:[function(require,module,exports){
+},{"../../is-buffer/index.js":217,"./algs":343,"./dhe":345,"./ed-compat":346,"./errors":347,"./fingerprint":348,"./formats/auto":349,"./formats/pem":351,"./formats/pkcs1":352,"./formats/pkcs8":353,"./formats/rfc4253":354,"./formats/ssh":356,"./formats/ssh-private":355,"./private-key":362,"./signature":363,"./utils":365,"assert-plus":61,"crypto":158}],362:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2017 Joyent, Inc.
 
@@ -70572,7 +70644,7 @@ PrivateKey._oldVersionDetect = function (obj) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./algs":343,"./dhe":345,"./ed-compat":346,"./errors":347,"./fingerprint":348,"./formats/auto":349,"./formats/pem":351,"./formats/pkcs1":352,"./formats/pkcs8":353,"./formats/rfc4253":354,"./formats/ssh-private":355,"./key":361,"./signature":363,"./utils":365,"assert-plus":61,"buffer":158,"crypto":112,"tweetnacl":381,"util":387}],363:[function(require,module,exports){
+},{"./algs":343,"./dhe":345,"./ed-compat":346,"./errors":347,"./fingerprint":348,"./formats/auto":349,"./formats/pem":351,"./formats/pkcs1":352,"./formats/pkcs8":353,"./formats/rfc4253":354,"./formats/ssh-private":355,"./key":361,"./signature":363,"./utils":365,"assert-plus":61,"buffer":157,"crypto":158,"tweetnacl":381,"util":387}],363:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -70889,7 +70961,7 @@ Signature._oldVersionDetect = function (obj) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./algs":343,"./errors":347,"./ssh-buffer":364,"./utils":365,"asn1":60,"assert-plus":61,"buffer":158,"crypto":112}],364:[function(require,module,exports){
+},{"./algs":343,"./errors":347,"./ssh-buffer":364,"./utils":365,"asn1":60,"assert-plus":61,"buffer":157,"crypto":158}],364:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -71041,7 +71113,7 @@ SSHBuffer.prototype.write = function (buf) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"assert-plus":61,"buffer":158}],365:[function(require,module,exports){
+},{"assert-plus":61,"buffer":157}],365:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2015 Joyent, Inc.
 
@@ -71333,7 +71405,7 @@ function opensshCipherInfo(cipher) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./private-key":362,"assert-plus":61,"buffer":158,"crypto":112,"jsbn":220}],366:[function(require,module,exports){
+},{"./private-key":362,"assert-plus":61,"buffer":157,"crypto":158,"jsbn":220}],366:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -71462,7 +71534,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":143,"inherits":215,"readable-stream/duplex.js":303,"readable-stream/passthrough.js":314,"readable-stream/readable.js":315,"readable-stream/transform.js":316,"readable-stream/writable.js":317}],367:[function(require,module,exports){
+},{"events":142,"inherits":215,"readable-stream/duplex.js":303,"readable-stream/passthrough.js":314,"readable-stream/readable.js":315,"readable-stream/transform.js":316,"readable-stream/writable.js":317}],367:[function(require,module,exports){
 (function (global){
 var ClientRequest = require('./lib/request')
 var extend = require('xtend')
@@ -71927,7 +71999,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":368,"./response":370,"_process":285,"buffer":158,"inherits":215,"readable-stream":315,"to-arraybuffer":372}],370:[function(require,module,exports){
+},{"./capability":368,"./response":370,"_process":285,"buffer":157,"inherits":215,"readable-stream":315,"to-arraybuffer":372}],370:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -72113,7 +72185,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":368,"_process":285,"buffer":158,"inherits":215,"readable-stream":315}],371:[function(require,module,exports){
+},{"./capability":368,"_process":285,"buffer":157,"inherits":215,"readable-stream":315}],371:[function(require,module,exports){
 (function (Buffer){
 var util = require('util')
 var Stream = require('stream')
@@ -72219,7 +72291,7 @@ function alignedWrite(buffer) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":158,"stream":366,"string_decoder":171,"util":387}],372:[function(require,module,exports){
+},{"buffer":157,"stream":366,"string_decoder":171,"util":387}],372:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 
 module.exports = function (buf) {
@@ -72248,7 +72320,7 @@ module.exports = function (buf) {
 	}
 }
 
-},{"buffer":158}],373:[function(require,module,exports){
+},{"buffer":157}],373:[function(require,module,exports){
 /*!
  * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
@@ -73591,7 +73663,7 @@ module.exports = {
   canonicalDomain: canonicalDomain
 };
 
-},{"../package.json":379,"./memstore":374,"./pathMatch":375,"./permuteDomain":376,"./pubsuffix":377,"./store":378,"net":157,"punycode":292,"url":382}],374:[function(require,module,exports){
+},{"../package.json":379,"./memstore":374,"./pathMatch":375,"./permuteDomain":376,"./pubsuffix":377,"./store":378,"net":156,"punycode":292,"url":382}],374:[function(require,module,exports){
 /*!
  * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
@@ -74442,7 +74514,7 @@ if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
 exports.debug = debug // for test
 
 }).call(this,require('_process'))
-},{"_process":285,"assert":154,"events":143,"http":367,"https":159,"net":157,"safe-buffer":333,"tls":157,"util":387}],381:[function(require,module,exports){
+},{"_process":285,"assert":153,"events":142,"http":367,"https":159,"net":156,"safe-buffer":333,"tls":156,"util":387}],381:[function(require,module,exports){
 (function(nacl) {
 'use strict';
 
@@ -78912,7 +78984,7 @@ WError.prototype.cause = function we_cause(c)
 	return (this.jse_cause);
 };
 
-},{"assert-plus":61,"core-util-is":105,"extsprintf":146,"util":387}],394:[function(require,module,exports){
+},{"assert-plus":61,"core-util-is":105,"extsprintf":145,"util":387}],394:[function(require,module,exports){
 var indexOf = require('indexof');
 
 var Object_keys = function (obj) {
@@ -79133,6 +79205,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   var api = new SimpleApi();
   var ui = require('./ui');
+  const requestP = require('request-promise');
 
   var options = {
     'qs': {
@@ -79151,6 +79224,12 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     api.Issues
        .getIssuesForRepo(org, repo, _options)
        .then(callback);
+  }
+
+  function getIssuesForOrg(_org, _options) {
+    _options = _options || options;
+    var _url = "https://api.github.com/search/issues?q=is%3Aopen+org%3A" + _org + "+label%3A" + _options.qs.labels;
+    return requestP({ uri: _url });
   }
 
   function getCommitsForRepo(callback, _options) {
@@ -79186,7 +79265,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     chart:   chart,
     options: options,
     getIssuesForRepo: getIssuesForRepo,
-    // getIssuesForOrg: getIssuesForOrg,
+    getIssuesForOrg: getIssuesForOrg,
     getCommitsForRepo: getCommitsForRepo,
     getRepoContributors: getRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo
@@ -79196,12 +79275,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 module.exports = CommunityToolbox;
 
-},{"./chart":396,"./ui":398,"github-api-simple":152}],398:[function(require,module,exports){
+},{"./chart":396,"./ui":398,"github-api-simple":151,"request-promise":319}],398:[function(require,module,exports){
 var moment = require('moment');
 
-function generateIssueHtml(title, body, githubUrl) {
-  var html = '<div class="panel panel-default">\
+function generateIssueHtml(title, body, githubUrl, repo) {
+  var repoName = githubUrl.split('/')[4],
+      repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
+      html = '<div class="panel panel-default">\
     <div class="panel-heading">\
+      <h3 class="panel-title" style="float:right;"><a href="' + repoUrl + '">' + repoName + '</a></h3>\
       <h3 class="panel-title"><b><a href="' + githubUrl + '">' + title + '</a></b></h3>\
     </div>\
     <div class="panel-body">\
@@ -79221,7 +79303,7 @@ function insertIssue(issue, el) {
   body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ago ";
   body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
   body += " <i class='fa fa-comment-o'></i> " + issue.comments;
-  $(el).append(generateIssueHtml(issue.title, body, issue.html_url));
+  $(el).append(generateIssueHtml(issue.title, body, issue.html_url, issue));
 }
 
 module.exports = {
