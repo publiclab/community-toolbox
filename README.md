@@ -22,6 +22,12 @@ To embed these on your site, use an `<iframe>` like this:
 <iframe src="https://publiclab.github.io/community-toolbox/examples/embed.html#o=orgname&r=repository" style="border:none;" width="100%" height="600px"></iframe>
 ```
 
+## Org-wide issues
+
+You can also use Community Toolbox to display issues for a given label across an entire organization. Use `all` for the `r` parameter, like this:
+
+https://publiclab.github.io/community-toolbox/#r=all
+
 
 ## Developing
 
