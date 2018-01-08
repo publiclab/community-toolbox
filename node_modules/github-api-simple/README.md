@@ -338,6 +338,8 @@ simpleApi.Milestones.getMilestone('MichielvdVelde', 'github-api-simple', 544)
 
 # Changelog
 
+* 0.1.0 - 25 October 2017
+  * Drop fs and .readFileSync() to support Browserify (thanks to [jywarren](https://github.com/jywarren))
 * 0.0.4 - 0.0.5 10 December 2015
   * (0.0.6) Added `Repositories.getRepoCommits()` and `Repositories.getRepoCommit()`
   * (0.0.5) Added `Repositories.getRepositoryFile(username, reponame, filename)`

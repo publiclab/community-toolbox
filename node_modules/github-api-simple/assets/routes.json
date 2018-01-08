@@ -15,6 +15,10 @@
 			"uri": "/users/%s/repos"
 		},
 		{
+			"method": "getReposForOrg",
+			"uri": "/orgs/%s/repos"
+		},
+		{
 			"method": "getRepo",
 			"uri": "/repos/%s/%s"
 		},
