@@ -76,7 +76,7 @@
 
       <h2>What's next?</h2>
 
-      <p>Once you've completed a <b>first-timers-only</b> issue, there are <a href="https://github.com/publiclab/plots2/labels/help-wanted">plenty of other challenges</a> we'd love to have your help on.</p> 
+      <p>Once you've completed a <b>first-timers-only</b> issue, there are <a href="https://github.com/publiclab/plots2/labels/help-wanted">plenty of other challenges</a> we'd love to have your help on.</p>
 
       <p>In "Candidates" above, there are some issues we think would make good <b>first-timers-only</b> issues, but haven't finished formatting. They could make a good second-time contribution!</p>
 
@@ -90,18 +90,18 @@
 
       <hr />
 
-      <h2>Contributors</h2>
+      <h2 class="contributors-head">Contributors</h2>
 
       <p>This project was made possible by many contributors, including the following GitHub users:</p>
 
-      <p class="well contributors"></p>
+      <div class="well contributors"><p class="usernames"></p><p class="avatars"></p></div>
 
     </div>
 
     <footer>
       <p>
         Page powered by <a href="https://github.com/jywarren/community-toolbox"><i class="fa fa-github"></i></a>
-        <a href="https://github.com/jywarren/community-toolbox">Commmunity Toolbox</a> 
+        <a href="https://github.com/jywarren/community-toolbox">Commmunity Toolbox</a>
         - Open Source
       </p>
     </footer>
@@ -116,7 +116,7 @@
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
         var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
         var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
-    
+
         toolbox = CommunityToolbox(org, repo);
 
 	if (repo === 'all') {
@@ -138,19 +138,45 @@
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.api.Repositories
-                 .getRepoContributors(org, repo, { qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-                 .then(function(contributors) {
-                   var usernames = contributors.map(function(c) { 
-                     return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
-                   });
-                   var avatars = contributors.map(function(c) { 
-                     return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
-                   });
-                   $('.contributors').html(usernames.join(', '));
-                   $('.contributors').append('<hr />');
-                   $('.contributors').append(avatars.join());
+          // get number of pages
+          var getPages = toolbox.api.Repositories
+                 .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+                 .then(function(contribData) {
+                   var headers = contribData;
+                   var parsed = toolbox.parse(headers['link']);
+                   totalPages = parseInt(parsed.last.page);
+                   return totalPages;
                  });
+
+          //define totalContributors
+          var totalContributors = 0;
+
+          // get data given the page number
+          function getData(curPage){
+            toolbox.api.Repositories
+                   .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:curPage } })
+                   .then(function(contributors) {
+                     //contributors = contributors.body;
+                     var usernames = contributors.map(function(c) {
+                       return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
+                     });
+                     var avatars = contributors.map(function(c) {
+                       return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+                     });
+                     totalContributors += contributors.length;
+                     $('.contributors-head').html('Contributors ('+totalContributors+')');
+                     $('.contributors > .usernames').append(usernames.join(', '));
+                     $('.contributors').append('<hr />');
+                     $('.contributors > .avatars').append(avatars.join());
+                   });
+          }
+
+          var curPage = 1;
+          getPages.then(function(totalPages){
+            for(var i = curPage; i <= totalPages; i++) {
+            	getData(i);
+            }
+          });
 
 	}
 

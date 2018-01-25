@@ -5,18 +5,19 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var api = new SimpleApi();
   var ui = require('./ui');
   const requestP = require('request-promise');
+  var parse = require('parse-link-header');
 
   var options = {
     'qs': {
       'sort': 'pushed',
-      'direction': 'desc', // optional, GitHub API uses 'desc' by default for 'pushed' 
+      'direction': 'desc', // optional, GitHub API uses 'desc' by default for 'pushed'
       'per_page': 100
     }
   }
 
-  // these are essentially examples for now; we could wrap them 
-  // in externally available methods for convenience but at the 
-  // moment they're not quite complex enough to merit it. 
+  // these are essentially examples for now; we could wrap them
+  // in externally available methods for convenience but at the
+  // moment they're not quite complex enough to merit it.
 
   function getIssuesForRepo(callback, _options) {
     _options = _options || options;
@@ -61,6 +62,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   return {
     api:     api,
     ui:      ui,
+    parse:   parse,
     chart:   chart,
     options: options,
     getIssuesForRepo: getIssuesForRepo,
