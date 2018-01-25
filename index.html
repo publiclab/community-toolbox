@@ -94,7 +94,7 @@
 
       <p>This project was made possible by many contributors, including the following GitHub users:</p>
 
-      <div class="well contributors"><p class="usernames"></p><p class="avatars"></p></div>
+      <div class="well contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
     </div>
 
@@ -166,7 +166,6 @@
                      totalContributors += contributors.length;
                      $('.contributors-head').html('Contributors ('+totalContributors+')');
                      $('.contributors > .usernames').append(usernames.join(', '));
-                     $('.contributors').append('<hr />');
                      $('.contributors > .avatars').append(avatars.join());
                    });
           }
