@@ -138,44 +138,7 @@
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          // get number of pages
-          var getPages = toolbox.api.Repositories
-                 .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-                 .then(function(contribData) {
-                   var headers = contribData;
-                   var parsed = toolbox.parse(headers['link']);
-                   totalPages = parseInt(parsed.last.page);
-                   return totalPages;
-                 });
-
-          //define totalContributors
-          var totalContributors = 0;
-
-          // get data given the page number
-          function getData(curPage){
-            toolbox.api.Repositories
-                   .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:curPage } })
-                   .then(function(contributors) {
-                     //contributors = contributors.body;
-                     var usernames = contributors.map(function(c) {
-                       return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
-                     });
-                     var avatars = contributors.map(function(c) {
-                       return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
-                     });
-                     totalContributors += contributors.length;
-                     $('.contributors-head').html('Contributors ('+totalContributors+')');
-                     $('.contributors > .usernames').append(usernames.join(', '));
-                     $('.contributors > .avatars').append(avatars.join());
-                   });
-          }
-
-          var curPage = 1;
-          getPages.then(function(totalPages){
-            for(var i = curPage; i <= totalPages; i++) {
-            	getData(i);
-            }
-          });
+          toolbox.getRepoContributors(org, repo);
 
 	}
 

@@ -79251,11 +79251,44 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        .then(callback);
   }
 
-  function getRepoContributors(callback, _options) {
-    _options = _options || options;
-    api.Repositories
-       .getRepoContributors(org, repo, _options)
-       .then(callback);
+  function getRepoContributors(org, repo) {
+
+    var getPages = api.Repositories
+           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+           .then(function(contribData) {
+             var headers = contribData;
+             var parsed = parse(headers['link']);
+             totalPages = parseInt(parsed.last.page);
+             return totalPages;
+           });
+
+    //define totalContributors
+    var totalContributors = 0;
+
+    // get data given the page number
+    function getData(curPage){
+      api.Repositories
+            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:curPage } })
+            .then(function(contributors) {
+              var usernames = contributors.map(function(c) {
+                return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
+              });
+              var avatars = contributors.map(function(c) {
+                return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+              });
+              totalContributors += contributors.length;
+              //push data to UI
+              ui.insertContributors(totalContributors, usernames, avatars);
+            });
+    }
+
+    var promises = [];
+    getPages.then(function(totalPages){
+      for(var i = 1; i <= totalPages; i++) {
+        getData(i);
+      }
+    });
+
   }
 
   function displayIssuesForRepo(org, repo, label, selector) {
@@ -79319,9 +79352,21 @@ function insertIssue(issue, el) {
   $(el).append(generateIssueHtml(issue.title, body, issue.html_url, issue));
 }
 
+//Check if function executed so we can add a comma
+var insertContributorsExec = false;
+
+function insertContributors(totalContributors, usernames, avatars){
+  if(insertContributorsExec) $('.contributors > .usernames').append(', ');
+  $('.contributors-head').html('Contributors ('+totalContributors+')');
+  $('.contributors > .usernames').append(usernames.join(', '));
+  $('.contributors > .avatars').append(avatars.join());
+  insertContributorsExec=true;
+}
+
 module.exports = {
   generateIssueHtml: generateIssueHtml,
-  insertIssue: insertIssue
+  insertIssue: insertIssue,
+  insertContributors: insertContributors
 };
 
 },{"moment":270}]},{},[398]);
