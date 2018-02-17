@@ -76,7 +76,7 @@
 
       <h2>What's next?</h2>
 
-      <p>Once you've completed a <b>first-timers-only</b> issue, there are <a href="https://github.com/publiclab/plots2/labels/help-wanted">plenty of other challenges</a> we'd love to have your help on.</p> 
+      <p>Once you've completed a <b>first-timers-only</b> issue, there are <a href="https://github.com/publiclab/plots2/labels/help-wanted">plenty of other challenges</a> we'd love to have your help on.</p>
 
       <p>In "Candidates" above, there are some issues we think would make good <b>first-timers-only</b> issues, but haven't finished formatting. They could make a good second-time contribution!</p>
 
@@ -90,11 +90,11 @@
 
       <hr />
 
-      <h2>Contributors</h2>
+      <h2 class="contributors-head">Contributors</h2>
 
       <p>This project was made possible by many contributors, including the following GitHub users:</p>
 
-      <p class="well contributors"></p>
+      <div class="well contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
     </div>
 
@@ -116,7 +116,7 @@
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
         var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
         var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
-    
+
         toolbox = CommunityToolbox(org, repo);
 
 	if (repo === 'all') {
@@ -138,19 +138,7 @@
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.api.Repositories
-                 .getRepoContributors(org, repo, { qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-                 .then(function(contributors) {
-                   var usernames = contributors.map(function(c) { 
-                     return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
-                   });
-                   var avatars = contributors.map(function(c) { 
-                     return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
-                   });
-                   $('.contributors').html(usernames.join(', '));
-                   $('.contributors').append('<hr />');
-                   $('.contributors').append(avatars.join());
-                 });
+          toolbox.getRepoContributors(org, repo);
 
 	}
 

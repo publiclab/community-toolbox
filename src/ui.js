@@ -28,7 +28,19 @@ function insertIssue(issue, el) {
   $(el).append(generateIssueHtml(issue.title, body, issue.html_url, issue));
 }
 
+//Check if function executed so we can add a comma
+var insertContributorsExec = false;
+
+function insertContributors(totalContributors, usernames, avatars){
+  if(insertContributorsExec) $('.contributors > .usernames').append(', ');
+  $('.contributors-head').html('Contributors ('+totalContributors+')');
+  $('.contributors > .usernames').append(usernames.join(', '));
+  $('.contributors > .avatars').append(avatars.join());
+  insertContributorsExec=true;
+}
+
 module.exports = {
   generateIssueHtml: generateIssueHtml,
-  insertIssue: insertIssue
+  insertIssue: insertIssue,
+  insertContributors: insertContributors
 };
