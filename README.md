@@ -28,6 +28,15 @@ You can also use Community Toolbox to display issues for a given label across an
 
 https://publiclab.github.io/community-toolbox/#r=all
 
+## Configuration
+
+[These lines](https://github.com/publiclab/community-toolbox/blob/620c4d906be704ffaa5b40509796c18c393f83f4/index.html#L115-L118) allow configuration of the example to set **repository, organization** and **labels** to use, by adding to the URL hash in the format: `https://publiclab.github.io/community-toolbox/#r=all` (for the `r` parameter, as an example). So the options are:
+
+* **repository** - using `r=` you can set the repository name to look at, like: https://publiclab.github.io/community-toolbox/#r=plots2 for https://github.com/publiclab/plots2
+* **organization/user** - using `o=` you can set the organization or user name to look at, like: https://publiclab.github.io/community-toolbox/#o=publiclab for https://github.com/publiclab
+* **first-timers-only label** - using `f=` you can set the label to use for `first-timers-only` or equivalent issues, like: https://publiclab.github.io/community-toolbox/#f=help-wanted for https://github.com/publiclab/plots2/labels/help-wanted
+* **first timers only "candidates"** - using `c=` you can set the label to use for `fto-candidate` or equivalent issues (at Public Lab, we keep a queue of not-quite-ready-but-almost issues for newcomers, that have key information but aren't completely formatted to welcome yet), like: https://publiclab.github.io/community-toolbox/#c=fto-candidate for https://github.com/publiclab/plots2/labels/fto-candidate
+
 
 ## Developing
 
