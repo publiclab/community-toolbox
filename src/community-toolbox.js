@@ -5,18 +5,19 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var api = new SimpleApi();
   var ui = require('./ui');
   const requestP = require('request-promise');
+  var parse = require('parse-link-header');
 
   var options = {
     'qs': {
       'sort': 'pushed',
-      'direction': 'desc', // optional, GitHub API uses 'desc' by default for 'pushed' 
+      'direction': 'desc', // optional, GitHub API uses 'desc' by default for 'pushed'
       'per_page': 100
     }
   }
 
-  // these are essentially examples for now; we could wrap them 
-  // in externally available methods for convenience but at the 
-  // moment they're not quite complex enough to merit it. 
+  // these are essentially examples for now; we could wrap them
+  // in externally available methods for convenience but at the
+  // moment they're not quite complex enough to merit it.
 
   function getIssuesForRepo(callback, _options) {
     _options = _options || options;
@@ -38,11 +39,44 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        .then(callback);
   }
 
-  function getRepoContributors(callback, _options) {
-    _options = _options || options;
-    api.Repositories
-       .getRepoContributors(org, repo, _options)
-       .then(callback);
+  function getRepoContributors(org, repo) {
+
+    var getPages = api.Repositories
+           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+           .then(function(contribData) {
+             var headers = contribData;
+             var parsed = parse(headers['link']);
+             totalPages = parseInt(parsed.last.page);
+             return totalPages;
+           });
+
+    //define totalContributors
+    var totalContributors = 0;
+
+    // get data given the page number
+    function getData(curPage){
+      api.Repositories
+            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:curPage } })
+            .then(function(contributors) {
+              var usernames = contributors.map(function(c) {
+                return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
+              });
+              var avatars = contributors.map(function(c) {
+                return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+              });
+              totalContributors += contributors.length;
+              //push data to UI
+              ui.insertContributors(totalContributors, usernames, avatars);
+            });
+    }
+
+    var promises = [];
+    getPages.then(function(totalPages){
+      for(var i = 1; i <= totalPages; i++) {
+        getData(i);
+      }
+    });
+
   }
 
   function displayIssuesForRepo(org, repo, label, selector) {
@@ -61,6 +95,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   return {
     api:     api,
     ui:      ui,
+    parse:   parse,
     chart:   chart,
     options: options,
     getIssuesForRepo: getIssuesForRepo,
