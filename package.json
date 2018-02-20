@@ -1,20 +1,20 @@
 {
   "name": "community-toolbox",
-  "version": "0.0.1",
-  "description": "A JavaScript... ",
+  "version": "0.0.3",
+  "description": "Tools to understand and welcome people into a contributor community",
   "main": "src/community-toolbox.js",
   "scripts": {
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jywarren/community-toolbox.git"
+    "url": "git+https://github.com/publiclab/community-toolbox.git"
   },
   "keywords": [
   ],
   "author": "jywarren",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jywarren/community-portriat/issues"
+    "url": "https://github.com/publiclab/community-portriat/issues"
   },
   "dependencies": {
     "bootstrap": "~3.2.0",
@@ -37,5 +37,5 @@
     "tape": ">=4.7.0",
     "tape-run": "^3.0.0"
   },
-  "homepage": "https://github.com/jywarren/community-toolbox"
+  "homepage": "https://github.com/publiclab/community-toolbox"
 }
