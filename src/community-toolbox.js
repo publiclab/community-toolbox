@@ -59,10 +59,10 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:curPage } })
             .then(function(contributors) {
               var usernames = contributors.map(function(c) {
-                return '<a href="https://github.com/' + c.login + '">@' + c.login + '</a>';
+                return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
               });
               var avatars = contributors.map(function(c) {
-                return '<a href="https://github.com/' + c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+                return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
               });
               totalContributors += contributors.length;
               //push data to UI
@@ -70,7 +70,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             });
     }
 
-    var promises = [];
     getPages.then(function(totalPages){
       for(var i = 1; i <= totalPages; i++) {
         getData(i);
