@@ -20,13 +20,13 @@
     "bootstrap": "~3.2.0",
     "chart.js": "~2.7.0",
     "font-awesome": "~4.5.0",
-    "jquery": "~2",
+    "jquery": "~3",
     "parse-link-header": "^1.0.1",
     "urlhash": "~0.1.1"
   },
   "devDependencies": {
     "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
-    "moment": "~2.10.6",
+    "moment": "~2.19.3",
     "browserify": "13.0.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^5.0.0",
