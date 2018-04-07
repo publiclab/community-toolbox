@@ -1,32 +1,32 @@
 {
   "name": "community-toolbox",
-  "version": "0.0.1",
-  "description": "A JavaScript... ",
+  "version": "0.0.3",
+  "description": "Tools to understand and welcome people into a contributor community",
   "main": "src/community-toolbox.js",
   "scripts": {
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jywarren/community-toolbox.git"
+    "url": "git+https://github.com/publiclab/community-toolbox.git"
   },
   "keywords": [
   ],
   "author": "jywarren",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jywarren/community-portriat/issues"
+    "url": "https://github.com/publiclab/community-toolbox/issues"
   },
   "dependencies": {
     "bootstrap": "~3.2.0",
     "chart.js": "~2.7.0",
     "font-awesome": "~4.5.0",
-    "jquery": "~2",
+    "jquery": "~3",
     "parse-link-header": "^1.0.1",
     "urlhash": "~0.1.1"
   },
   "devDependencies": {
     "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
-    "moment": "~2.10.6",
+    "moment": "~2.19.3",
     "browserify": "13.0.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^5.0.0",
@@ -37,5 +37,5 @@
     "tape": ">=4.7.0",
     "tape-run": "^3.0.0"
   },
-  "homepage": "https://github.com/jywarren/community-toolbox"
+  "homepage": "https://github.com/publiclab/community-toolbox"
 }
