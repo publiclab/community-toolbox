@@ -45,8 +45,12 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
            .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
            .then(function(contribData) {
              var headers = contribData;
-             var parsed = parse(headers['link']);
-             totalPages = parseInt(parsed.last.page);
+             if (headers.hasOwnProperty("link")) {
+                 var parsed = parse(headers['link']);
+                 totalPages = parseInt(parsed.last.page);
+             } else {
+                 totalPages = 1;
+             }
              return totalPages;
            });
 
