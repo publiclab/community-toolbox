@@ -22,7 +22,7 @@ function insertIssue(issue, el) {
     body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
   });
   body += "</div>";
-  body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
+  body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ago ";
   body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
   body += " <i class='fa fa-comment-o'></i> " + issue.comments;
   $(el).append(generateIssueHtml(issue.title, body, issue.html_url, issue));
