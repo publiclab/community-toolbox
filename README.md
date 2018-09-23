@@ -46,6 +46,23 @@ Community Toolbox is built using a Grunt task from the source files in `/src/`, 
 
 API calls are based on: https://www.npmjs.com/package/github-api-simple
 
+## Install Instructions
+* Clone or download the repo. into any fresh temporary folder.
+
+   ``` git clone https://github.com/publiclab/community-toolbox.git ```
+
+* Cd into that root folder you just cloned locally.
+
+   ``` cd community-toolbox ```
+
+* Open terminal in the current folder and to install all dependencies type
+
+   ```npm install ```
+   
+   Update to new version of packages if required in package.json.
+   
+* Now go to the folder and open index.html in browser.
+
 
 ## Testing
 
