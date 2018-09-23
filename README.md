@@ -49,7 +49,11 @@ API calls are based on: https://www.npmjs.com/package/github-api-simple
 ## Install Instructions
 * Clone or download the repo. into any fresh temporary folder.
 
+   ``` git clone https://github.com/publiclab/community-toolbox.git ```
+
 * Cd into that root folder you just cloned locally.
+
+   ``` cd community-toolbox ```
 
 * Open terminal in the current folder and to install all dependencies type
 
