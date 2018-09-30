@@ -161,6 +161,7 @@
 
           toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
                  .then(displayIssues('.candidates'));
+	toolbox.getRepoContributors(org, repo);
 
 	} else {
 
