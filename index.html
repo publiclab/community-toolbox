@@ -9,6 +9,12 @@
 
     <title>Community toolbox</title>
     <link rel="shortcut icon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
+    <style type="text/css">
+      .links
+      {
+        display: inline;
+      }
+    </style>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -80,7 +86,7 @@
 
           <img class="img-circle" src="images/help.png" />
           <h3>2.<br />Help someone else out</h3>
-	<p>Use your new skills to <a href="https://github.com/publiclab/plots2/labels/support">assist someone else</a> who's just starting out. Browse issues below to see who needs help!</p>
+  <p>Use your new skills to <a href="https://github.com/publiclab/plots2/labels/support">assist someone else</a> who's just starting out. Browse issues below to see who needs help!</p>
 
         </div>
 
@@ -136,10 +142,18 @@
     </div>
 
     <footer>
-      <p>
-        Page powered by <a href="https://github.com/publiclab/community-toolbox"><i class="fa fa-github"></i></a>
-        <a href="https://github.com/publiclab/community-toolbox">Commmunity Toolbox</a> 
-        - Open Source
+      <p class="links">
+          Page powered by <a href="https://github.com/publiclab/community-toolbox"><i class="fa fa-github"></i></a>
+          <a href="https://github.com/publiclab/community-toolbox">Commmunity Toolbox</a> 
+          - Open Source
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+  
+          <a href="https://github.com/publiclab"><i class="fa fa-github"></i></a>
+          <a href="https://github.com/publiclab">Public Lab</a> 
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ 
+          <img itemprop="image" class="TableObject-item avatar" src="https://avatars2.githubusercontent.com/u/4621650?s=200&amp;v=4" width="15" height="15" alt="@publiclab">
+          <a href="https://publiclab.org">www.publiclab.org</a> 
       </p>
     </footer>
 
@@ -156,15 +170,15 @@
 
         toolbox = CommunityToolbox(org, repo);
 
-	if (repo === 'all') {
+  if (repo === 'all') {
 
-      	  toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
+          toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
                  .then(displayIssues('.first-timers-only'));
 
           toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
                  .then(displayIssues('.candidates'));
 
-	} else {
+  } else {
 
           toolbox.api.Issues
                  .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
@@ -177,15 +191,15 @@
           // compile and display all contributors for given org/repo:
           toolbox.getRepoContributors(org, repo);
 
-	}
+  }
 
         function displayIssues(selector) {
           return function displayIssues(issues) {
             if (typeof issues === "string") issues = JSON.parse(issues).items;
-	    issues.forEach(function(issue) {
+      issues.forEach(function(issue) {
               toolbox.ui.insertIssue(issue, selector);
             });
-	  }
+    }
         }
 
       })();
