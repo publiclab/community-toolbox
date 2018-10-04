@@ -172,6 +172,9 @@
           toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
                  .then(displayIssues('.candidates'));
 
+          // compile and display all contributors for given org/repo:
+          toolbox.getAllContributors(org);
+
 	} else {
 
           toolbox.api.Issues

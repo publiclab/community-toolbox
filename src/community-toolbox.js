@@ -39,6 +39,158 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        .then(callback);
   }
 
+  function fetchRepoContributors(org, repo) {
+    var arr = [];
+    return api.Repositories
+    .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+    .then((contribData) => {
+      var headers = contribData;
+      if (headers.hasOwnProperty("link")) {
+          var parsed = parse(headers['link']);
+          var totalPages = parseInt(parsed.last.page);
+      } else {
+          var totalPages = 1;
+      }
+      return totalPages;
+    })
+    .then((totalPages) => {
+      let promises = [];
+      for(let i = 1; i <= totalPages; i++) {
+
+        var currentPromise = api.Repositories
+                              .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
+                              .then(function(contributors) {
+                                if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                                    contributors.map((contributor, i) => arr.push(contributor));
+                                }
+                              });
+        promises.push(currentPromise);
+      }
+      return Promise.all(promises)
+            .then(()=> {
+              return arr;
+            });
+    })
+  }
+
+
+
+  // Fetches all the publiclab repos
+  function getAllRepos(org) {
+    let repos = [];
+    return new Promise((resolve, reject) => {
+      fetch(`https://api.github.com/orgs/${org}/repos`, {'headers': { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36" }})
+      .then((response) => {
+        if (response.status == "200") {
+          return response.json();
+        }
+      })
+      .then((res) => {
+        res.map((item, i) => {
+          repos[i] = item.name;
+        });
+        // Stores all public lab repos to localstorage (only first 30 repos yet)
+        localStorage.setItem('repos', JSON.stringify(repos));
+
+        resolve(repos);
+      })
+    });
+    
+  }
+
+  // Fetches all the UNIQUE contributors from all the publiclab repos
+  // and stores them in localstorage in the form of array
+  function getAllContributorsInStorage(org, repos) {
+    var contributorSet = new Set([]);
+    var myArr = [];
+
+    var promises = repos.map((repo, i) => {
+                    return fetchRepoContributors(org, repo)
+                      .then((repoContributors) => {
+                        if (repoContributors!=undefined && repoContributors.length>0) {
+                          repoContributors.map((contributor, i) => {
+                            if(!contributorSet.has(contributor.login)) {
+                              contributorSet.add(contributor.login);
+                              myArr.push(contributor);
+                            }
+                          });
+                        }
+                        return(true);
+                      });
+                  });
+
+      return Promise.all(promises)
+        .then(() => {
+          // Stores all unique contributors info to localstorage
+          localStorage.setItem('contributors', JSON.stringify(myArr));
+          return myArr;
+        });
+
+
+  }
+
+  function getAllContributors(org) {
+    let totalContributors=0;
+
+    // Flushes contributors from localStorage after every single day
+    let timeNow = (new Date).getTime();
+    let lifeTime = localStorage.getItem('date');
+    if (lifeTime!=null && ((timeNow-lifeTime)/1000) >= 86400) {
+      localStorage.removeItem('contributors');
+      localStorage.removeItem('date');
+    }
+
+    let repos = JSON.parse(localStorage.getItem('repos'));
+    let AllContributors = JSON.parse(localStorage.getItem('contributors'));
+
+    if (AllContributors == null || AllContributors.length==0) {
+      if(repos==null || repos.length==0) {
+        getAllRepos(org).then((res)=> {
+          repos = res;
+          getAllContributorsInStorage(org, repos).then((contributors) => {
+            let currentTime = (new Date).getTime();
+            localStorage.setItem('date', currentTime);
+            var usernames = contributors.map(function(c) {
+              return `@${c.login}`;
+            });
+            var avatars = contributors.map(function(c) {
+              return '<img width="100px" src="' + c.avatar_url + '">';
+            });
+            totalContributors += contributors.length;
+            ui.insertContributors(totalContributors, usernames, avatars);
+            return;
+          })
+        })
+      } else {
+        getAllContributorsInStorage(org, repos).then((contributors) => {
+          let currentTime = (new Date).getTime();
+          localStorage.setItem('date', currentTime);
+          var usernames = contributors.map(function(c) {
+            return `@${c.login}`;
+          });
+          var avatars = contributors.map(function(c) {
+            return '<img width="100px" src="' + c.avatar_url + '">';
+          });
+          totalContributors += contributors.length;
+          ui.insertContributors(totalContributors, usernames, avatars);
+          return;
+        })
+      }
+    } else {   
+      // If Repos and contributors are already present in localstorage, then
+      // there is no need to hit the API =====================================================================
+      var usernames = AllContributors.map(function(c) {
+        return `@${c.login}`;
+      });
+      var avatars = AllContributors.map(function(c) {
+        return '<img width="100px" src="' + c.avatar_url + '">';
+      });
+      totalContributors += AllContributors.length;
+      ui.insertContributors(totalContributors, usernames, avatars);
+      return;
+    }
+  }
+
   function getRepoContributors(org, repo) {
 
     var getPages = api.Repositories
@@ -105,6 +257,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     getIssuesForOrg: getIssuesForOrg,
     getCommitsForRepo: getCommitsForRepo,
     getRepoContributors: getRepoContributors,
+    getAllContributors: getAllContributors,
     displayIssuesForRepo: displayIssuesForRepo
   }
 
