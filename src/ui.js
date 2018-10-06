@@ -35,7 +35,7 @@ function insertContributors(totalContributors, usernames, avatars){
   if(insertContributorsExec) $('.contributors > .usernames').append(', ');
   $('.contributors-head').html('Contributors ('+totalContributors+')');
   $('.contributors > .usernames').append(usernames.join(', '));
-  $('.contributors > .avatars').append(avatars.join());
+  $('.contributors > .avatars').append(avatars.join(''));
   insertContributorsExec=true;
 }
 
