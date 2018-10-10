@@ -107,7 +107,7 @@
 
       <h2>Candidates</h2>
 
-      <p>We put a lot of work into our first-timer-only issues. But if we haven't been able to prepare any recently, here's a set of candidates we haven't yet had time to prepare, but which have most of the needed information:</p>
+      <p>We put a lot of work into our first-timer-only issues. But if we haven't been able to prepare any recently, here's a set of candidates we haven't yet had time to prepare, but which have most of the needed information. (Also: Learn how to <a href="https://publiclab.org/n/13667">help turn these into first-timers-only issues</a> to help keep welcoming people in!</p>
 
       <div class="row candidates"></div>
 
@@ -171,6 +171,9 @@
 
           toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
                  .then(displayIssues('.candidates'));
+
+          // compile and display all contributors for given org/repo:
+          toolbox.getAllContributors(org);
 
 	} else {
 
