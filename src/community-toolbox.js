@@ -192,10 +192,11 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   }
 
   function getRepoContributors(org, repo) {
+    let contributorsArray = [];
 
-    var getPages = api.Repositories
+    return api.Repositories
            .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-           .then(function(contribData) {
+           .then((contribData) => {
              var headers = contribData;
              if (headers.hasOwnProperty("link")) {
                  var parsed = parse(headers['link']);
@@ -204,33 +205,67 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                  totalPages = 1;
              }
              return totalPages;
+           })
+           .then((totalPages) => {
+              let promises = [];
+              for(let i = 1; i <= totalPages; i++) {
+                var currentPromise = api.Repositories
+                                      .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
+                                      .then((contributors) => {
+                                        if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                                            contributors.map((contributor, i) => contributorsArray.push(contributor));
+                                        }
+                                      });
+                promises.push(currentPromise);
+              }
+              return Promise.all(promises)
+                    .then(()=> {
+                      let now = (new Date).getTime();
+                      localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
+                      localStorage.setItem('repoContributorsExpiry', now);
+                      return contributorsArray;
+                    });
            });
+  }
 
-    //define totalContributors
-    var totalContributors = 0;
+  function showRepoContributors(org, repo) {
+    let totalContributors = 0;
 
-    // get data given the page number
-    function getData(curPage){
-      api.Repositories
-            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:curPage } })
-            .then(function(contributors) {
-              var usernames = contributors.map(function(c) {
-                return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
-              });
-              var avatars = contributors.map(function(c) {
-                return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
-              });
-              totalContributors += contributors.length;
-              //push data to UI
-              ui.insertContributors(totalContributors, usernames, avatars);
-            });
+     // Flushes repoContributors from localStorage after every single day
+     let timeNow = (new Date).getTime();
+     let lifespan = localStorage.getItem('repoContributorsExpiry');
+     if (lifespan!=null && ((timeNow-lifespan)/1000) >= 43200) {
+       localStorage.removeItem('repoContributors');
+       localStorage.removeItem('repoContributorsExpiry');
+     }
+    let repoContributors = JSON.parse(localStorage.getItem('repoContributors'));
+
+    // If we don't have repoContributors in localStorage, we fetch them from Github
+    if (repoContributors == null || repoContributors.length == 0) {
+      getRepoContributors(org, repo).then((contributors) => {
+        let usernames = contributors.map((c, i) => {
+          return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
+        });
+        let avatars = contributors.map((c, i) => {
+          return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+        });
+        totalContributors += contributors.length;
+        //push data to UI
+        ui.insertContributors(totalContributors, usernames, avatars);
+      })
+    } 
+    // If we have repoContributors in localStorage, we save a network call :)
+    else {
+      let usernames = repoContributors.map((c, i) => {
+        return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
+      });
+      let avatars = repoContributors.map((c, i) => {
+        return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+      });
+      totalContributors += repoContributors.length;
+      //push data to UI
+      ui.insertContributors(totalContributors, usernames, avatars);
     }
-
-    getPages.then(function(totalPages){
-      for(var i = 1; i <= totalPages; i++) {
-        getData(i);
-      }
-    });
 
   }
 
@@ -256,8 +291,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     getIssuesForRepo: getIssuesForRepo,
     getIssuesForOrg: getIssuesForOrg,
     getCommitsForRepo: getCommitsForRepo,
-    getRepoContributors: getRepoContributors,
     getAllContributors: getAllContributors,
+    showRepoContributors: showRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo
   }
 
