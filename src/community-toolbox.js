@@ -1,9 +1,11 @@
 CommunityToolbox = function CommunityToolbox(org, repo) {
 
   var SimpleApi = require("github-api-simple")
-
   var api = new SimpleApi();
   var ui = require('./ui');
+  var getAllContribsUtility = require('./getAllContribsUtility');
+  var repoContributorsUtility = require('./repoContributorsUtility');
+
   const requestP = require('request-promise');
   var parse = require('parse-link-header');
 
@@ -39,100 +41,13 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        .then(callback);
   }
 
-  function fetchRepoContributors(org, repo) {
-    var arr = [];
-    return api.Repositories
-    .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-    .then((contribData) => {
-      var headers = contribData;
-      if (headers.hasOwnProperty("link")) {
-          var parsed = parse(headers['link']);
-          var totalPages = parseInt(parsed.last.page);
-      } else {
-          var totalPages = 1;
-      }
-      return totalPages;
-    })
-    .then((totalPages) => {
-      let promises = [];
-      for(let i = 1; i <= totalPages; i++) {
-
-        var currentPromise = api.Repositories
-                              .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
-                              .then(function(contributors) {
-                                if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
-                                    contributors.map((contributor, i) => arr.push(contributor));
-                                }
-                              });
-        promises.push(currentPromise);
-      }
-      return Promise.all(promises)
-            .then(()=> {
-              return arr;
-            });
-    })
-  }
-
-
-
-  // Fetches all the publiclab repos
-  function getAllRepos(org) {
-    let repos = [];
-    return new Promise((resolve, reject) => {
-      fetch(`https://api.github.com/orgs/${org}/repos`, {'headers': { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36" }})
-      .then((response) => {
-        if (response.status == "200") {
-          return response.json();
-        }
-      })
-      .then((res) => {
-        res.map((item, i) => {
-          repos[i] = item.name;
-        });
-        // Stores all public lab repos to localstorage (only first 30 repos yet)
-        localStorage.setItem('repos', JSON.stringify(repos));
-
-        resolve(repos);
-      })
-    });
-    
-  }
-
-  // Fetches all the UNIQUE contributors from all the publiclab repos
-  // and stores them in localstorage in the form of array
-  function getAllContributorsInStorage(org, repos) {
-    var contributorSet = new Set([]);
-    var myArr = [];
-
-    var promises = repos.map((repo, i) => {
-                    return fetchRepoContributors(org, repo)
-                      .then((repoContributors) => {
-                        if (repoContributors!=undefined && repoContributors.length>0) {
-                          repoContributors.map((contributor, i) => {
-                            if(!contributorSet.has(contributor.login)) {
-                              contributorSet.add(contributor.login);
-                              myArr.push(contributor);
-                            }
-                          });
-                        }
-                        return(true);
-                      });
-                  });
-
-      return Promise.all(promises)
-        .then(() => {
-          // Stores all unique contributors info to localstorage
-          localStorage.setItem('contributors', JSON.stringify(myArr));
-          return myArr;
-        });
-
-
-  }
-
+  // This function is responsible for showing contributors
+  // on a multi-repository view
   function getAllContributors(org) {
+    // This variable stores the total contributors count
     let totalContributors=0;
 
-    // Flushes contributors from localStorage after every single day
+    // Flushes contributors lit from localStorage after every single day
     let timeNow = (new Date).getTime();
     let lifeTime = localStorage.getItem('date');
     if (lifeTime!=null && ((timeNow-lifeTime)/1000) >= 86400) {
@@ -140,95 +55,84 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       localStorage.removeItem('date');
     }
 
+    // Looking for Repositories and Contributors list in localStorage
     let repos = JSON.parse(localStorage.getItem('repos'));
     let AllContributors = JSON.parse(localStorage.getItem('contributors'));
 
+    // If contributors list is not present in localStorage, ================================================
+    // fetch them from Github ==============================================================================
     if (AllContributors == null || AllContributors.length==0) {
       if(repos==null || repos.length==0) {
-        getAllRepos(org).then((res)=> {
+        // If repositories list is not present in localStorage,
+        // fetch them from Github
+        getAllContribsUtility.getAllRepos(org)
+        .then(function gotRepos(res) {
           repos = res;
-          getAllContributorsInStorage(org, repos).then((contributors) => {
+          // This function is responsible for getting contributors list FROM FIRST 30 REPOSITORIES
+          getAllContribsUtility.getAllContributorsInStorage(org, repos)
+          .then(function gotAllContributorsInStorage (contributors) {
+            // Saves current time in epoch, used for flushing out the stored data
+            // after 24 hours
             let currentTime = (new Date).getTime();
             localStorage.setItem('date', currentTime);
-            var usernames = contributors.map(function(c) {
+
+            // Map to contributors and store their usernames and avatar URLs to variables
+            var usernames = contributors.map(function getContributorUsername(c) {
               return `@${c.login}`;
             });
-            var avatars = contributors.map(function(c) {
+            var avatars = contributors.map(function getContributorAvatarURL(c) {
               return '<img width="100px" src="' + c.avatar_url + '">';
             });
             totalContributors += contributors.length;
+            // Inject the data to UI
             ui.insertContributors(totalContributors, usernames, avatars);
             return;
           })
         })
       } else {
-        getAllContributorsInStorage(org, repos).then((contributors) => {
+        // This function is responsible for getting contributors list FROM FIRST 30 REPOSITORIES
+        getAllContribsUtility.getAllContributorsInStorage(org, repos)
+        .then(function gotAllContributorsInStorage (contributors) {
+          // Saves current time in epoch, used for flushing out the stored data
+          // after 24 hours
           let currentTime = (new Date).getTime();
           localStorage.setItem('date', currentTime);
-          var usernames = contributors.map(function(c) {
+
+          // Map to contributors and store their usernames and avatar URLs to variables
+          var usernames = contributors.map(function getContributorUsername(c) {
             return `@${c.login}`;
           });
-          var avatars = contributors.map(function(c) {
+          var avatars = contributors.map(function getContributorAvatarURL(c) {
             return '<img width="100px" src="' + c.avatar_url + '">';
           });
           totalContributors += contributors.length;
+          // Inject the data to UI
           ui.insertContributors(totalContributors, usernames, avatars);
           return;
-        })
+        });
       }
-    } else {   
-      // If Repos and contributors are already present in localstorage, then
-      // there is no need to hit the API =====================================================================
-      var usernames = AllContributors.map(function(c) {
+    } 
+    // If repos and contributors are already present in localStorage, ======================================
+    // there is no need to hit the API =====================================================================
+    else {
+      // Map to contributors and store their usernames and avatar URLs to variables
+      var usernames = AllContributors.map(function getContributorUsername(c) {
         return `@${c.login}`;
       });
-      var avatars = AllContributors.map(function(c) {
+      var avatars = AllContributors.map(function getContributorAvatarURL(c) {
         return '<img width="100px" src="' + c.avatar_url + '">';
       });
       totalContributors += AllContributors.length;
+      // Inject the data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
       return;
     }
   }
 
-  function getRepoContributors(org, repo) {
-    let contributorsArray = [];
 
-    return api.Repositories
-           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-           .then((contribData) => {
-             var headers = contribData;
-             if (headers.hasOwnProperty("link")) {
-                 var parsed = parse(headers['link']);
-                 totalPages = parseInt(parsed.last.page);
-             } else {
-                 totalPages = 1;
-             }
-             return totalPages;
-           })
-           .then((totalPages) => {
-              let promises = [];
-              for(let i = 1; i <= totalPages; i++) {
-                var currentPromise = api.Repositories
-                                      .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
-                                      .then((contributors) => {
-                                        if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
-                                            contributors.map((contributor, i) => contributorsArray.push(contributor));
-                                        }
-                                      });
-                promises.push(currentPromise);
-              }
-              return Promise.all(promises)
-                    .then(()=> {
-                      let now = (new Date).getTime();
-                      localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
-                      localStorage.setItem('repoContributorsExpiry', now);
-                      return contributorsArray;
-                    });
-           });
-  }
-
+  // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
+    // This variable stores the total contributors count
     let totalContributors = 0;
 
      // Flushes repoContributors from localStorage after every single day
@@ -238,33 +142,40 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        localStorage.removeItem('repoContributors');
        localStorage.removeItem('repoContributorsExpiry');
      }
+    
+    // Looking for repo Contributors list in localStorage
     let repoContributors = JSON.parse(localStorage.getItem('repoContributors'));
 
     // If we don't have repoContributors in localStorage, we fetch them from Github
     if (repoContributors == null || repoContributors.length == 0) {
-      getRepoContributors(org, repo).then((contributors) => {
-        let usernames = contributors.map((c, i) => {
+      repoContributorsUtility.fetchRepoContributors(org, repo)
+      .then(function gotRepoContributorsInStorage (contributors) {
+        // Map to contributors and store their usernames and avatar URLs to variables
+        let usernames = contributors.map(function getRepoContributorUsername(c, i) {
           return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
         });
-        let avatars = contributors.map((c, i) => {
+        let avatars = contributors.map(function getRepoContributorAvatarURL(c, i) {
           return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
         });
         totalContributors += contributors.length;
         //push data to UI
         ui.insertContributors(totalContributors, usernames, avatars);
+        return;
       })
-    } 
+    }
     // If we have repoContributors in localStorage, we save a network call :)
     else {
-      let usernames = repoContributors.map((c, i) => {
+      // Map to contributors and store their usernames and avatar URLs to variables
+      let usernames = repoContributors.map(function getRepoContributorUsername(c, i) {
         return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
       });
-      let avatars = repoContributors.map((c, i) => {
+      let avatars = repoContributors.map(function getRepoContributorAvatarURL(c, i) {
         return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
       });
       totalContributors += repoContributors.length;
       //push data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
+      return;
     }
 
   }
