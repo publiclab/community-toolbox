@@ -54,25 +54,16 @@
     // This array is used to store all the repositories fetched from Github
     let repos = [];
 
-    return new Promise(function handleRepoFetch(resolve, reject) {
-      fetch(`https://api.github.com/orgs/${org}/repos`, {'headers': { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36" }})
-      .then(function gotRequestResponse(response) {
-        if (response.status == "200") {
-          return response.json();
-        }
-      })
-      .then(function gotResponseInJson(res) {
-        // Maps to each repo and stores it in the array
-        res.map(function mapToEachRepo(item, i) {
-          repos[i] = item.name;
-        });
-        // Stores all publiclab's repos to localStorage (only first 30 repos yet)
-        localStorage.setItem('repos', JSON.stringify(repos));
-
-        resolve(repos);
-      })
-    });
-    
+    return api.Repositories.getReposForUser(org, {qs: {sort: 'pushed', direction: 'desc', per_page: 100}})
+            .then(function gotAllRepos(data) {
+              data.map(function mapToEachRepo(repo, index) {
+                  repos[index] = repo.name;
+              });
+              // Stores all of the Publiclab's repos to localStorage
+              localStorage.setItem('repos', JSON.stringify(repos));
+              
+              return(repos);
+            });
   }
 
   // Fetches all the UNIQUE contributors from all the publiclab's repos
@@ -80,19 +71,19 @@
   function getAllContributorsInStorage(org, repos) {
     var contributorSet = new Set([]);
     var myArr = [];
-
-    var promises = repos.map(function mapToEachRepo(repo, i) {
+    var activeRepos = repos.splice(0,30)
+    var promises = activeRepos.map(function mapToEachRepo(repo, i) {
                     return fetchRepoContributors(org, repo)
                             .then(function gotContribsForParticularRepo(repoContributors) {
                                 if (repoContributors!=undefined && repoContributors.length>0) {
-                                // Maps to each contributor and stores it in the array
-                                // if its not in there yet
-                                repoContributors.map((contributor, i) => {
-                                    if(!contributorSet.has(contributor.login)) {
-                                    contributorSet.add(contributor.login);
-                                    myArr.push(contributor);
-                                    }
-                                });
+                                  // Maps to each contributor and stores it in the array
+                                  // if its not in there yet
+                                  repoContributors.map((contributor, i) => {
+                                      if(!contributorSet.has(contributor.login)) {
+                                      contributorSet.add(contributor.login);
+                                      myArr.push(contributor);
+                                      }
+                                  });
                                 }
                                 return(true);
                             });
