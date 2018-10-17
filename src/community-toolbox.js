@@ -5,6 +5,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var ui = require('./ui');
   var getAllContribsUtility = require('./getAllContribsUtility');
   var repoContributorsUtility = require('./repoContributorsUtility');
+  var getRecentCommitsUtility = require('./getRecentCommitsUtility');
 
   const requestP = require('request-promise');
   var parse = require('parse-link-header');
@@ -180,6 +181,73 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   }
 
+  function getRecentCommits(org) {
+    var results = [];
+    let repos = JSON.parse(localStorage.getItem('repos'));
+    let recentCommitsExpiry = localStorage.getItem('recentCommitsExpiry');
+    let timeToday = (new Date).getTime();
+    // If recentCommits expiry time is 1 day behind the current time, flush them out.
+    if(recentCommitsExpiry!=null && ((timeToday-recentCommitsExpiry)/1000)>=86400) {
+      localStorage.removeItem('recentCommitsExpiry');
+      localStorage.removeItem('recentCommits');
+    }
+
+    // We make queryTime 1 week behind the current time, to pass it as query in the request
+    let queryTime = (new Date).toISOString();
+    let temp = queryTime.split('T')[0].split('-')[2];
+    queryTime = queryTime.replace(temp, temp-7);
+
+    var recentCommits = JSON.parse(localStorage.getItem('recentCommits'));
+
+    // There is no list of recentCommits in localStorage,
+    // we need to get it from Github
+    if(recentCommits==null || recentCommits.length==0) {
+      if(repos==null || repos.length == 0) {
+        getAllContribsUtility.getAllRepos(org)
+        .then(function gotAllRepos(repos) {
+          getRecentCommitsUtility.fetchRecentCommits(repos, queryTime)
+          .then(function gotRecentCommitsInStorage(commits) {
+            let totalCommits = commits.length;
+            let usernames = commits.map((commit, i) => {
+              return `@${commit.author.login}`;
+            })
+            let avatars = commits.map((commit, i) => {
+              return '<img width="100px" src="' + commit.author.avatar_url + '">';
+            })
+            // Push data to UI
+            ui.insertRecentContributors(totalCommits,usernames, avatars);
+          })
+        });
+      } else  {
+        // Repos are in the localStorage, we saved a network call!
+        getRecentCommitsUtility.fetchRecentCommits(repos, queryTime)
+        .then(function gotRecentCommitsInStorage(commits) {        
+          let totalCommits = commits.length;
+          let usernames = commits.map((commit, i) => {
+            return `@${commit.author.login}`;
+          })
+          let avatars = commits.map((commit, i) => {
+            return '<img width="100px" src="' + commit.author.avatar_url + '">';
+          })
+          // Push data to UI
+          ui.insertRecentContributors(totalCommits,usernames, avatars);
+        });
+      }
+    }else {
+      // RecentCommits are in the localStorage, no need for any network call!!!
+      let commits = JSON.parse(localStorage.getItem('recentCommits'));
+      let totalCommits = commits.length;
+      let usernames = commits.map((commit, i) => {
+        return `@${commit.author.login}`;
+      })
+      let avatars = commits.map((commit, i) => {
+        return '<img width="100px" src="' + commit.author.avatar_url + '">';
+      })
+      // Push data to UI
+      ui.insertRecentContributors(totalCommits,usernames, avatars);
+    }
+  }
+
   function displayIssuesForRepo(org, repo, label, selector) {
     toolbox.api.Issues
            .getIssuesForRepo(org, repo, { qs: { labels: label } })
@@ -201,6 +269,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     options: options,
     getIssuesForRepo: getIssuesForRepo,
     getIssuesForOrg: getIssuesForOrg,
+    getRecentCommits: getRecentCommits,
     getCommitsForRepo: getCommitsForRepo,
     getAllContributors: getAllContributors,
     showRepoContributors: showRepoContributors,

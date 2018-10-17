@@ -51,14 +51,20 @@
 
   // Fetches all the publiclab's repositories
   function getAllRepos(org) {
+
     // This array is used to store all the repositories fetched from Github
     let repos = [];
 
-    return api.Repositories.getReposForUser(org, {qs: {sort: 'pushed', direction: 'desc', per_page: 100}})
-            .then(function gotAllRepos(data) {
-              data.map(function mapToEachRepo(repo, index) {
-                  repos[index] = repo.name;
-              });
+    return fetch('https://api.github.com/users/publiclab/repos?sort=pushed&direction=desc&per_page=100')
+            .then(function gotRepos(data) {
+              if(data.status=='200') {
+                return data.json();
+              }
+            })
+            .then(function mapToEachRepo(results) {
+              results.map(function mappingToEachRepo(repo, index) {
+                return repos[index] = repo.name;
+              })
               // Stores all of the Publiclab's repos to localStorage
               localStorage.setItem('repos', JSON.stringify(repos));
               
@@ -71,8 +77,9 @@
   function getAllContributorsInStorage(org, repos) {
     var contributorSet = new Set([]);
     var myArr = [];
-    var activeRepos = repos.splice(0,30)
-    var promises = activeRepos.map(function mapToEachRepo(repo, i) {
+    // We take only first 20 repos to stay under API quota
+    var splicedRepos = repos.splice(0,20);
+    var promises = splicedRepos.map(function mapToEachRepo(repo, i) {
                     return fetchRepoContributors(org, repo)
                             .then(function gotContribsForParticularRepo(repoContributors) {
                                 if (repoContributors!=undefined && repoContributors.length>0) {
