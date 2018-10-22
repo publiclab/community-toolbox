@@ -133,6 +133,12 @@
 
       <div class="well contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
+      <h2 class="recent-contributors-head">Recent Contributors</h2>
+      
+      <p>Below are the list active contributors last week:</p>
+
+      <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
+
     </div>
 
     <footer>
@@ -175,6 +181,8 @@
           // compile and display all contributors for given org/repo:
           toolbox.getAllContributors(org);
 
+          toolbox.getRecentCommits(org);
+
 	} else {
 
           toolbox.api.Issues
@@ -187,6 +195,8 @@
 
           // compile and display all contributors for given org/repo:
           toolbox.showRepoContributors(org, repo);
+
+          toolbox.getRecentCommits(org);
 
 	}
 
