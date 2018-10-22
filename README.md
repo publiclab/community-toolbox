@@ -14,7 +14,7 @@ http://code.publiclab.org/examples/embed.html#o=orgname&r=repository
 
 For issues with a specific label, use, for example: 
 
-http://code.publiclab.org/community-toolbox/examples/embed.html#o=orgname&r=repository&l=first-timers-only
+http://code.publiclab.org/examples/embed.html#o=orgname&r=repository&l=first-timers-only
 
 To embed these on your site, use an `<iframe>` like this:
 

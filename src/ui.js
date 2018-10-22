@@ -30,17 +30,27 @@ function insertIssue(issue, el) {
 
 //Check if function executed so we can add a comma
 var insertContributorsExec = false;
+var insertRecentContributorsExec = false;
 
 function insertContributors(totalContributors, usernames, avatars){
   if(insertContributorsExec) $('.contributors > .usernames').append(', ');
   $('.contributors-head').html('Contributors ('+totalContributors+')');
   $('.contributors > .usernames').append(usernames.join(', '));
-  $('.contributors > .avatars').append(avatars.join());
+  $('.contributors > .avatars').append(avatars.join(''));
   insertContributorsExec=true;
+}
+
+function insertRecentContributors(totalContributors, usernames, avatars){
+  if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
+  $('.recent-contributors-head').html('Recent Contributors ('+totalContributors+')');
+  $('.recent-contributors > .usernames').append(usernames.join(', '));
+  $('.recent-contributors > .avatars').append(avatars.join(''));
+  insertRecentContributorsExec=true;
 }
 
 module.exports = {
   generateIssueHtml: generateIssueHtml,
   insertIssue: insertIssue,
-  insertContributors: insertContributors
+  insertContributors: insertContributors,
+  insertRecentContributors: insertRecentContributors,
 };
