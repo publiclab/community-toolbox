@@ -135,7 +135,7 @@
 
       <h2 class="recent-contributors-head">Recent Contributors</h2>
       
-      <p>Below are the list active contributors last week:</p>
+      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
 
       <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
@@ -167,8 +167,26 @@
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
         var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
         var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
+        var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
 
         toolbox = CommunityToolbox(org, repo);
+
+        let d = document.getElementById('toggle-contributors');
+        let recency_label = document.getElementById('recency-label');
+        d.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (recencyLabel=="week") {
+            toolbox.getRecentCommits(org, recencyLabel);
+            d.innerHTML = "Show monthly";
+            recency_label.innerHTML = "last week: ";
+            recencyLabel = "month";
+          }else if (recencyLabel=="month") {
+            toolbox.getRecentCommits(org, recencyLabel);
+            d.innerHTML = "Show weekly";
+            recency_label.innerHTML = "last month: ";
+            recencyLabel = "week";
+          }
+        })
 
 	if (repo === 'all') {
 
@@ -181,7 +199,8 @@
           // compile and display all contributors for given org/repo:
           toolbox.getAllContributors(org);
 
-          toolbox.getRecentCommits(org);
+          // Makes the toggle contributors list button click
+          d.click();
 
 	} else {
 
@@ -196,20 +215,23 @@
           // compile and display all contributors for given org/repo:
           toolbox.showRepoContributors(org, repo);
 
-          toolbox.getRecentCommits(org);
-
+          // Makes the toggle contributors list button click
+          d.click();
 	}
 
         function displayIssues(selector) {
           return function displayIssues(issues) {
             if (typeof issues === "string") issues = JSON.parse(issues).items;
-	    issues.forEach(function(issue) {
+	          issues.forEach(function(issue) {
               toolbox.ui.insertIssue(issue, selector);
             });
-	  }
+	        }
         }
 
       })();
+
+
+
 
     </script>
 
