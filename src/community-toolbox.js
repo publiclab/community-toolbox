@@ -84,6 +84,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             var avatars = contributors.map(function getContributorAvatarURL(c) {
               return '<img width="100px" src="' + c.avatar_url + '">';
             });
+            document.getElementById("spinner-icon").style.visibility = "hidden";
             totalContributors += contributors.length;
             // Inject the data to UI
             ui.insertContributors(totalContributors, usernames, avatars);
@@ -106,6 +107,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           var avatars = contributors.map(function getContributorAvatarURL(c) {
             return '<img width="100px" src="' + c.avatar_url + '">';
           });
+          document.getElementById("spinner-icon").style.visibility = "hidden";
           totalContributors += contributors.length;
           // Inject the data to UI
           ui.insertContributors(totalContributors, usernames, avatars);
@@ -123,6 +125,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       var avatars = AllContributors.map(function getContributorAvatarURL(c) {
         return '<img width="100px" src="' + c.avatar_url + '">';
       });
+      document.getElementById("spinner-icon").style.visibility = "hidden";
       totalContributors += AllContributors.length;
       // Inject the data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
@@ -158,6 +161,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         let avatars = contributors.map(function getRepoContributorAvatarURL(c, i) {
           return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
         });
+        document.getElementById("spinner-icon").style.visibility = "hidden";
         totalContributors += contributors.length;
         //push data to UI
         ui.insertContributors(totalContributors, usernames, avatars);
@@ -173,6 +177,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       let avatars = repoContributors.map(function getRepoContributorAvatarURL(c, i) {
         return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
       });
+      document.getElementById("spinner-icon").style.visibility = "hidden";
       totalContributors += repoContributors.length;
       //push data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
