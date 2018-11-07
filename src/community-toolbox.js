@@ -82,7 +82,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
               return `@${c.login}`;
             });
             var avatars = contributors.map(function getContributorAvatarURL(c) {
-              return '<img width="100px" src="' + c.avatar_url + '">';
+              return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
             });
             document.getElementById("spinner-icon").style.visibility = "hidden";
             totalContributors += contributors.length;
@@ -105,7 +105,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             return `@${c.login}`;
           });
           var avatars = contributors.map(function getContributorAvatarURL(c) {
-            return '<img width="100px" src="' + c.avatar_url + '">';
+            return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
           });
           document.getElementById("spinner-icon").style.visibility = "hidden";
           totalContributors += contributors.length;
@@ -123,7 +123,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         return `@${c.login}`;
       });
       var avatars = AllContributors.map(function getContributorAvatarURL(c) {
-        return '<img width="100px" src="' + c.avatar_url + '">';
+        return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
       });
       document.getElementById("spinner-icon").style.visibility = "hidden";
       totalContributors += AllContributors.length;
@@ -159,7 +159,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
         });
         let avatars = contributors.map(function getRepoContributorAvatarURL(c, i) {
-          return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+          return `<a title="${c.login}" href="https://github.com/${org}/${repo}/commits?author=${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
         });
         document.getElementById("spinner-icon").style.visibility = "hidden";
         totalContributors += contributors.length;
@@ -175,7 +175,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
       });
       let avatars = repoContributors.map(function getRepoContributorAvatarURL(c, i) {
-        return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
+        return `<a title="${c.login}" href="https://github.com/${org}/${repo}/commits?author=${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
       });
       document.getElementById("spinner-icon").style.visibility = "hidden";
       totalContributors += repoContributors.length;
