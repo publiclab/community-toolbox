@@ -44,3 +44,26 @@ h1, h2, .section h3 {
   text-align: center;
 }
 
+.circle {
+  border-radius:50%;
+}
+
+#button {
+  background: #CCC;
+  position: fixed;
+  display: none;
+  cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  padding: 12px;
+  margin: auto;
+}
+
+#button:hover {
+  background-color: #777;
+}
+
+#arrow {
+  display: block;
+}

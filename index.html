@@ -134,18 +134,22 @@
       <div class="well contributors"><i class="fa fa-spinner fa-spin"></i><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
       <h2 class="recent-contributors-head">Recent Contributors</h2>
-      
+
       <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
 
       <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
     </div>
 
+    <div class="circle" id="button" onclick="window.scrollTo({top:0, left:0, behavior: 'smooth'})">
+      <img src="images/arrow.png" id="arrow"></img>
+    </div>
+
     <footer>
       <div class="row">
         <div class="col-md-6 text-center">
             <span class="float-md-left">  Page powered by <a href="https://github.com/publiclab/community-toolbox"><i class="fa fa-github"></i></a>
-        <a href="https://github.com/publiclab/community-toolbox" >Commmunity Toolbox</a> 
+        <a href="https://github.com/publiclab/community-toolbox">Commmunity Toolbox</a>
         - Open Source
       </span>
         </div>
@@ -232,7 +236,17 @@
 
       })();
 
+      window.onscroll = function() {
+        scrollFunction();
+      }
 
+      function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          document.getElementById("button").style.display = "block";
+        } else {
+          document.getElementById("button").style.display = "none";
+        }
+      }
 
 
     </script>
