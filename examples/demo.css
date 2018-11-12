@@ -60,8 +60,10 @@ h1, h2, .section h3 {
   opacity: 0;
 }
 
-#button:hover {
-  background-color: #777;
+@media (hover:hover) {
+  #button:hover {
+    background-color: #777;
+  }
 }
 
 #pop {
