@@ -238,10 +238,12 @@
 
       })();
 
+      // detects if window is scrolling
       window.onscroll = function() {
         scrollFunction();
       }
 
+      // displays bring to top button if window has scrolled 500px down
       function scrollFunction() {
         let button = document.getElementById("button").style;
         if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
@@ -256,7 +258,8 @@
         }
       }
 
-
+      // controls movement after button is clicked
+      // scrolls window to top and shrinks button and plays popping gif
       function scrolling(x, start) {
         if (document.body.scrollTop - x > 0 || document.documentElement.scrollTop - x > 0) {
           document.body.scrollTop -= x;
