@@ -49,21 +49,27 @@ h1, h2, .section h3 {
 }
 
 #button {
-  background: #CCC;
+  background-color: #CCC;
   position: fixed;
-  display: none;
+  display: block;
   cursor: pointer;
   position: fixed;
   bottom: 20px;
   right: 30px;
   padding: 12px;
-  margin: auto;
+  opacity: 0;
 }
 
 #button:hover {
   background-color: #777;
 }
 
-#arrow {
-  display: block;
+#pop {
+  position: fixed;
+  display: none;
+  cursor: pointer;
+  position: fixed;
+  bottom: -30px;
+  right: -20px;
+  transform: scale(0.4);
 }

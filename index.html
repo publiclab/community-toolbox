@@ -141,9 +141,11 @@
 
     </div>
 
-    <div class="circle" id="button" onclick="window.scrollTo({top:0, left:0, behavior: 'smooth'})">
-      <img src="images/arrow.png" id="arrow"></img>
+    <div class="circle" id="button" onclick="scrolling(1, document.documentElement.scrollTop)">
+      <img src="images/arrow.png" id="arrow" style="display:block; margin-left:auto; margin-right:auto;"></img>
     </div>
+
+    <img src="images/pop.gif" id="pop"></img>
 
     <footer>
       <div class="row">
@@ -241,13 +243,38 @@
       }
 
       function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-          document.getElementById("button").style.display = "block";
+        let button = document.getElementById("button").style;
+        if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+          button.opacity = 1;
+        } else if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1){
+          button.display = "block";
+          button.opacity = document.documentElement.scrollTop/500;
+          document.getElementById("pop").style.display = "none";
         } else {
-          document.getElementById("button").style.display = "none";
+          button.display = "none";
+          button.transform = "scale(1)";
         }
       }
 
+
+      function scrolling(x, start) {
+        if (document.body.scrollTop - x > 0 || document.documentElement.scrollTop - x > 0) {
+          document.body.scrollTop -= x;
+          document.documentElement.scrollTop -= x;
+          x *= 1.01;
+          // console.log(x);
+
+          document.getElementById("button").style.transform = "scale(" + (document.documentElement.scrollTop+document.body.scrollTop)/start + ")";
+
+          setTimeout(scrolling, 1, x, start);
+        } else {
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
+
+          document.getElementById("pop").style.display = "block";
+          setTimeout(function(){document.getElementById("pop").style.display = "none";}, 300)
+        }
+      }
 
     </script>
 
