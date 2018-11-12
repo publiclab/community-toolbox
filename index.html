@@ -145,7 +145,10 @@
       <img src="images/arrow.png" id="arrow" style="display:block; margin-left:auto; margin-right:auto;"></img>
     </div>
 
-    <img src="images/pop.gif" id="pop"></img>
+    <div id="pop">
+      <img></img>
+    </div>
+
 
     <footer>
       <div class="row">
@@ -251,7 +254,6 @@
         } else if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1){
           button.display = "block";
           button.opacity = document.documentElement.scrollTop/500;
-          document.getElementById("pop").style.display = "none";
         } else {
           button.display = "none";
           button.transform = "scale(1)";
@@ -274,8 +276,8 @@
           document.body.scrollTop = 0;
           document.documentElement.scrollTop = 0;
 
-          document.getElementById("pop").style.display = "block";
-          setTimeout(function(){document.getElementById("pop").style.display = "none";}, 300)
+          $('#pop').append('<img src="images/pop.gif">')
+          setTimeout(function(){$('#pop img').remove()}, 300)
         }
       }
 
