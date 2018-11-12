@@ -253,7 +253,7 @@
           button.opacity = 1;
         } else if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1){
           button.display = "block";
-          button.opacity = document.documentElement.scrollTop/500;
+          button.opacity = (document.body.scrollTop + document.documentElement.scrollTop)/500;
         } else {
           button.display = "none";
           button.transform = "scale(1)";
