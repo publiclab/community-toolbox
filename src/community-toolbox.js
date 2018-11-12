@@ -84,7 +84,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             var avatars = contributors.map(function getContributorAvatarURL(c) {
               return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
             });
-            document.getElementById("spinner-icon").style.visibility = "hidden";
+             document.getElementById("spinner-icon").style.display = "none";
             totalContributors += contributors.length;
             // Inject the data to UI
             ui.insertContributors(totalContributors, usernames, avatars);
@@ -107,7 +107,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           var avatars = contributors.map(function getContributorAvatarURL(c) {
             return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
           });
-          document.getElementById("spinner-icon").style.visibility = "hidden";
+           document.getElementById("spinner-icon").style.display = "none";
           totalContributors += contributors.length;
           // Inject the data to UI
           ui.insertContributors(totalContributors, usernames, avatars);
@@ -125,7 +125,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       var avatars = AllContributors.map(function getContributorAvatarURL(c) {
         return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
       });
-      document.getElementById("spinner-icon").style.visibility = "hidden";
+       document.getElementById("spinner-icon").style.display = "none";
       totalContributors += AllContributors.length;
       // Inject the data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
@@ -161,7 +161,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         let avatars = contributors.map(function getRepoContributorAvatarURL(c, i) {
           return `<a title="${c.login}" href="https://github.com/${org}/${repo}/commits?author=${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
         });
-        document.getElementById("spinner-icon").style.visibility = "hidden";
+        document.getElementById("spinner-icon").style.display = "none";
         totalContributors += contributors.length;
         //push data to UI
         ui.insertContributors(totalContributors, usernames, avatars);
@@ -177,7 +177,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       let avatars = repoContributors.map(function getRepoContributorAvatarURL(c, i) {
         return `<a title="${c.login}" href="https://github.com/${org}/${repo}/commits?author=${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
       });
-      document.getElementById("spinner-icon").style.visibility = "hidden";
+       document.getElementById("spinner-icon").style.display = "none";
       totalContributors += repoContributors.length;
       //push data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
