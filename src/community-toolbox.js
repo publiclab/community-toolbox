@@ -21,15 +21,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   // these are essentially examples for now; we could wrap them
   // in externally available methods for convenience but at the
   // moment they're not quite complex enough to merit it.
-  
-  function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("myBtn").style.display = "block";
-    } else {
-        document.getElementById("myBtn").style.display = "none";
-    }
-}
-
+ 
   function getIssuesForRepo(callback, _options) {
     _options = _options || options;
     api.Issues
