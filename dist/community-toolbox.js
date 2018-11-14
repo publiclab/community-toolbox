@@ -81643,9 +81643,12 @@ module.exports = generateChart;
 CommunityToolbox = function CommunityToolbox(org, repo) {
 
   var SimpleApi = require("github-api-simple")
-
   var api = new SimpleApi();
   var ui = require('./ui');
+  var getAllContribsUtility = require('./getAllContribsUtility');
+  var repoContributorsUtility = require('./repoContributorsUtility');
+  var getRecentCommitsUtility = require('./getRecentCommitsUtility');
+
   const requestP = require('request-promise');
   var parse = require('parse-link-header');
 
@@ -81681,100 +81684,13 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        .then(callback);
   }
 
-  function fetchRepoContributors(org, repo) {
-    var arr = [];
-    return api.Repositories
-    .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-    .then((contribData) => {
-      var headers = contribData;
-      if (headers.hasOwnProperty("link")) {
-          var parsed = parse(headers['link']);
-          var totalPages = parseInt(parsed.last.page);
-      } else {
-          var totalPages = 1;
-      }
-      return totalPages;
-    })
-    .then((totalPages) => {
-      let promises = [];
-      for(let i = 1; i <= totalPages; i++) {
-
-        var currentPromise = api.Repositories
-                              .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
-                              .then(function(contributors) {
-                                if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
-                                    contributors.map((contributor, i) => arr.push(contributor));
-                                }
-                              });
-        promises.push(currentPromise);
-      }
-      return Promise.all(promises)
-            .then(()=> {
-              return arr;
-            });
-    })
-  }
-
-
-
-  // Fetches all the publiclab repos
-  function getAllRepos(org) {
-    let repos = [];
-    return new Promise((resolve, reject) => {
-      fetch(`https://api.github.com/orgs/${org}/repos`, {'headers': { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36" }})
-      .then((response) => {
-        if (response.status == "200") {
-          return response.json();
-        }
-      })
-      .then((res) => {
-        res.map((item, i) => {
-          repos[i] = item.name;
-        });
-        // Stores all public lab repos to localstorage (only first 30 repos yet)
-        localStorage.setItem('repos', JSON.stringify(repos));
-
-        resolve(repos);
-      })
-    });
-    
-  }
-
-  // Fetches all the UNIQUE contributors from all the publiclab repos
-  // and stores them in localstorage in the form of array
-  function getAllContributorsInStorage(org, repos) {
-    var contributorSet = new Set([]);
-    var myArr = [];
-
-    var promises = repos.map((repo, i) => {
-                    return fetchRepoContributors(org, repo)
-                      .then((repoContributors) => {
-                        if (repoContributors!=undefined && repoContributors.length>0) {
-                          repoContributors.map((contributor, i) => {
-                            if(!contributorSet.has(contributor.login)) {
-                              contributorSet.add(contributor.login);
-                              myArr.push(contributor);
-                            }
-                          });
-                        }
-                        return(true);
-                      });
-                  });
-
-      return Promise.all(promises)
-        .then(() => {
-          // Stores all unique contributors info to localstorage
-          localStorage.setItem('contributors', JSON.stringify(myArr));
-          return myArr;
-        });
-
-
-  }
-
+  // This function is responsible for showing contributors
+  // on a multi-repository view
   function getAllContributors(org) {
+    // This variable stores the total contributors count
     let totalContributors=0;
 
-    // Flushes contributors from localStorage after every single day
+    // Flushes contributors lit from localStorage after every single day
     let timeNow = (new Date).getTime();
     let lifeTime = localStorage.getItem('date');
     if (lifeTime!=null && ((timeNow-lifeTime)/1000) >= 86400) {
@@ -81782,95 +81698,84 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       localStorage.removeItem('date');
     }
 
+    // Looking for Repositories and Contributors list in localStorage
     let repos = JSON.parse(localStorage.getItem('repos'));
     let AllContributors = JSON.parse(localStorage.getItem('contributors'));
 
+    // If contributors list is not present in localStorage, ================================================
+    // fetch them from Github ==============================================================================
     if (AllContributors == null || AllContributors.length==0) {
       if(repos==null || repos.length==0) {
-        getAllRepos(org).then((res)=> {
+        // If repositories list is not present in localStorage,
+        // fetch them from Github
+        getAllContribsUtility.getAllRepos(org)
+        .then(function gotRepos(res) {
           repos = res;
-          getAllContributorsInStorage(org, repos).then((contributors) => {
+          // This function is responsible for getting contributors list FROM FIRST 30 REPOSITORIES
+          getAllContribsUtility.getAllContributorsInStorage(org, repos)
+          .then(function gotAllContributorsInStorage (contributors) {
+            // Saves current time in epoch, used for flushing out the stored data
+            // after 24 hours
             let currentTime = (new Date).getTime();
             localStorage.setItem('date', currentTime);
-            var usernames = contributors.map(function(c) {
+
+            // Map to contributors and store their usernames and avatar URLs to variables
+            var usernames = contributors.map(function getContributorUsername(c) {
               return `@${c.login}`;
             });
-            var avatars = contributors.map(function(c) {
+            var avatars = contributors.map(function getContributorAvatarURL(c) {
               return '<img width="100px" src="' + c.avatar_url + '">';
             });
             totalContributors += contributors.length;
+            // Inject the data to UI
             ui.insertContributors(totalContributors, usernames, avatars);
             return;
           })
         })
       } else {
-        getAllContributorsInStorage(org, repos).then((contributors) => {
+        // This function is responsible for getting contributors list FROM FIRST 30 REPOSITORIES
+        getAllContribsUtility.getAllContributorsInStorage(org, repos)
+        .then(function gotAllContributorsInStorage (contributors) {
+          // Saves current time in epoch, used for flushing out the stored data
+          // after 24 hours
           let currentTime = (new Date).getTime();
           localStorage.setItem('date', currentTime);
-          var usernames = contributors.map(function(c) {
+
+          // Map to contributors and store their usernames and avatar URLs to variables
+          var usernames = contributors.map(function getContributorUsername(c) {
             return `@${c.login}`;
           });
-          var avatars = contributors.map(function(c) {
+          var avatars = contributors.map(function getContributorAvatarURL(c) {
             return '<img width="100px" src="' + c.avatar_url + '">';
           });
           totalContributors += contributors.length;
+          // Inject the data to UI
           ui.insertContributors(totalContributors, usernames, avatars);
           return;
-        })
+        });
       }
-    } else {   
-      // If Repos and contributors are already present in localstorage, then
-      // there is no need to hit the API =====================================================================
-      var usernames = AllContributors.map(function(c) {
+    } 
+    // If repos and contributors are already present in localStorage, ======================================
+    // there is no need to hit the API =====================================================================
+    else {
+      // Map to contributors and store their usernames and avatar URLs to variables
+      var usernames = AllContributors.map(function getContributorUsername(c) {
         return `@${c.login}`;
       });
-      var avatars = AllContributors.map(function(c) {
+      var avatars = AllContributors.map(function getContributorAvatarURL(c) {
         return '<img width="100px" src="' + c.avatar_url + '">';
       });
       totalContributors += AllContributors.length;
+      // Inject the data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
       return;
     }
   }
 
-  function getRepoContributors(org, repo) {
-    let contributorsArray = [];
 
-    return api.Repositories
-           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-           .then((contribData) => {
-             var headers = contribData;
-             if (headers.hasOwnProperty("link")) {
-                 var parsed = parse(headers['link']);
-                 totalPages = parseInt(parsed.last.page);
-             } else {
-                 totalPages = 1;
-             }
-             return totalPages;
-           })
-           .then((totalPages) => {
-              let promises = [];
-              for(let i = 1; i <= totalPages; i++) {
-                var currentPromise = api.Repositories
-                                      .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
-                                      .then((contributors) => {
-                                        if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
-                                            contributors.map((contributor, i) => contributorsArray.push(contributor));
-                                        }
-                                      });
-                promises.push(currentPromise);
-              }
-              return Promise.all(promises)
-                    .then(()=> {
-                      let now = (new Date).getTime();
-                      localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
-                      localStorage.setItem('repoContributorsExpiry', now);
-                      return contributorsArray;
-                    });
-           });
-  }
-
+  // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
+    // This variable stores the total contributors count
     let totalContributors = 0;
 
      // Flushes repoContributors from localStorage after every single day
@@ -81880,35 +81785,75 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        localStorage.removeItem('repoContributors');
        localStorage.removeItem('repoContributorsExpiry');
      }
+    
+    // Looking for repo Contributors list in localStorage
     let repoContributors = JSON.parse(localStorage.getItem('repoContributors'));
 
     // If we don't have repoContributors in localStorage, we fetch them from Github
     if (repoContributors == null || repoContributors.length == 0) {
-      getRepoContributors(org, repo).then((contributors) => {
-        let usernames = contributors.map((c, i) => {
+      repoContributorsUtility.fetchRepoContributors(org, repo)
+      .then(function gotRepoContributorsInStorage (contributors) {
+        // Map to contributors and store their usernames and avatar URLs to variables
+        let usernames = contributors.map(function getRepoContributorUsername(c, i) {
           return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
         });
-        let avatars = contributors.map((c, i) => {
+        let avatars = contributors.map(function getRepoContributorAvatarURL(c, i) {
           return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
         });
         totalContributors += contributors.length;
         //push data to UI
         ui.insertContributors(totalContributors, usernames, avatars);
+        return;
       })
-    } 
+    }
     // If we have repoContributors in localStorage, we save a network call :)
     else {
-      let usernames = repoContributors.map((c, i) => {
+      // Map to contributors and store their usernames and avatar URLs to variables
+      let usernames = repoContributors.map(function getRepoContributorUsername(c, i) {
         return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '">@' + c.login + '</a>';
       });
-      let avatars = repoContributors.map((c, i) => {
+      let avatars = repoContributors.map(function getRepoContributorAvatarURL(c, i) {
         return '<a href="https://github.com/' + org + '/'+ repo +'/commits?author='+ c.login + '"><img width="100px" src="' + c.avatar_url + '"></a>';
       });
       totalContributors += repoContributors.length;
       //push data to UI
       ui.insertContributors(totalContributors, usernames, avatars);
+      return;
     }
 
+  }
+
+  function getRecentCommits(org, recencyLabel) {
+    if(recencyLabel==='month') {
+      return getRecentCommitsUtility.getCommitsLastMonth(org)
+            .then(function gotCommits(commits) {
+              console.log("inside month then");
+              let totalCommits = commits.length;
+              let usernames = commits.map((commit, i) => {
+                return `@${commit.author.login}`;
+              })
+              let avatars = commits.map((commit, i) => {
+                return '<img width="100px" src="' + commit.author.avatar_url + '">';
+              })
+              // Push data to UI
+              ui.insertRecentContributors(totalCommits,usernames, avatars);
+              return;
+            })
+    } else {
+      return getRecentCommitsUtility.getCommitsLastWeek(org)
+            .then(function gotCommits(commits) {
+              let totalCommits = commits.length;
+              let usernames = commits.map((commit, i) => {
+                return `@${commit.author.login}`;
+              })
+              let avatars = commits.map((commit, i) => {
+                return '<img width="100px" src="' + commit.author.avatar_url + '">';
+              })
+              // Push data to UI
+              ui.insertRecentContributors(totalCommits,usernames, avatars);
+              return;
+            })
+      }
   }
 
   function displayIssuesForRepo(org, repo, label, selector) {
@@ -81932,6 +81877,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     options: options,
     getIssuesForRepo: getIssuesForRepo,
     getIssuesForOrg: getIssuesForOrg,
+    getRecentCommits: getRecentCommits,
     getCommitsForRepo: getCommitsForRepo,
     getAllContributors: getAllContributors,
     showRepoContributors: showRepoContributors,
@@ -81942,7 +81888,326 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 module.exports = CommunityToolbox;
 
-},{"./chart":399,"./ui":401,"github-api-simple":161,"parse-link-header":277,"request-promise":322}],401:[function(require,module,exports){
+},{"./chart":399,"./getAllContribsUtility":401,"./getRecentCommitsUtility":402,"./repoContributorsUtility":403,"./ui":404,"github-api-simple":161,"parse-link-header":277,"request-promise":322}],401:[function(require,module,exports){
+
+
+    var SimpleApi = require("github-api-simple")
+    var api = new SimpleApi();
+    var ui = require('./ui');
+    var parse = require('parse-link-header');
+
+
+  // Fetches all the contributors for a particular repository
+  function fetchRepoContributors(org, repo) {
+    // This array is used to hold all the contributors of a repo
+    var arr = [];
+
+    return api.Repositories
+    .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+    .then(function gotContribData(contribData) {
+      var headers = contribData;
+      if (headers.hasOwnProperty("link")) {
+          var parsed = parse(headers['link']);
+          var totalPages = parseInt(parsed.last.page);
+      } else {
+          var totalPages = 1;
+      }
+      return totalPages;
+    })
+    .then(function gotTotalPages(totalPages) {
+      // This array is used to collect all the promises so that 
+      // we can wait for all of them to finish first...
+      let promises = [];
+      
+      for(let i = 1; i <= totalPages; i++) {
+        var currentPromise = api.Repositories
+                              .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
+                              .then(function gotContributorsOnParticularPage(contributors) {
+                                if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                                    contributors.map((contributor, i) => arr.push(contributor));
+                                }
+                              });
+        // Push currentPromise to promises array
+        promises.push(currentPromise);
+      }
+      // Waits for all the promises to resolve first, returns the array after that...
+      return Promise.all(promises)
+            .then(()=> {
+              return arr;
+            });
+    })
+  }
+
+
+
+  // Fetches all the publiclab's repositories
+  function getAllRepos(org) {
+
+    // This array is used to store all the repositories fetched from Github
+    let repos = [];
+
+    return fetch('https://api.github.com/users/publiclab/repos?sort=pushed&direction=desc&per_page=100')
+            .then(function gotRepos(data) {
+              if(data.status=='200') {
+                return data.json();
+              }
+            })
+            .then(function mapToEachRepo(results) {
+              results.map(function mappingToEachRepo(repo, index) {
+                return repos[index] = repo.name;
+              })
+              // Stores all of the Publiclab's repos to localStorage
+              localStorage.setItem('repos', JSON.stringify(repos));
+              
+              return(repos);
+            });
+  }
+
+  // Fetches all the UNIQUE contributors from all the publiclab's repos
+  // and stores them in localStorage in the form of an array
+  function getAllContributorsInStorage(org, repos) {
+    var contributorSet = new Set([]);
+    var myArr = [];
+    // We take only first 20 repos to stay under API quota
+    var splicedRepos = repos.splice(0,20);
+    var promises = splicedRepos.map(function mapToEachRepo(repo, i) {
+                    return fetchRepoContributors(org, repo)
+                            .then(function gotContribsForParticularRepo(repoContributors) {
+                                if (repoContributors!=undefined && repoContributors.length>0) {
+                                  // Maps to each contributor and stores it in the array
+                                  // if its not in there yet
+                                  repoContributors.map((contributor, i) => {
+                                      if(!contributorSet.has(contributor.login)) {
+                                      contributorSet.add(contributor.login);
+                                      myArr.push(contributor);
+                                      }
+                                  });
+                                }
+                                return(true);
+                            });
+                  });
+
+      // Waits for all the promises to resolve, in order to make sure that
+      // myArr contains results from all of the promises
+      return Promise.all(promises)
+        .then(() => {
+          // Stores all unique contributors info to localStorage
+          localStorage.setItem('contributors', JSON.stringify(myArr));
+          return myArr;
+        });
+  }
+
+
+
+// EXPORTS
+module.exports = {
+    getAllContributorsInStorage: getAllContributorsInStorage,
+    getAllRepos: getAllRepos,
+}
+},{"./ui":404,"github-api-simple":161,"parse-link-header":277}],402:[function(require,module,exports){
+var getAllContribsUtility = require('./getAllContribsUtility');
+
+
+function fetchRecentCommits(repos, queryTime, flag) {
+    var commitersSet = new Set([]);
+    var results = [];
+    let timeToday = (new Date).getTime();
+    // We take only first 10 repos to stay under API quota
+    let splicedRepos = repos.splice(0, 10);
+
+    var promises = splicedRepos.map(function mapToEachRepo(repo, i) {
+        return fetch(`https://api.github.com/repos/publiclab/${repo}/commits?since=${queryTime}`)
+                .then(function gotResponse(response) {
+                    if(response.status=="200") {
+                        return response.json();
+                    }
+                })
+                .then(function gotResponseJson(response) {
+                    if(response!=null && response.length>0) {
+                        response.map(function mappingToCommits(commit, i) {
+                            if(commit!=null) {
+                                if(!commitersSet.has(commit.author.login)) {
+                                    commitersSet.add(commit.author.login);
+                                    results.push(commit);
+                                }
+                            }
+                            return true;
+                        });
+                    }
+                    return true;
+                });
+        });
+
+    return Promise.all(promises)
+           .then(function promisesResolved() {
+                // Store recentCommits and recentCommitsExpiry in the localStorage
+                if(flag==='w') {
+                    localStorage.setItem('recentCommits', JSON.stringify(results));
+                    localStorage.setItem('recentCommitsExpiry', timeToday);
+                    return results;
+                } else if(flag==='m') {
+                    localStorage.setItem('recentMCommits', JSON.stringify(results));
+                    localStorage.setItem('recentCommitsMExpiry', timeToday);
+                    return results;
+                }  
+                return true;
+            });
+} 
+
+
+// Gets the list of active contributors last Week
+function getCommitsLastWeek(org) {
+    let repos = JSON.parse(localStorage.getItem('repos'));
+    let recentCommitsExpiry = localStorage.getItem('recentCommitsExpiry');
+    let timeToday = (new Date).getTime();
+    // If recentCommits expiry time is 1 day behind the current time, flush them out.
+    if(recentCommitsExpiry!=null && ((timeToday-recentCommitsExpiry)/1000)>=86400) {
+      localStorage.removeItem('recentCommitsExpiry');
+      localStorage.removeItem('recentCommits');
+    }
+
+    // We make queryTime 1 week behind the current time, to pass it as query in the request
+    let d = (new Date);
+    d.setDate(d.getDate() - 7);
+    let queryTime = d.toISOString();
+    
+    var recentCommits = JSON.parse(localStorage.getItem('recentCommits'));
+    // This flag is used to distinguish the place to store the result in localStorage
+    let flag = 'w';
+
+    // There is no list of recentCommits in localStorage,
+    // we need to get it from Github
+    if(recentCommits==null || recentCommits.length==0) {
+      if(repos==null || repos.length == 0) {
+        return getAllContribsUtility.getAllRepos(org)
+        .then(function gotAllRepos(repos) {
+          return fetchRecentCommits(repos, queryTime, flag)
+                .then(function gotRecentCommitsInStorage(commits) {
+                    return commits;
+                })
+        });
+      } else  {
+        // Repos are in the localStorage, we saved a network call!
+        return fetchRecentCommits(repos, queryTime, flag)
+                .then(function gotRecentCommitsInStorage(commits) {
+                    return commits;
+                });
+      }
+    } else {
+        // RecentCommits are in the localStorage, no need for any network call!!!
+        return new Promise(function returningPromise(resolve, reject) {resolve(recentCommits)});
+    }
+}
+
+
+function getCommitsLastMonth(org) {
+    let repos = JSON.parse(localStorage.getItem('repos'));
+    let recentCommitsMExpiry = localStorage.getItem('recentCommitsMExpiry');
+    let timeToday = (new Date).getTime();
+    // If recentCommits expiry time is 1 day behind the current time, flush them out.
+    if(recentCommitsMExpiry!=null && ((timeToday-recentCommitsMExpiry)/1000)>=86400) {
+      localStorage.removeItem('recentCommitsMExpiry');
+      localStorage.removeItem('recentMCommits');
+    }
+
+    // We make queryTime 1 month behind the current time, to pass it as query in the request
+    let d = (new Date);
+    d.setDate(d.getDate() - 30);
+    let queryTime = d.toISOString();
+
+    var recentCommits = JSON.parse(localStorage.getItem('recentMCommits'));
+    // This flag is used to distinguish the place to store the result in localStorage
+    var flag = 'm';
+
+    // There is no list of recentCommits in localStorage,
+    // we need to get it from Github
+    if(recentCommits==null || recentCommits.length==0) {
+      if(repos==null || repos.length == 0) {
+        return getAllContribsUtility.getAllRepos(org)
+        .then(function gotAllRepos(repos) {
+          return fetchRecentCommits(repos, queryTime, flag)
+          .then(function gotRecentCommitsInStorage(commits) {
+            return commits;
+          })
+        });
+      } else  {
+        // Repos are in the localStorage, we saved a network call!
+        return fetchRecentCommits(repos, queryTime, flag)
+        .then(function gotRecentCommitsInStorage(commits) {
+            return commits;
+        });
+      }
+    } else {
+        // RecentCommits are in the localStorage, no need for any network call!!!
+        return new Promise(function returningPromise(resolve, reject) {resolve(recentCommits)});
+    }
+}
+
+
+
+// EXPORTS
+module.exports = {
+    fetchRecentCommits: fetchRecentCommits,
+    getCommitsLastWeek: getCommitsLastWeek,
+    getCommitsLastMonth: getCommitsLastMonth
+}
+},{"./getAllContribsUtility":401}],403:[function(require,module,exports){
+var SimpleApi = require("github-api-simple")
+var api = new SimpleApi();
+var parse = require('parse-link-header');
+
+
+// This utility helps us in getting all the contributors for a particular repository
+function fetchRepoContributors(org, repo) {
+    // This array is used to store the contributors from all of the repositories
+    let contributorsArray = [];
+
+    return api.Repositories
+           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+           .then(function gotContribData(contribData) {
+             var headers = contribData;
+             if (headers.hasOwnProperty("link")) {
+                 var parsed = parse(headers['link']);
+                 totalPages = parseInt(parsed.last.page);
+             } else {
+                 totalPages = 1;
+             }
+             return totalPages;
+           })
+           .then(function gotTotalPages(totalPages) {
+              // This array is used to store all of the promises
+              let promises = [];
+
+              for(let i = 1; i <= totalPages; i++) {
+                var currentPromise = api.Repositories
+                                      .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
+                                      .then(function gotRepoContributors(contributors) {
+                                        if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                                            contributors.map((contributor, i) => contributorsArray.push(contributor));
+                                        }
+                                      });
+                // Push currentPromise to promises array
+                promises.push(currentPromise);
+              }
+
+              // Waits for all of the promises to resolve first, sets localStorage after that...
+              return Promise.all(promises)
+                    .then(()=> {
+                      let now = (new Date).getTime();
+                      localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
+                      localStorage.setItem('repoContributorsExpiry', now);
+                      return contributorsArray;
+                    });
+           });
+  }
+
+
+
+// EXPORTS
+module.exports = {
+    fetchRepoContributors: fetchRepoContributors,
+}
+},{"github-api-simple":161,"parse-link-header":277}],404:[function(require,module,exports){
 var moment = require('moment');
 
 function generateIssueHtml(title, body, githubUrl, repo) {
@@ -81975,19 +82240,29 @@ function insertIssue(issue, el) {
 
 //Check if function executed so we can add a comma
 var insertContributorsExec = false;
+var insertRecentContributorsExec = false;
 
 function insertContributors(totalContributors, usernames, avatars){
   if(insertContributorsExec) $('.contributors > .usernames').append(', ');
   $('.contributors-head').html('Contributors ('+totalContributors+')');
   $('.contributors > .usernames').append(usernames.join(', '));
-  $('.contributors > .avatars').append(avatars.join());
+  $('.contributors > .avatars').append(avatars.join(''));
   insertContributorsExec=true;
+}
+
+function insertRecentContributors(totalContributors, usernames, avatars){
+  if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
+  $('.recent-contributors-head').html('Recent Contributors ('+totalContributors+')');
+  $('.recent-contributors > .usernames').html(usernames.join(', '));
+  $('.recent-contributors > .avatars').html(avatars.join(''));
+  insertRecentContributorsExec=true;
 }
 
 module.exports = {
   generateIssueHtml: generateIssueHtml,
   insertIssue: insertIssue,
-  insertContributors: insertContributors
+  insertContributors: insertContributors,
+  insertRecentContributors: insertRecentContributors,
 };
 
 },{"moment":259}]},{},[400]);

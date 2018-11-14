@@ -9,7 +9,9 @@
 
     <title>Community toolbox</title>
     <link rel="shortcut icon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
-
+	 
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous'>
+   
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="node_modules/chart.js/dist/Chart.js"></script>
@@ -19,6 +21,15 @@
   </head>
 
   <body>
+	  
+    <button onclick="window.scroll({ top: 100, left: 100, behavior: 'smooth' });" id="myBtn" title="Go to top"><i style='font-size:24px' class='fas'>&#xf102;</i></button>
+    
+	  
+    <script type="text/javascript" src="src/community-toolbox.js">
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+</script>
+
 
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -131,7 +142,13 @@
 
       <p>This project was made possible by many contributors, including the following GitHub users:</p>
 
-      <div class="well contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
+      <div class="well contributors"><i class="fa fa-spinner fa-spin"></i><p class="usernames"></p><hr /><p class="avatars"></p></div>
+
+      <h2 class="recent-contributors-head">Recent Contributors</h2>
+      
+      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
+
+      <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
     </div>
 
@@ -145,7 +162,9 @@
         </div>
         <div class="col-md-6 text-center">
             <span class="float-md-right">
-      <a href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github"></i> </a>
+		<a href="https://www.facebook.com/PublicLab/" title="Facebook" ><i class="fa fa-facebook"></i> </a>
+      		<a href="https://twitter.com/PublicLab?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" title="Twitter" ><i class="fa fa-twitter"></i> </a>
+		<a href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github"></i> </a>
         <a href="https://publiclab.org" title="Publiclab Website"><i class="fa fa-globe"></i> Publiclab</a> </span>
         </div>
     </div>
@@ -161,8 +180,26 @@
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
         var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
         var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
+        var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
 
         toolbox = CommunityToolbox(org, repo);
+
+        let d = document.getElementById('toggle-contributors');
+        let recency_label = document.getElementById('recency-label');
+        d.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (recencyLabel=="week") {
+            toolbox.getRecentCommits(org, recencyLabel);
+            d.innerHTML = "Show monthly";
+            recency_label.innerHTML = "last week: ";
+            recencyLabel = "month";
+          }else if (recencyLabel=="month") {
+            toolbox.getRecentCommits(org, recencyLabel);
+            d.innerHTML = "Show weekly";
+            recency_label.innerHTML = "last month: ";
+            recencyLabel = "week";
+          }
+        })
 
 	if (repo === 'all') {
 
@@ -174,6 +211,9 @@
 
           // compile and display all contributors for given org/repo:
           toolbox.getAllContributors(org);
+
+          // Makes the toggle contributors list button click
+          d.click();
 
 	} else {
 
@@ -188,18 +228,23 @@
           // compile and display all contributors for given org/repo:
           toolbox.showRepoContributors(org, repo);
 
+          // Makes the toggle contributors list button click
+          d.click();
 	}
 
         function displayIssues(selector) {
           return function displayIssues(issues) {
             if (typeof issues === "string") issues = JSON.parse(issues).items;
-	    issues.forEach(function(issue) {
+	          issues.forEach(function(issue) {
               toolbox.ui.insertIssue(issue, selector);
             });
-	  }
+	        }
         }
 
       })();
+
+
+
 
     </script>
 
