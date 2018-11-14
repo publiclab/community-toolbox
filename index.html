@@ -45,7 +45,8 @@
 
   <body>
 	  
-    <button onclick="topFunction()" id="myBtn" title="Go to top"><i style='font-size:24px' class='fas'>&#xf102;</i></button>
+    <button onclick="window.scroll({ top: 100, left: 100, behavior: 'smooth' });" id="myBtn" title="Go to top"><i style='font-size:24px' class='fas'>&#xf102;</i></button>
+    
 	  
     <script>
 // When the user scrolls down 20px from the top of the document, show the button
@@ -59,11 +60,6 @@ function scrollFunction() {
     }
 }
 
-// When the user clicks on the button, scroll to the top of the document
-function topFunction() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-}
 </script>
 
 
