@@ -22,15 +22,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   // in externally available methods for convenience but at the
   // moment they're not quite complex enough to merit it.
   
-  window.onscroll = function() {scrollFunction()};
-  function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("myBtn").style.display = "block";
-    } else {
-        document.getElementById("myBtn").style.display = "none";
-    }
-}
-
+  
   function getIssuesForRepo(callback, _options) {
     _options = _options || options;
     api.Issues
@@ -237,6 +229,14 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
              });
            });
   }
+  
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("myBtn").style.display = "block";
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+    }
+}
 
   var chart = require('./chart');
 
@@ -253,7 +253,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     getCommitsForRepo: getCommitsForRepo,
     getAllContributors: getAllContributors,
     showRepoContributors: showRepoContributors,
-    displayIssuesForRepo: displayIssuesForRepo
+    displayIssuesForRepo: displayIssuesForRepo,
+    scrollFunction: scrollFunction
   }
 
 }
