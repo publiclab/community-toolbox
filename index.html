@@ -17,23 +17,14 @@
     <script src="node_modules/chart.js/dist/Chart.js"></script>
     <script src="node_modules/urlhash/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
+    <script type="text/javascript" src="src/community-toolbox.js"></script>
+
 
   </head>
 
   <body>
 	  
-    <script>
-    window.onscroll = function() {scrollFunction()};
-    function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("myBtn").style.display = "block";
-    } else {
-        document.getElementById("myBtn").style.display = "none";
-    }
-}
-
-</script>
-	  
+      
     <button onclick="window.scroll({ top: 100, left: 100, behavior: 'smooth' });" id="myBtn" title="Go to top"><i style='font-size:24px' class='fas'>&#xf102;</i></button>
    
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -245,6 +236,7 @@
             });
 	        }
         }
+	      window.onscroll = function(){toolbox.scrollFunction();}
 
       })();
 
