@@ -32,17 +32,37 @@ function insertIssue(issue, el) {
 var insertContributorsExec = false;
 var insertRecentContributorsExec = false;
 
-function insertContributors(totalContributors, usernames, avatars){
+function insertContributors(AllContributors){
+  // This removes the spinner icon as soon as contributors list is loaded
+  document.getElementById("spinner-icon").style.display = "none";
+
+  let totalContributors = 0;
+  var usernames = AllContributors.map(function getContributorUsername(c) {
+    return `@${c.login}`;
+  });
+  var avatars = AllContributors.map(function getContributorAvatarURL(c) {
+    return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
+  });
+  totalContributors += AllContributors.length;
   if(insertContributorsExec) $('.contributors > .usernames').append(', ');
-  $('.contributors-head').html('Contributors ('+totalContributors+')');
+  $('.contributors-head').html('Contributors ('+totalContributors+'+)');
   $('.contributors > .usernames').append(usernames.join(', '));
   $('.contributors > .avatars').append(avatars.join(''));
   insertContributorsExec=true;
 }
 
-function insertRecentContributors(totalContributors, usernames, avatars){
+function insertRecentContributors(AllContributors){
+  let recentContributors = 0;
+  let usernames = AllContributors.map((commit, i) => {
+    return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
+  })
+  let avatars = AllContributors.map((commit, i) => {
+    return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
+  })
+  recentContributors += AllContributors.length;
+
   if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
-  $('.recent-contributors-head').html('Recent Contributors ('+totalContributors+')');
+  $('.recent-contributors-head').html('Recent Contributors ('+recentContributors+'+)');
   $('.recent-contributors > .usernames').html(usernames.join(', '));
   $('.recent-contributors > .avatars').html(avatars.join(''));
   insertRecentContributorsExec=true;

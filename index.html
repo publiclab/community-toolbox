@@ -175,18 +175,22 @@
         var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
 
         toolbox = CommunityToolbox(org, repo);
+        // Stores all the contributors of 20 most active repos to database
+        setTimeout(()=> {
+          toolbox.storeAllContributorsInDatabase(org);
+        },100);
 
         let d = document.getElementById('toggle-contributors');
         let recency_label = document.getElementById('recency-label');
         d.addEventListener("click", (e) => {
           e.preventDefault();
           if (recencyLabel=="week") {
-            toolbox.getRecentCommits(org, recencyLabel);
+            toolbox.getRecentCommits(org, repo, recencyLabel);
             d.innerHTML = "Show monthly";
             recency_label.innerHTML = "last week: ";
             recencyLabel = "month";
           }else if (recencyLabel=="month") {
-            toolbox.getRecentCommits(org, recencyLabel);
+            toolbox.getRecentCommits(org, repo, recencyLabel);
             d.innerHTML = "Show weekly";
             recency_label.innerHTML = "last month: ";
             recencyLabel = "week";
@@ -202,10 +206,12 @@
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.getAllContributors(org);
+          setTimeout(()=> {
+            toolbox.getAllContributors(org);
+          },500)
 
           // Makes the toggle contributors list button click
-          d.click();
+          // d.click();
 
 	} else {
 
@@ -218,10 +224,12 @@
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.showRepoContributors(org, repo);
+          setTimeout(()=> {
+            toolbox.showRepoContributors(org, repo);
+          },500);
 
           // Makes the toggle contributors list button click
-          d.click();
+          // d.click();
 	}
 
         function displayIssues(selector) {
