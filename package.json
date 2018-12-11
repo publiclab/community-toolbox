@@ -3,14 +3,12 @@
   "version": "0.0.3",
   "description": "Tools to understand and welcome people into a contributor community",
   "main": "src/community-toolbox.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/publiclab/community-toolbox.git"
   },
-  "keywords": [
-  ],
+  "keywords": [],
   "author": "jywarren",
   "license": "MIT",
   "bugs": {
