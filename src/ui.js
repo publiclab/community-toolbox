@@ -22,6 +22,7 @@ function insertIssue(issue, el) {
     body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
   });
   body += "</div>";
+  body += "<img width='50px' src='" + issue.user.avatar_url + "' class='img-circle'> &emsp;";
   body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
   body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
   body += " <i class='fa fa-comment-o'></i> " + issue.comments;
