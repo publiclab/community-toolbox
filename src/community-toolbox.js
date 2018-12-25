@@ -207,7 +207,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             .then(function gotCommits(commits) {
               let totalCommits = commits.length;
               let usernames = commits.map((commit, i) => {
-                return `@${commit.author.login}`;
+                return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
               })
               let avatars = commits.map((commit, i) => {
                 return '<img width="100px" src="' + commit.author.avatar_url + '">';
