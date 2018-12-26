@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="text/html; charset=UTF8">
 
-    <title> toolbox</title>
+    <title>Community toolbox</title>
     <link rel="shortcut icon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
 	 
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous'>
@@ -16,15 +16,14 @@
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="node_modules/chart.js/dist/Chart.js"></script>
     <script src="node_modules/urlhash/urlHash.js"></script>
-    <script src="dist/community-toolbox.js" charset="utf-8"></script>
-    <script type="text/javascript" src="src/community-toolbox.js"></script>
+    <script src="dist/community-toolbox.js"></script>
 
   </head>
 
   <body>
 	  
       
-   <script>window.onscroll = function() {scrollFunction()};</script>
+   <script>window.onscroll = function() {toolbox.scrollFunction()};</script>
     <button onclick="window.scroll({ top: 100, left: 100, behavior: 'smooth' });" id="myBtn" title="Go to top"><i style='font-size:24px' class='fas'>&#xf102;</i></button>
 
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -236,9 +235,8 @@
             });
 	        }
         }
-	      window.onscroll = function(){toolbox.scrollFunction();}
-
-	      window.onscroll = function(){toolbox.scrollFunction();} 
+	     
+	      
 	      
       })();   
 

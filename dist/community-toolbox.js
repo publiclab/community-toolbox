@@ -27530,7 +27530,7 @@ module.exports={
     "#DEV:/"
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
-  "_shasum": "895e8d9cfa3458e0f115559f6a0c46f6f29680aa",
+  "_shasum": "877408b4c138f80c612bab7ac43dea7eccc4d83f",
   "_shrinkwrap": null,
   "_spec": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
   "_where": "/home/anuj/community-toolbox",
@@ -83460,8 +83460,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   // these are essentially examples for now; we could wrap them
   // in externally available methods for convenience but at the
-  // moment they're not quite complex enough to merit it.
- 
+  // moment they're not quite complex enou
   function getIssuesForRepo(callback, _options) {
     _options = _options || options;
     api.Issues
@@ -83668,7 +83667,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
              });
            });
   }
-
+  
   function scrollFunction() {
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
         document.getElementById("myBtn").style.display = "block";
