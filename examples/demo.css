@@ -13,16 +13,31 @@
 
 body {
   padding: 20px;
-  margin: 0 auto 200px;
+  margin: 0 auto 20px;
   max-width: 1000px;
   background: #f8f8fa;
 }
 
-h1, h2 {
+h1, h2, .section h3 {
   font-family: 'League Spartan';
   color: #445;
   padding-top: 20px;
   text-align: center;
+  line-height: 1.3em;
+}
+
+.row.section  img {
+  max-width: 90%;
+}
+
+.row.section p {
+  margin-bottom: 30px;
+}
+
+@media (min-width:768px) {
+  .row.section  img {
+    margin-left: 10%;
+  }
 }
 
 .header {
