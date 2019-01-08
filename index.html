@@ -42,12 +42,13 @@
           <p>We especially welcome contributions from people from <b>groups underrepresented</b> in free and open source software!</p>
 
           <p>Our community aspires to be a respectful place. Please read and abide by our <a href="https://publiclab.org/conduct">Code of Conduct</a>.</p>
-	  <p>To explore issues across the entire organization, check out <a href="https://code.publiclab.org/#r=all">Public Lab issues</a></p>
+
+	        <p>To explore issues across the entire organization, check out <a href="https://code.publiclab.org/#r=all">Public Lab issues</a>.</p>
         </div>
 
         <div class="col-md-6">
 
-          <p>If you're new, and looking to get involved, you're in the right place. Check out <a href="https://github.com/publiclab/plots2/">our README</a> to get started.</p>
+          <p>If you're new, and looking to get involved, you're in the right place. Check out <a href="https://github.com/publiclab/plots2/blob/master/README.md">our README</a> to get started.</p>
 
           <p>If you're new to GitHub, using branches, or opening pull requests, <a href="https://guides.github.com/activities/hello-world/">read here for an introduction</a>.</p>
 
@@ -127,17 +128,19 @@
 
       <hr />
 
+
+      <h2 class="recent-contributors-head">Recent Contributors</h2>
+      
+      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
+
+      <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
+
+
       <h2 class="contributors-head">Contributors</h2>
 
       <p>This project was made possible by many contributors, including the following GitHub users:</p>
 
-      <div class="well contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
-
-      <h2 class="recent-contributors-head">Recent Contributors</h2>
-      
-      <p>Below are the list active contributors last week:</p>
-
-      <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
+      <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
     </div>
 
@@ -151,7 +154,9 @@
         </div>
         <div class="col-md-6 text-center">
             <span class="float-md-right">
-      <a href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github"></i> </a>
+		<a href="https://www.facebook.com/PublicLab/" title="Facebook" ><i class="fa fa-facebook"></i> </a>
+      		<a href="https://twitter.com/PublicLab?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" title="Twitter" ><i class="fa fa-twitter"></i> </a>
+		<a href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github"></i> </a>
         <a href="https://publiclab.org" title="Publiclab Website"><i class="fa fa-globe"></i> Publiclab</a> </span>
         </div>
     </div>
@@ -167,8 +172,26 @@
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
         var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
         var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
+        var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
 
         toolbox = CommunityToolbox(org, repo);
+
+        let d = document.getElementById('toggle-contributors');
+        let recency_label = document.getElementById('recency-label');
+        d.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (recencyLabel=="week") {
+            toolbox.getRecentCommits(org, recencyLabel);
+            d.innerHTML = "Show monthly";
+            recency_label.innerHTML = "last week: ";
+            recencyLabel = "month";
+          }else if (recencyLabel=="month") {
+            toolbox.getRecentCommits(org, recencyLabel);
+            d.innerHTML = "Show weekly";
+            recency_label.innerHTML = "last month: ";
+            recencyLabel = "week";
+          }
+        })
 
 	if (repo === 'all') {
 
@@ -181,7 +204,8 @@
           // compile and display all contributors for given org/repo:
           toolbox.getAllContributors(org);
 
-          toolbox.getRecentCommits(org);
+          // Makes the toggle contributors list button click
+          d.click();
 
 	} else {
 
@@ -196,20 +220,23 @@
           // compile and display all contributors for given org/repo:
           toolbox.showRepoContributors(org, repo);
 
-          toolbox.getRecentCommits(org);
-
+          // Makes the toggle contributors list button click
+          d.click();
 	}
 
         function displayIssues(selector) {
           return function displayIssues(issues) {
             if (typeof issues === "string") issues = JSON.parse(issues).items;
-	    issues.forEach(function(issue) {
+	          issues.forEach(function(issue) {
               toolbox.ui.insertIssue(issue, selector);
             });
-	  }
+	        }
         }
 
       })();
+
+
+
 
     </script>
 

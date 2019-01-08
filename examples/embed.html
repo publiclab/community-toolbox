@@ -42,7 +42,7 @@
         toolbox = CommunityToolbox(org, repo);
 
         if(repo==='all') {
-          toolbox.getIssuesForOrg(org, { qs: { labels: orgLabels }})
+          toolbox.getIssuesForOrg(org, { qs: { labels: orgLabels, per_page: 100 }})
                  .then(function gotIssuesForOrg(orgIssuesObject) {
                    let orgIssues = JSON.parse(orgIssuesObject).items;
                    orgIssues.forEach(function mapToEachIssue(issue) {
@@ -51,7 +51,7 @@
                  });
         } else {
           toolbox.api.Issues
-                .getIssuesForRepo(org, repo, { qs: { labels: labels } })
+                .getIssuesForRepo(org, repo, { qs: { labels: labels, per_page: 100 } })
                 .then(function(issues) {
                   issues.forEach(function(issue) {
                     toolbox.ui.insertIssue(issue, '.issues');
