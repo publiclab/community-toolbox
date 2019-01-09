@@ -1,5 +1,5 @@
 CommunityToolbox = function CommunityToolbox(org, repo) {
-
+  
   var SimpleApi = require("github-api-simple")
   var api = new SimpleApi();
   var ui = require('./ui');
@@ -193,10 +193,10 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
               console.log("inside month then");
               let totalCommits = commits.length;
               let usernames = commits.map((commit, i) => {
-                return `@${commit.author.login}`;
+                return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
               })
               let avatars = commits.map((commit, i) => {
-                return '<img width="100px" src="' + commit.author.avatar_url + '">';
+                return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
               })
               // Push data to UI
               ui.insertRecentContributors(totalCommits,usernames, avatars);
@@ -210,7 +210,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                 return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
               })
               let avatars = commits.map((commit, i) => {
-                return '<img width="100px" src="' + commit.author.avatar_url + '">';
+                return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
               })
               // Push data to UI
               ui.insertRecentContributors(totalCommits,usernames, avatars);
