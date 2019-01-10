@@ -1,13 +1,44 @@
 
 
-    var SimpleApi = require("github-api-simple")
-    var api = new SimpleApi();
-    var ui = require('./ui');
-    var parse = require('parse-link-header');
+  var SimpleApi = require("github-api-simple")
+  var api = new SimpleApi();
+  var ui = require('./ui');
+  var parse = require('parse-link-header');
+
+  // Utility function which decides whether to make a single or multiple
+  // requests for fetching repo's contributors
+  function fetchRepoContributorsUtil(org, repo) {
+    return new Promise((resolve, reject) => { 
+      if(repo==='plots2') {
+        resolve(fetchAllRepoContributors(org, repo));
+      }else { 
+        resolve(fetchRepoContributors(org, repo));
+      }
+     })
+  }
 
 
-  // Fetches all the contributors for a particular repository
+  // Fetches the CONTRIBUTORS for a particular repository
   function fetchRepoContributors(org, repo) {
+    // This array is used to hold all the contributors of a repo
+    let arr = [];
+  
+    return api.Repositories
+        .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+        .then(function gotContributorsOnParticularPage(contributors) {
+          if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+            contributors.map((contributor, i) => arr.push(contributor));
+          }
+        })
+        .then(() => {
+          return arr;
+        });
+  }
+
+
+
+  // Fetches ALL THE CONTRIBUTORS for a particular repository
+  function fetchAllRepoContributors(org, repo) {
     // This array is used to hold all the contributors of a repo
     var arr = [];
 
@@ -80,7 +111,7 @@
     // We take only first 20 repos to stay under API quota
     var splicedRepos = repos.splice(0,20);
     var promises = splicedRepos.map(function mapToEachRepo(repo, i) {
-                    return fetchRepoContributors(org, repo)
+                    return fetchRepoContributorsUtil(org, repo)
                             .then(function gotContribsForParticularRepo(repoContributors) {
                                 if (repoContributors!=undefined && repoContributors.length>0) {
                                   // Maps to each contributor and stores it in the array

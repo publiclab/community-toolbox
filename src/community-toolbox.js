@@ -1,5 +1,5 @@
 CommunityToolbox = function CommunityToolbox(org, repo) {
-
+  
   var SimpleApi = require("github-api-simple")
   var api = new SimpleApi();
   var ui = require('./ui');
@@ -142,7 +142,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
      // Flushes repoContributors from localStorage after every single day
      let timeNow = (new Date).getTime();
      let lifespan = localStorage.getItem('repoContributorsExpiry');
-     if (lifespan!=null && ((timeNow-lifespan)/1000) >= 43200) {
+     if (lifespan!=null && ((timeNow-lifespan)/1000) >= 86400) {
        localStorage.removeItem('repoContributors');
        localStorage.removeItem('repoContributorsExpiry');
      }
@@ -152,7 +152,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
     // If we don't have repoContributors in localStorage, we fetch them from Github
     if (repoContributors == null || repoContributors.length == 0) {
-      repoContributorsUtility.fetchRepoContributors(org, repo)
+      repoContributorsUtility.fetchRepoContributorsUtil(org, repo)
       .then(function gotRepoContributorsInStorage (contributors) {
         // Map to contributors and store their usernames and avatar URLs to variables
         let usernames = contributors.map(function getRepoContributorUsername(c, i) {
@@ -190,33 +190,31 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     if(recencyLabel==='month') {
       return getRecentCommitsUtility.getCommitsLastMonth(org)
             .then(function gotCommits(commits) {
-              console.log("inside month then");
               let totalCommits = commits.length;
               let usernames = commits.map((commit, i) => {
-                return `@${commit.author.login}`;
+                return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
               })
               let avatars = commits.map((commit, i) => {
-                return '<img width="100px" src="' + commit.author.avatar_url + '">';
+                return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
               })
               // Push data to UI
               ui.insertRecentContributors(totalCommits,usernames, avatars);
               return;
             })
     } else {
-      return getRecentCommitsUtility.getCommitsLastWeek(org)
-            .then(function gotCommits(commits) {
-              let totalCommits = commits.length;
-              let usernames = commits.map((commit, i) => {
-                return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
-              })
-              let avatars = commits.map((commit, i) => {
-                return '<img width="100px" src="' + commit.author.avatar_url + '">';
-              })
-              // Push data to UI
-              ui.insertRecentContributors(totalCommits,usernames, avatars);
-              return;
-            })
-      }
+        return getRecentCommitsUtility.getCommitsLastWeek(org).then((weekly_contribs) => {
+          let totalCommits = weekly_contribs.length;
+          let usernames = weekly_contribs.map((commit, i) => {
+            return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
+          })
+          let avatars = weekly_contribs.map((commit, i) => {
+            return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
+          })
+          // Push data to UI
+          ui.insertRecentContributors(totalCommits,usernames, avatars);
+          return;
+        })
+    }
   }
 
   function displayIssuesForRepo(org, repo, label, selector) {

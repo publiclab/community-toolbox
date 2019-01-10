@@ -34,7 +34,7 @@ var insertRecentContributorsExec = false;
 
 function insertContributors(totalContributors, usernames, avatars){
   if(insertContributorsExec) $('.contributors > .usernames').append(', ');
-  $('.contributors-head').html('Contributors ('+totalContributors+')');
+  $('.contributors-head').html('Contributors ('+totalContributors+'+)');
   $('.contributors > .usernames').append(usernames.join(', '));
   $('.contributors > .avatars').append(avatars.join(''));
   insertContributorsExec=true;
@@ -42,7 +42,7 @@ function insertContributors(totalContributors, usernames, avatars){
 
 function insertRecentContributors(totalContributors, usernames, avatars){
   if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
-  $('.recent-contributors-head').html('Recent Contributors ('+totalContributors+')');
+  $('.recent-contributors-head').html('Recent Contributors ('+totalContributors+'+)');
   $('.recent-contributors > .usernames').html(usernames.join(', '));
   $('.recent-contributors > .avatars').html(avatars.join(''));
   insertRecentContributorsExec=true;
