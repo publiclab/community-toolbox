@@ -88,9 +88,33 @@ function fetchAllRepoContributors(org, repo) {
 
 
 
+
+// This utility helps us in getting CONTRIBUTORS for a particular repository
+function fetchRepoContributors(org, repo) {
+  // This array is used to store the contributors from all of the repositories
+  let contributorsArray = [];
+
+  return api.Repositories
+            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 }})
+            .then(function gotRepoContributors(contributors) {
+              if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                contributors.map((contributor, i) => contributorsArray.push(contributor));
+              }
+            })
+            .then(() => {
+              let now = (new Date).getTime();
+              localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
+              localStorage.setItem('repoContributorsExpiry', now);
+              return contributorsArray;
+            })
+
+}
+
+
+
 // EXPORTS
 module.exports = {
+    fetchAllRepoContributors: fetchAllRepoContributors,
     fetchRepoContributors: fetchRepoContributors,
     fetchRepoContributorsUtil: fetchRepoContributorsUtil,
-    fetchAllRepoContributors: fetchAllRepoContributors,
 }

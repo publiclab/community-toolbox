@@ -82266,6 +82266,7 @@ function getCommitsLastWeek(org) {
           return new Promise((resolve, reject) => {resolve(contribs)});
         }
     }
+    return false;
 }
 
 
@@ -82330,9 +82331,11 @@ function getCommitsLastMonth(org) {
 // EXPORTS
 module.exports = {
     fetchRecentCommits: fetchRecentCommits,
+    getCommitsLastMonth: getCommitsLastMonth,
     getCommitsLastWeek: getCommitsLastWeek,
-    getCommitsLastMonth: getCommitsLastMonth
+    within_this_week: within_this_week
 }
+
 },{"../utils/getAllContribsUtility":404}],406:[function(require,module,exports){
 var SimpleApi = require("github-api-simple")
 var api = new SimpleApi();
@@ -82424,10 +82427,34 @@ function fetchAllRepoContributors(org, repo) {
 
 
 
+
+// This utility helps us in getting CONTRIBUTORS for a particular repository
+function fetchRepoContributors(org, repo) {
+  // This array is used to store the contributors from all of the repositories
+  let contributorsArray = [];
+
+  return api.Repositories
+            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 }})
+            .then(function gotRepoContributors(contributors) {
+              if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                contributors.map((contributor, i) => contributorsArray.push(contributor));
+              }
+            })
+            .then(() => {
+              let now = (new Date).getTime();
+              localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
+              localStorage.setItem('repoContributorsExpiry', now);
+              return contributorsArray;
+            })
+
+}
+
+
+
 // EXPORTS
 module.exports = {
+    fetchAllRepoContributors: fetchAllRepoContributors,
     fetchRepoContributors: fetchRepoContributors,
     fetchRepoContributorsUtil: fetchRepoContributorsUtil,
-    fetchAllRepoContributors: fetchAllRepoContributors,
 }
 },{"../models/utils":401,"github-api-simple":151,"parse-link-header":278}]},{},[403]);

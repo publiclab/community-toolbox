@@ -90,6 +90,7 @@ function getCommitsLastWeek(org) {
           return new Promise((resolve, reject) => {resolve(contribs)});
         }
     }
+    return false;
 }
 
 
@@ -154,6 +155,7 @@ function getCommitsLastMonth(org) {
 // EXPORTS
 module.exports = {
     fetchRecentCommits: fetchRecentCommits,
+    getCommitsLastMonth: getCommitsLastMonth,
     getCommitsLastWeek: getCommitsLastWeek,
-    getCommitsLastMonth: getCommitsLastMonth
+    within_this_week: within_this_week
 }
