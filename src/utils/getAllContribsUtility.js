@@ -13,7 +13,9 @@ function getAllRepos(org) {
           .then(function mapToEachRepo(results) {
             results.map(function mappingToEachRepo(repo, index) {
               return repos[index] = repo.name;
-            })
+            });
+            // Storing the repos in localStorage
+            localStorage.setItem('repos', JSON.stringify(repos));
             return(repos);
           });
   }

@@ -80,7 +80,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                         // after 24 hours
                         let currentTime = (new Date).getTime();
                         model_utils.setItem('allContributorsExpiry', currentTime);
-                        console.log("Stored allContributors in storage");
                         resolve(AllContributors);
                     })
           })
@@ -177,22 +176,60 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  // Stores all the Recent Contributors in the database
+  function storeAllRecentContribsInitially(org, repo) {
+    // We make queryTime 1 month behind the current time, to pass it as query in the request
+    let d = (new Date);
+    d.setDate(d.getDate() - 30);
+    let queryTime = d.toISOString();
+    let repos = JSON.parse(localStorage.getItem('repos'));
+    return model_utils.getItem('recent-present').then((result)=> {
+      if(result!=null && result!=undefined) {
+        return result;
+      }
+      else {
+        if(repos!=null || repos!=undefined) {
+          return getRecentCommitsUtility.fetchAllRecentMonthCommits(repos, queryTime)
+                  .then((result) => {
+                    model_utils.setItem('recent-present', 'true');
+                    return result;
+                  })
+        }
+        else {
+          getAllContribsUtility.getAllRepos(org).then((repos) => {
+            if(repos!=null || repos!=undefined || repos.length>0) {
+              return getRecentCommitsUtility.fetchAllRecentMonthCommits(repos, queryTime)
+                      .then((result) => {
+                        model_utils.setItem('recent-present', 'true');
+                        return result;
+                      })
+            }
+          });
+        }
+      }
+    });
+  }
+
+
+  // Function for fetching and showing recent contributors
   function getRecentCommits(org, repo, recencyLabel) {
-    if(recencyLabel==='month') {
-      return getRecentCommitsUtility.getCommitsLastMonth(org)
-            .then(function gotCommits(commits) {
-              // Push data to UI
-              ui.insertRecentContributors(commits);
-              return;
-            });
-    } else {
-      return getRecentCommitsUtility.getCommitsLastWeek(org)
-            .then((weekly_contribs) => {
-              // Push data to UI
-              ui.insertRecentContributors(weekly_contribs);
-              return;
-            });
-    }
+    return storeAllRecentContribsInitially(org, repo).then((result)=>{
+      if(recencyLabel==='month') {
+        return getRecentCommitsUtility.getCommitsLastMonth(org, repo)
+              .then(function gotCommits(commits) {
+                // Push data to UI
+                ui.insertRecentContributors(commits);
+                return;
+              });
+      } else {
+        return getRecentCommitsUtility.getCommitsLastWeek(org, repo)
+              .then((weekly_contribs) => {
+                // Push data to UI
+                ui.insertRecentContributors(weekly_contribs);
+                return;
+              });
+      }
+    });
   }
 
   function displayIssuesForRepo(org, repo, label, selector) {

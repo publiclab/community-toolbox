@@ -7,16 +7,13 @@ function setItem(queryKey, queryContent) {
 }
 
 function getItem(query) {
-    console.log("In getItem");
     return model.getContentFromDb(query).then((result) => {
-        console.log('In getItem, result = ', result);
         return result;
     });
 }
 
 function deleteItem(query) {
-    return model.deleteContentFromDb(query).then(() => {
-        console.log("Deleted item.");
+    return model.deleteItemFromDb(query).then(() => {
         return;
     })
 

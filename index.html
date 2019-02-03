@@ -192,10 +192,6 @@
         var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
 
         toolbox = CommunityToolbox(org, repo);
-        // Stores all the contributors of 20 most active repos to database
-        setTimeout(()=> {
-          toolbox.storeAllContributorsInDatabase(org);
-        },100);
 
         let d = document.getElementById('toggle-contributors');
         let recency_label = document.getElementById('recency-label');
@@ -225,10 +221,10 @@
           // compile and display all contributors for given org/repo:
           setTimeout(()=> {
             toolbox.getAllContributors(org);
+            // Makes the toggle contributors list button click
+            d.click();
           },500)
 
-          // Makes the toggle contributors list button click
-          // d.click();
 
 	} else {
 
@@ -243,10 +239,10 @@
           // compile and display all contributors for given org/repo:
           setTimeout(()=> {
             toolbox.showRepoContributors(org, repo);
+            // Makes the toggle contributors list button click
+            d.click();
           },500);
 
-          // Makes the toggle contributors list button click
-          // d.click();
 	}
 
         function displayIssues(selector) {
