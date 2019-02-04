@@ -147,7 +147,7 @@
 
 
       <h2 class="recent-contributors-head">Recent Contributors</h2>
-      
+
       <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
 
       <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
@@ -165,7 +165,7 @@
       <div class="row">
         <div class="col-md-6 text-center">
             <span class="float-md-left">  Page powered by <a href="https://github.com/publiclab/community-toolbox"><i class="fa fa-github"></i></a>
-        <a href="https://github.com/publiclab/community-toolbox" >Commmunity Toolbox</a> 
+        <a href="https://github.com/publiclab/community-toolbox" >Commmunity Toolbox</a>
         - Open Source
       </span>
         </div>
@@ -244,12 +244,21 @@
         function displayIssues(selector) {
           return function displayIssues(issues) {
             if (typeof issues === "string") issues = JSON.parse(issues).items;
-	          issues.forEach(function(issue) {
-              toolbox.ui.insertIssue(issue, selector);
-            });
-	        }
+              issues.forEach(function(issue) {
+                toolbox.ui.insertIssue(issue, selector);
+              });
+            displayIssueCount(selector);
+          }
         }
 
+        // Display current count of first timer only issues and candidate issues
+        // First find the span needed. Then find the amount of issues displayed.
+        // Finally, insert the count into the span.
+        function displayIssueCount(selector) {
+          let countSpan = selector === '.first-timers-only' ? document.getElementById('fto-count') : document.getElementById('candidate-count');
+          let currentIssueCount = selector === '.first-timers-only' ? document.getElementsByClassName('first-timers-only')[0].children.length : document.getElementsByClassName('candidates')[0].children.length;
+          countSpan.innerText = ` (${currentIssueCount})`;
+        }
       })();
 
 
