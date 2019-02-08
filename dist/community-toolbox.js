@@ -82188,7 +82188,7 @@ function getAllRepos(org) {
   // This array is used to store all the repositories fetched from Github
   let repos = [];
 
-  return fetch('https://api.github.com/users/publiclab/repos?sort=pushed&direction=desc&per_page=100')
+  return fetch(`https://api.github.com/users/${org}/repos?sort=pushed&direction=desc&per_page=100`)
           .then(function gotRepos(data) {
             if(data.status=='200') {
               return data.json();
@@ -82214,10 +82214,10 @@ var getAllContribsUtility = require('../utils/getAllContribsUtility');
 var model_utils = require('../models/utils');
 
 // Fetches recent month commits for a particular repository 
-function fetchRecentMonthCommits(repo, queryTime) {
+function fetchRecentMonthCommits(org, repo, queryTime) {
     let commitersSet = new Set([]);
     let result=[];
-    return fetch(`https://api.github.com/repos/publiclab/${repo}/commits?since=${queryTime}`)
+    return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
             .then(function gotResponse(response) {
                 if(response.status=="200") {
                     return response.json();
@@ -82246,7 +82246,7 @@ function fetchRecentMonthCommits(repo, queryTime) {
 }
 
 // Fetches recent month commits for top 10 repositories
-function fetchAllRecentMonthCommits(repos, queryTime) {
+function fetchAllRecentMonthCommits(org, repos, queryTime) {
     let results = [];
     let commitersSet = new Set([]);
     let timeToday = (new Date).getTime();
@@ -82255,7 +82255,7 @@ function fetchAllRecentMonthCommits(repos, queryTime) {
     let splicedRepos = repos.splice(0,10);
 
     let promises = splicedRepos.map(function mapToEachRepo(repo, i) {
-        return fetch(`https://api.github.com/repos/publiclab/${repo}/commits?since=${queryTime}`)
+        return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
                 .then(function gotResponse(response) {
                     if(response.status=="200") {
                         return response.json();
@@ -82375,14 +82375,14 @@ function getCommitsLastMonth(org, repo) {
                         d.setDate(d.getDate() - 30);
                         let queryTime = d.toISOString();
                         if(repo==='all') {
-                            return fetchAllRecentMonthCommits(repos, queryTime)
+                            return fetchAllRecentMonthCommits(org, repos, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
                                         console.log("got all monthly contribs from fetchAllRecentMonthCommits");
                                         return month_commits;
                                     });
                         }
                         else {
-                            return fetchRecentMonthCommits(repo, queryTime)
+                            return fetchRecentMonthCommits(org, repo, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
                                         console.log("got repo's month commits from fetch");
                                         return month_commits;
