@@ -13,15 +13,15 @@ function initialize() {
         // Object stores in databases are where data are stored.
         let toolbox;
         if (!db.objectStoreNames.contains('toolbox')) {
-            toolbox = db.createObjectStore('toolbox', {autoIncrement: true});
+            toolbox = db.createObjectStore('toolbox', {autoIncrement: true, keyPath: "keys"});
         } else {
             toolbox = db.transaction("toolbox", "readwrite").objectStore("toolbox");
         }
 
         // If there isn't already a KEY index, make one so we can query toolbox
         // by their KEY
-        if (!toolbox.indexNames.contains('key')) {
-            toolbox.createIndex('key', 'key', { unique: true });
+        if (!toolbox.indexNames.contains('keys')) {
+            toolbox.createIndex('keys', 'keys', { unique: true });
         }else {
             console.log("KEY index is already created");
         }
@@ -58,7 +58,7 @@ function saveContentToDb(queryKey, queryContent) {
     let store = tx.objectStore('toolbox');
 
     // Put the data into the object store
-    let temp = { key: queryKey, content: queryContent };
+    let temp = { keys: queryKey, content: queryContent };
     store.add(temp);
 
     // Wait for the database transaction to complete
@@ -76,7 +76,7 @@ function saveContentToDb(queryKey, queryContent) {
 function getContentFromDb(query) {
     let tx = db.transaction(["toolbox"], 'readonly');
     let store = tx.objectStore("toolbox");
-    let index = store.index("key");
+    let index = store.index("keys");
 
     return new Promise((resolve, reject) => {
     
@@ -99,9 +99,9 @@ function getContentFromDb(query) {
 
 // This is not implemented fully yet...(this is WIP)
 function deleteItemFromDb(query) {
-    let tx = db.transaction("toolbox", "readwrite");
+    let tx = db.transaction(["toolbox"], 'readwrite');
     let store = tx.objectStore("toolbox");
-    let index = store.index("key");
+    let index = store.index("keys");
 
     return new Promise((resolve, reject) => {
     
@@ -111,8 +111,7 @@ function deleteItemFromDb(query) {
             let cursor = e.target.result;
             if (cursor) {
                 // Called for each matching record.
-                // resolve(cursor.value.content);
-                store.delete(cursor.value)
+                store.delete(cursor.key);
 
                 // Wait for the database transaction to complete
                 tx.oncomplete = function() { 

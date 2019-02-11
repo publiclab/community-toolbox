@@ -100,33 +100,35 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     return storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
-
         // Flushes contributors list from the database after every single day
         let timeNow = (new Date).getTime();
-        model_utils.getItem('allContributorsExpiry').then((allContributorsExpiry) => {
+        model_utils.getItem('allContributorsExpiry')
+        .then((allContributorsExpiry) => {
           if (allContributorsExpiry!=null && ((timeNow-allContributorsExpiry)/1000) >= 86400) {
-            console.log("deleting allContributors stuff");
-            model_utils.deleteItem('allContributors');
-            model_utils.deleteItem('allContributorsExpiry');
-          }
-        });
-
-        // Looking for contributors list in the database
-        model_utils.getItem('allContributors').then((AllContributors) => {
-          // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
-          if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
-
-            storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
-              // Provides fetched contributors list to UI function for rendering it
-              // to the user
-              ui.insertContributors(AllContributors);
-            })
-          } 
-          // If stored data is not null and undefined, process it
-          else {
-            ui.insertContributors(AllContributors);
+            return Promise.all([model_utils.deleteItem('allContributors'), model_utils.deleteItem('allContributorsExpiry')])
+              .then(()=> {
+                return true;
+              }) 
           }
         })
+        .then(()=> {
+          // Looking for contributors list in the database
+          model_utils.getItem('allContributors').then((AllContributors) => {
+            // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
+            if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
+  
+              storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
+                // Provides fetched contributors list to UI function for rendering it
+                // to the user
+                ui.insertContributors(AllContributors);
+              })
+            } 
+            // If stored data is not null and undefined, process it
+            else {
+              ui.insertContributors(AllContributors);
+            }
+          })
+        });
       }
       // If execution goes here, it means that there's probably something wrong 
       // in the storeAllContributorsInDatabase function
@@ -142,31 +144,34 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     return storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
-
         // Flushes repoContributors from the database after every single day
         let timeNow = (new Date).getTime();
-        let lifespan = model_utils.getItem(`${repo}Expiry`);
-        if (lifespan!=null && ((timeNow-lifespan)/1000) >= 86400) {
-          console.log("deleting entries...");
-          model_utils.deleteItem(`${repo}`);
-          model_utils.deleteItem(`${repo}Expiry`);
-        }
-        
-        // Looking for repo Contributors list in the database
-        model_utils.getItem(repo).then((repoContributors) => {
-          // If we don't have repoContributors in the database, we fetch them from Github
-          if (repoContributors == null || repoContributors == undefined || repoContributors.length == 0) {
-            repoContributorsUtility.fetchRepoContributorsUtil(org, repo)
-            .then(function gotRepoContributorsInStorage (contributors) {
-              ui.insertContributors(contributors);
+        model_utils.getItem(`${repo}Expiry`)
+        .then((lifespan) => {
+          if (lifespan!=null && ((timeNow-lifespan)/1000) >= 86400) {
+            return Promise.all([model_utils.deleteItem(`${repo}`), model_utils.deleteItem(`${repo}Expiry`)])
+              .then(()=>{
+                return true;
+              })
+          }
+        })
+        .then(()=>{
+          // Looking for repo Contributors list in the database
+          model_utils.getItem(repo).then((repoContributors) => {
+            // If we don't have repoContributors in the database, we fetch them from Github
+            if (repoContributors == null || repoContributors == undefined) {
+              repoContributorsUtility.fetchRepoContributorsUtil(org, repo)
+              .then(function gotRepoContributorsInStorage (contributors) {
+                ui.insertContributors(contributors);
+                return;
+              })
+            }
+            // If we have repoContributors in the database, we save a network call :)
+            else {
+              ui.insertContributors(repoContributors);
               return;
-            })
-          }
-          // If we have repoContributors in the database, we save a network call :)
-          else {
-            ui.insertContributors(repoContributors);
-            return;
-          }
+            }
+          })
         })
       } else {
         // Execution goes here, it means that data for this repo is not available
@@ -189,7 +194,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       }
       else {
         if(repos!=null || repos!=undefined) {
-          return getRecentCommitsUtility.fetchAllRecentMonthCommits(repos, queryTime)
+          return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
                   .then((result) => {
                     model_utils.setItem('recent-present', 'true');
                     return result;
@@ -198,7 +203,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         else {
           getAllContribsUtility.getAllRepos(org).then((repos) => {
             if(repos!=null || repos!=undefined || repos.length>0) {
-              return getRecentCommitsUtility.fetchAllRecentMonthCommits(repos, queryTime)
+              return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
                       .then((result) => {
                         model_utils.setItem('recent-present', 'true');
                         return result;

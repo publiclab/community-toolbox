@@ -94,8 +94,10 @@ function getCommitsLastWeek(org, repo) {
                 // If recent month's commits expiry time is 1 day behind the current time, flush them out.
                 if(recentCommitsWeekExpiry!=null && recentCommitsWeekExpiry!=undefined && ((timeToday-recentCommitsWeekExpiry)/1000)>=86400) {
                     console.log("deleting");
-                    model_utils.deleteItem(`recent-${repo}-week-expiry`);
-                    model_utils.deleteItem(`recent-${repo}-week-commits`);
+                    return Promise.all([model_utils.deleteItem(`recent-${repo}-week-expiry`), model_utils.deleteItem(`recent-${repo}-week-commits`)])
+                        .then(()=> {
+                            return true;
+                        })
                 }
             })
             .then(() => {
@@ -147,8 +149,10 @@ function getCommitsLastMonth(org, repo) {
                 // If recentCommits expiry time is 1 day behind the current time, flush them out.
                 if(recentCommitsMonthExpiry!=null && recentCommitsMonthExpiry!=undefined && ((timeToday-recentCommitsMonthExpiry)/1000)>=86400) {
                     console.log("Deleting month contribs");
-                    model_utils.deleteItem(`recent-${repo}-month-commits`);
-                    model_utils.deleteItem(`recent-${repo}-month-expiry`);
+                    return Promise.all([model_utils.deleteItem(`recent-${repo}-month-commits`), model_utils.deleteItem(`recent-${repo}-month-expiry`)])
+                        .then(() => {
+                            return true;
+                        })
                 }
                 return true;
             })

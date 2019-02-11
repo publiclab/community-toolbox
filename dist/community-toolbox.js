@@ -81699,15 +81699,15 @@ function initialize() {
         // Object stores in databases are where data are stored.
         let toolbox;
         if (!db.objectStoreNames.contains('toolbox')) {
-            toolbox = db.createObjectStore('toolbox', {autoIncrement: true});
+            toolbox = db.createObjectStore('toolbox', {autoIncrement: true, keyPath: "keys"});
         } else {
             toolbox = db.transaction("toolbox", "readwrite").objectStore("toolbox");
         }
 
         // If there isn't already a KEY index, make one so we can query toolbox
         // by their KEY
-        if (!toolbox.indexNames.contains('key')) {
-            toolbox.createIndex('key', 'key', { unique: true });
+        if (!toolbox.indexNames.contains('keys')) {
+            toolbox.createIndex('keys', 'keys', { unique: true });
         }else {
             console.log("KEY index is already created");
         }
@@ -81744,7 +81744,7 @@ function saveContentToDb(queryKey, queryContent) {
     let store = tx.objectStore('toolbox');
 
     // Put the data into the object store
-    let temp = { key: queryKey, content: queryContent };
+    let temp = { keys: queryKey, content: queryContent };
     store.add(temp);
 
     // Wait for the database transaction to complete
@@ -81762,7 +81762,7 @@ function saveContentToDb(queryKey, queryContent) {
 function getContentFromDb(query) {
     let tx = db.transaction(["toolbox"], 'readonly');
     let store = tx.objectStore("toolbox");
-    let index = store.index("key");
+    let index = store.index("keys");
 
     return new Promise((resolve, reject) => {
     
@@ -81785,9 +81785,9 @@ function getContentFromDb(query) {
 
 // This is not implemented fully yet...(this is WIP)
 function deleteItemFromDb(query) {
-    let tx = db.transaction("toolbox", "readwrite");
+    let tx = db.transaction(["toolbox"], 'readwrite');
     let store = tx.objectStore("toolbox");
-    let index = store.index("key");
+    let index = store.index("keys");
 
     return new Promise((resolve, reject) => {
     
@@ -81797,8 +81797,7 @@ function deleteItemFromDb(query) {
             let cursor = e.target.result;
             if (cursor) {
                 // Called for each matching record.
-                // resolve(cursor.value.content);
-                store.delete(cursor.value)
+                store.delete(cursor.key);
 
                 // Wait for the database transaction to complete
                 tx.oncomplete = function() { 
@@ -82016,33 +82015,35 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     return storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
-
         // Flushes contributors list from the database after every single day
         let timeNow = (new Date).getTime();
-        model_utils.getItem('allContributorsExpiry').then((allContributorsExpiry) => {
+        model_utils.getItem('allContributorsExpiry')
+        .then((allContributorsExpiry) => {
           if (allContributorsExpiry!=null && ((timeNow-allContributorsExpiry)/1000) >= 86400) {
-            console.log("deleting allContributors stuff");
-            model_utils.deleteItem('allContributors');
-            model_utils.deleteItem('allContributorsExpiry');
-          }
-        });
-
-        // Looking for contributors list in the database
-        model_utils.getItem('allContributors').then((AllContributors) => {
-          // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
-          if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
-
-            storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
-              // Provides fetched contributors list to UI function for rendering it
-              // to the user
-              ui.insertContributors(AllContributors);
-            })
-          } 
-          // If stored data is not null and undefined, process it
-          else {
-            ui.insertContributors(AllContributors);
+            return Promise.all([model_utils.deleteItem('allContributors'), model_utils.deleteItem('allContributorsExpiry')])
+              .then(()=> {
+                return true;
+              }) 
           }
         })
+        .then(()=> {
+          // Looking for contributors list in the database
+          model_utils.getItem('allContributors').then((AllContributors) => {
+            // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
+            if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
+  
+              storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
+                // Provides fetched contributors list to UI function for rendering it
+                // to the user
+                ui.insertContributors(AllContributors);
+              })
+            } 
+            // If stored data is not null and undefined, process it
+            else {
+              ui.insertContributors(AllContributors);
+            }
+          })
+        });
       }
       // If execution goes here, it means that there's probably something wrong 
       // in the storeAllContributorsInDatabase function
@@ -82058,31 +82059,34 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     return storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
-
         // Flushes repoContributors from the database after every single day
         let timeNow = (new Date).getTime();
-        let lifespan = model_utils.getItem(`${repo}Expiry`);
-        if (lifespan!=null && ((timeNow-lifespan)/1000) >= 86400) {
-          console.log("deleting entries...");
-          model_utils.deleteItem(`${repo}`);
-          model_utils.deleteItem(`${repo}Expiry`);
-        }
-        
-        // Looking for repo Contributors list in the database
-        model_utils.getItem(repo).then((repoContributors) => {
-          // If we don't have repoContributors in the database, we fetch them from Github
-          if (repoContributors == null || repoContributors == undefined || repoContributors.length == 0) {
-            repoContributorsUtility.fetchRepoContributorsUtil(org, repo)
-            .then(function gotRepoContributorsInStorage (contributors) {
-              ui.insertContributors(contributors);
+        model_utils.getItem(`${repo}Expiry`)
+        .then((lifespan) => {
+          if (lifespan!=null && ((timeNow-lifespan)/1000) >= 86400) {
+            return Promise.all([model_utils.deleteItem(`${repo}`), model_utils.deleteItem(`${repo}Expiry`)])
+              .then(()=>{
+                return true;
+              })
+          }
+        })
+        .then(()=>{
+          // Looking for repo Contributors list in the database
+          model_utils.getItem(repo).then((repoContributors) => {
+            // If we don't have repoContributors in the database, we fetch them from Github
+            if (repoContributors == null || repoContributors == undefined) {
+              repoContributorsUtility.fetchRepoContributorsUtil(org, repo)
+              .then(function gotRepoContributorsInStorage (contributors) {
+                ui.insertContributors(contributors);
+                return;
+              })
+            }
+            // If we have repoContributors in the database, we save a network call :)
+            else {
+              ui.insertContributors(repoContributors);
               return;
-            })
-          }
-          // If we have repoContributors in the database, we save a network call :)
-          else {
-            ui.insertContributors(repoContributors);
-            return;
-          }
+            }
+          })
         })
       } else {
         // Execution goes here, it means that data for this repo is not available
@@ -82105,7 +82109,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       }
       else {
         if(repos!=null || repos!=undefined) {
-          return getRecentCommitsUtility.fetchAllRecentMonthCommits(repos, queryTime)
+          return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
                   .then((result) => {
                     model_utils.setItem('recent-present', 'true');
                     return result;
@@ -82114,7 +82118,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         else {
           getAllContribsUtility.getAllRepos(org).then((repos) => {
             if(repos!=null || repos!=undefined || repos.length>0) {
-              return getRecentCommitsUtility.fetchAllRecentMonthCommits(repos, queryTime)
+              return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
                       .then((result) => {
                         model_utils.setItem('recent-present', 'true');
                         return result;
@@ -82306,8 +82310,10 @@ function getCommitsLastWeek(org, repo) {
                 // If recent month's commits expiry time is 1 day behind the current time, flush them out.
                 if(recentCommitsWeekExpiry!=null && recentCommitsWeekExpiry!=undefined && ((timeToday-recentCommitsWeekExpiry)/1000)>=86400) {
                     console.log("deleting");
-                    model_utils.deleteItem(`recent-${repo}-week-expiry`);
-                    model_utils.deleteItem(`recent-${repo}-week-commits`);
+                    return Promise.all([model_utils.deleteItem(`recent-${repo}-week-expiry`), model_utils.deleteItem(`recent-${repo}-week-commits`)])
+                        .then(()=> {
+                            return true;
+                        })
                 }
             })
             .then(() => {
@@ -82359,8 +82365,10 @@ function getCommitsLastMonth(org, repo) {
                 // If recentCommits expiry time is 1 day behind the current time, flush them out.
                 if(recentCommitsMonthExpiry!=null && recentCommitsMonthExpiry!=undefined && ((timeToday-recentCommitsMonthExpiry)/1000)>=86400) {
                     console.log("Deleting month contribs");
-                    model_utils.deleteItem(`recent-${repo}-month-commits`);
-                    model_utils.deleteItem(`recent-${repo}-month-expiry`);
+                    return Promise.all([model_utils.deleteItem(`recent-${repo}-month-commits`), model_utils.deleteItem(`recent-${repo}-month-expiry`)])
+                        .then(() => {
+                            return true;
+                        })
                 }
                 return true;
             })
