@@ -1,6 +1,6 @@
 {
   "name": "community-toolbox",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Tools to understand and welcome people into a contributor community",
   "main": "src/community-toolbox.js",
   "scripts": {},
