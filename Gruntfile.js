@@ -14,7 +14,6 @@ module.exports = function(grunt) {
           },
           source: {
               files: [
-                  'src/*.js',
                   'src/*/*.js',
                   'Gruntfile.js'
               ],
@@ -24,7 +23,7 @@ module.exports = function(grunt) {
 
       browserify: {
           dist: {
-            src: ['src/community-toolbox.js'],
+            src: ['src/scripts/community-toolbox.js'],
             dest: 'dist/community-toolbox.js'
           }
       }

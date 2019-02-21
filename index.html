@@ -180,6 +180,24 @@
     </footer>
 
     <script type="text/javascript">
+      /*Scroll to top when arrow up clicked BEGIN*/
+$(window).scroll(function() {
+    var height = $(window).scrollTop();
+    if (height > 100) {
+        $('#back2Top').fadeIn();
+    } else {
+        $('#back2Top').fadeOut();
+    }
+});
+$(document).ready(function() {
+    $("#back2Top").click(function(event) {
+        event.preventDefault();
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        return false;
+    });
+
+});
+ /*Scroll to top when arrow up clicked END*/
 
       var toolbox;
 
@@ -198,12 +216,12 @@
         d.addEventListener("click", (e) => {
           e.preventDefault();
           if (recencyLabel=="week") {
-            toolbox.getRecentCommits(org, recencyLabel);
+            toolbox.getRecentCommits(org, repo, recencyLabel);
             d.innerHTML = "Show monthly";
             recency_label.innerHTML = "last week: ";
             recencyLabel = "month";
           }else if (recencyLabel=="month") {
-            toolbox.getRecentCommits(org, recencyLabel);
+            toolbox.getRecentCommits(org, repo, recencyLabel);
             d.innerHTML = "Show weekly";
             recency_label.innerHTML = "last month: ";
             recencyLabel = "week";
@@ -219,10 +237,12 @@
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.getAllContributors(org);
+          setTimeout(()=> {
+            toolbox.getAllContributors(org);
+            // Makes the toggle contributors list button click
+            d.click();
+          },500)
 
-          // Makes the toggle contributors list button click
-          d.click();
 
 	} else {
 
@@ -235,10 +255,12 @@
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.showRepoContributors(org, repo);
+          setTimeout(()=> {
+            toolbox.showRepoContributors(org, repo);
+            // Makes the toggle contributors list button click
+            d.click();
+          },500);
 
-          // // Makes the toggle contributors list button click
-          d.click();
 	}
 
         function displayIssues(selector) {
@@ -256,7 +278,7 @@
 
 
     </script>
-
+    <a id="back2Top" title="Back to top" href="#">&#10148;</a>
   </body>
 
 </html>
