@@ -1,8 +1,9 @@
 var SimpleApi = require("github-api-simple")
 var api = new SimpleApi();
 var parse = require('parse-link-header');
+var model_utils = require('../models/utils');
 
-// This is a utility function which decides whether to a single request for fetching
+// This is a utility function which decides whether to make a single request for fetching
 // each repo's contributors or multiple ones.
 function fetchRepoContributorsUtil(org, repo) {
   return new Promise((resolve, reject) => {
@@ -15,7 +16,32 @@ function fetchRepoContributorsUtil(org, repo) {
 }
 
 
-// This utility helps us in getting ALL THE CONTRIBUTORS for a particular repository
+// This utility helps us in getting CONTRIBUTORS for a particular repository
+function fetchRepoContributors(org, repo) {
+  // This array is used to store the contributors from all of the repositories
+  let contributorsArray = [];
+
+  return api.Repositories
+            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 }})
+            .then(function gotRepoContributors(contributors) {
+              if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                contributors.map((contributor, i) => contributorsArray.push(contributor));
+              }
+            })
+            .then(() => {
+              let now = (new Date).getTime();
+              model_utils.setItem(repo, contributorsArray);
+              console.log("saving ",repo,"'s all contribs");
+              model_utils.setItem(`${repo}Expiry`, now);
+              return contributorsArray;
+            })
+
+}
+
+
+
+
+// This utility helps us in getting all the contributors for a particular repository
 function fetchAllRepoContributors(org, repo) {
     // This array is used to store the contributors from all of the repositories
     let contributorsArray = [];
@@ -25,8 +51,10 @@ function fetchAllRepoContributors(org, repo) {
            .then(function gotContribData(contribData) {
              var headers = contribData;
              if (headers.hasOwnProperty("link")) {
-                 var parsed = parse(headers['link']);
-                 totalPages = parseInt(parsed.last.page);
+                var parsed = parse(headers['link']);
+                if(parsed.last.page!=undefined) {
+                  totalPages = parseInt(parsed.last.page);
+                }
              } else {
                  totalPages = 1;
              }
@@ -52,36 +80,12 @@ function fetchAllRepoContributors(org, repo) {
               return Promise.all(promises)
                     .then(()=> {
                       let now = (new Date).getTime();
-                      localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
-                      localStorage.setItem('repoContributorsExpiry', now);
+                      model_utils.setItem(repo, contributorsArray);
+                      model_utils.setItem(`${repo}Expiry`, now);
                       return contributorsArray;
                     });
            });
   }
-
-
-
-
-// This utility helps us in getting CONTRIBUTORS for a particular repository
-function fetchRepoContributors(org, repo) {
-  // This array is used to store the contributors from all of the repositories
-  let contributorsArray = [];
-
-  return api.Repositories
-            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 }})
-            .then(function gotRepoContributors(contributors) {
-              if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
-                contributors.map((contributor, i) => contributorsArray.push(contributor));
-              }
-            })
-            .then(() => {
-              let now = (new Date).getTime();
-              localStorage.setItem('repoContributors', JSON.stringify(contributorsArray));
-              localStorage.setItem('repoContributorsExpiry', now);
-              return contributorsArray;
-            })
-
-}
 
 
 

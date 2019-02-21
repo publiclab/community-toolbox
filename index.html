@@ -216,12 +216,12 @@ $(document).ready(function() {
         d.addEventListener("click", (e) => {
           e.preventDefault();
           if (recencyLabel=="week") {
-            toolbox.getRecentCommits(org, recencyLabel);
+            toolbox.getRecentCommits(org, repo, recencyLabel);
             d.innerHTML = "Show monthly";
             recency_label.innerHTML = "last week: ";
             recencyLabel = "month";
           }else if (recencyLabel=="month") {
-            toolbox.getRecentCommits(org, recencyLabel);
+            toolbox.getRecentCommits(org, repo, recencyLabel);
             d.innerHTML = "Show weekly";
             recency_label.innerHTML = "last month: ";
             recencyLabel = "week";
@@ -237,10 +237,12 @@ $(document).ready(function() {
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.getAllContributors(org);
+          setTimeout(()=> {
+            toolbox.getAllContributors(org);
+            // Makes the toggle contributors list button click
+            d.click();
+          },500)
 
-          // Makes the toggle contributors list button click
-          d.click();
 
 	} else {
 
@@ -253,10 +255,12 @@ $(document).ready(function() {
                  .then(displayIssues('.candidates'));
 
           // compile and display all contributors for given org/repo:
-          toolbox.showRepoContributors(org, repo);
+          setTimeout(()=> {
+            toolbox.showRepoContributors(org, repo);
+            // Makes the toggle contributors list button click
+            d.click();
+          },500);
 
-          // // Makes the toggle contributors list button click
-          d.click();
 	}
 
         function displayIssues(selector) {
