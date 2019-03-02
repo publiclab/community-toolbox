@@ -81645,7 +81645,7 @@ function insertContributors(AllContributors){
   document.getElementById("spinner-icon").style.display = "none";
 
   let totalContributors = 0;
-  var usernames = AllContributors.map(function getContributorUsername(c) {
+  var user = AllContributors.map(function getContributorUsername(c) {
     return `<div class=" col-xs-12 col-sm-4 col-md-3 col-lg-2 text-center">
               <div class="card">
                 <img width="100px" src="${c.avatar_url}">
@@ -81659,7 +81659,7 @@ function insertContributors(AllContributors){
   totalContributors += AllContributors.length;
   if(insertContributorsExec) $('.contributors > .usernames').append(', ');
   $('.contributors-head').html('Contributors ('+totalContributors+'+)');
-  $('.contributors > .usernames').append(usernames.join(' '));
+  $('.contributors > .user').append(user.join(' '));
   insertContributorsExec=true;
 }
 
