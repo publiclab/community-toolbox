@@ -81661,18 +81661,21 @@ function insertContributors(AllContributors){
 
 function insertRecentContributors(AllContributors){
   let recentContributors = 0;
-  let usernames = AllContributors.map((commit, i) => {
-    return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
-  })
-  let avatars = AllContributors.map((commit, i) => {
-    return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
+  let user = AllContributors.map((commit, i) => {
+    return `<div class=" col-xs-12 col-sm-4 col-md-3 col-lg-2 text-center">
+              <div class="card">
+                <img class="card-img-top" width="100px" src="${commit.author.avatar_url}">
+                <div class="card-body">
+                  <h4 class="card-title"><a href="${commit.author.html_url}">@${commit.author.login}</a></h4>
+                </div>
+              </div>
+            </div>`;
   })
   recentContributors += AllContributors.length;
 
   if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
   $('.recent-contributors-head').html('Recent Contributors ('+recentContributors+'+)');
-  $('.recent-contributors > .usernames').html(usernames.join(', '));
-  $('.recent-contributors > .avatars').html(avatars.join(''));
+  $('.recent-contributors > .user').html(user.join(', '));
   insertRecentContributorsExec=true;
 }
 
