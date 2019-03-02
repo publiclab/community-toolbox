@@ -81675,7 +81675,7 @@ function insertRecentContributors(AllContributors){
 
   if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
   $('.recent-contributors-head').html('Recent Contributors ('+recentContributors+'+)');
-  $('.recent-contributors > .user').html(user.join(', '));
+  $('.recent-contributors > .user').html(user.join(' '));
   insertRecentContributorsExec=true;
 }
 
