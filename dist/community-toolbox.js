@@ -81646,16 +81646,20 @@ function insertContributors(AllContributors){
 
   let totalContributors = 0;
   var usernames = AllContributors.map(function getContributorUsername(c) {
-    return `@${c.login}`;
+    return `<div class=" col-xs-12 col-sm-4 col-md-3 col-lg-2 text-center">
+              <div class="card">
+                <img width="100px" src="${c.avatar_url}">
+                <div class="card-body">
+                  <h4 class="card-title">@${c.login}</h4>
+                </div>
+              </div>
+            </div>`;
   });
-  var avatars = AllContributors.map(function getContributorAvatarURL(c) {
-    return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
-  });
+
   totalContributors += AllContributors.length;
   if(insertContributorsExec) $('.contributors > .usernames').append(', ');
   $('.contributors-head').html('Contributors ('+totalContributors+'+)');
-  $('.contributors > .usernames').append(usernames.join(', '));
-  $('.contributors > .avatars').append(avatars.join(''));
+  $('.contributors > .usernames').append(usernames.join(' '));
   insertContributorsExec=true;
 }
 
