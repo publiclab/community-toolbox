@@ -18,7 +18,8 @@ before_install:
 
 # Build a production build of the project
 before_script:
-  - npm install
+  - npm i -g
+  - npm i -g grunt
 
 # Check for coverage, and linting
 script:
