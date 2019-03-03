@@ -20,11 +20,11 @@ before_install:
 before_script:
   - npm i -g
   - npm i -g grunt
+  - grunt build
   - npm i -g surge
 
 # Check for coverage, and linting
 script:
-  - grunt build
   - ./pr_deploy.sh
 
 # Notify codecov, deploy to surge
