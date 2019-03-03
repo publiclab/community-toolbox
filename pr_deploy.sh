@@ -6,7 +6,7 @@ fi
 
 npm i -g surge
 
-export SURGE_LOGIN=test@publiclab.co.in
+export SURGE_LOGIN=jainsubhahu@gmail.com
 # Token of a dummy account.
 export SURGE_TOKEN=817c436dd0e89047b2f773b8c1b52d2b
 
