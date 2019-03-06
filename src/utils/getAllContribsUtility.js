@@ -5,15 +5,9 @@ function getAllRepos(org) {
   let repos = [];
 
   return fetch(`https://api.github.com/users/${org}/repos?sort=pushed&direction=desc&per_page=100`)
-          .then(function gotRepos(data) {
-            if(data.status=='200') {
-              return data.json();
-            }
-          })
-          .then(function mapToEachRepo(results) {
-            results.map(function mappingToEachRepo(repo, index) {
-              return repos[index] = repo.name;
-            });
+          .then( (data) => data.json() )
+          .then( (results) => {
+            results.map( (repo, index) => repos[index] = repo.name );
             // Storing the repos in localStorage
             localStorage.setItem('repos', JSON.stringify(repos));
             return(repos);
