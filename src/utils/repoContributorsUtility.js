@@ -6,7 +6,7 @@ var model_utils = require('../models/utils');
 // This is a utility function which decides whether to make a single request for fetching
 // each repo's contributors or multiple ones.
 function fetchRepoContributorsUtil(org, repo) {
-  return new Promise((resolve, reject) => {
+  return new Promise( (resolve, reject) => {
     if(repo === 'plots2') {
       resolve(fetchAllRepoContributors(org, repo));
     }else {
@@ -23,12 +23,12 @@ function fetchRepoContributors(org, repo) {
 
   return api.Repositories
             .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 }})
-            .then(function gotRepoContributors(contributors) {
+            .then( (contributors) => {
               if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
                 contributors.map((contributor, i) => contributorsArray.push(contributor));
               }
             })
-            .then(() => {
+            .then( () => {
               let now = (new Date).getTime();
               model_utils.setItem(repo, contributorsArray);
               console.log("saving ",repo,"'s all contribs");
@@ -50,7 +50,7 @@ function fetchAllRepoContributors(org, repo) {
            .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
            .then(function gotContribData(contribData) {
              var headers = contribData;
-             if (headers.hasOwnProperty("link")) {
+             if ( headers.hasOwnProperty("link") ) {
                 var parsed = parse(headers['link']);
                 if(parsed.last.page!=undefined) {
                   totalPages = parseInt(parsed.last.page);
@@ -60,7 +60,7 @@ function fetchAllRepoContributors(org, repo) {
              }
              return totalPages;
            })
-           .then(function gotTotalPages(totalPages) {
+           .then( (totalPages) => {
               // This array is used to store all of the promises
               let promises = [];
 
@@ -78,7 +78,7 @@ function fetchAllRepoContributors(org, repo) {
 
               // Waits for all of the promises to resolve first, sets localStorage after that...
               return Promise.all(promises)
-                    .then(()=> {
+                    .then( ()=> {
                       let now = (new Date).getTime();
                       model_utils.setItem(repo, contributorsArray);
                       model_utils.setItem(`${repo}Expiry`, now);
