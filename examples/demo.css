@@ -95,7 +95,7 @@ h1, h2, .section h3 {
 }
 
 .swiper-pagination {
-	bottom: -30px;
+	bottom: -30px !important;
 }
 
 .swiper-slide-next {
@@ -124,7 +124,7 @@ h1, h2, .section h3 {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 70%;
+	width: 90%;
 	height: 90%;
 }
 
@@ -132,7 +132,7 @@ h1, h2, .section h3 {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 70%;
+	width: 90%;
 	height: 90%;
 }
 
@@ -140,14 +140,21 @@ h1, h2, .section h3 {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 70%;
+	width: 90%;
 	height: 90%;
 }
 
 .video-left, .video-middle, .video-right {
-  width: 350px;
+  width: 300px;
 }
 
 #container-iframe {
   height: 200px;
+  width: 250px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.iframe-row {
+  padding-left: 31px;
 }
