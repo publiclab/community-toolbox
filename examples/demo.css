@@ -68,3 +68,86 @@ h1, h2, .section h3 {
     background-color: #DDF;
     color: #000;
 }
+
+
+
+
+
+
+
+
+
+.videos-slider {
+	margin-bottom: 150px;
+}
+
+@media screen and (max-width: 1000px) {
+	.videos-slider {
+		display: none;
+	}
+}
+
+.videos-container {
+	width: 100%;
+	height: auto;
+	overflow: visible;
+	left: 0.2%;
+}
+
+.swiper-pagination {
+	bottom: -30px;
+}
+
+.swiper-slide-next {
+	visibility: hidden;
+}
+
+.swiper-slide-prev {
+	visibility: hidden;
+}
+
+.swiper-button-next {
+	right: -2.8%;
+}
+
+.swiper-button-prev {
+	left: -3.1%;
+}
+
+.ratio {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.video-left iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 70%;
+	height: 90%;
+}
+
+.video-middle iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 70%;
+	height: 90%;
+}
+
+.video-right iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 70%;
+	height: 90%;
+}
+
+.video-left, .video-middle, .video-right {
+  width: 350px;
+}
+
+#container-iframe {
+  height: 200px;
+}

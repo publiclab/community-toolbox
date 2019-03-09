@@ -15,12 +15,14 @@
     <script src="node_modules/chart.js/dist/Chart.js"></script>
     <script src="node_modules/urlhash/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.2/js/swiper.min.js"></script>
 
   </head>
 
   <body>
 
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.2/css/swiper.min.css">
     <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="examples/demo.css">
 
@@ -114,6 +116,69 @@
 
       <br />
 
+
+
+
+
+
+
+      <div class="videos-slider">
+          <div id="center">
+              <h2 id="center" class="help-heading">Videos For Begginers</h2>
+          </div>
+          <div class="swiper-container videos-container">
+              <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                      <div class="container">
+                          <div class="row">
+                              <div class="col-md-4 video-left">
+                                <div class="container" id="container-iframe">
+                                    <iframe src="https://www.youtube.com/embed/DoYvE2vWLNk" allowfullscreen></iframe>
+                                </div>
+                              </div>
+                              <div class="col-md-4 video-middle">
+                                <div class="container" id="container-iframe">
+                                    <iframe src="https://www.youtube.com/embed/Uw9HBw9zl3s" allowfullscreen></iframe>
+                                </div>
+                              </div>
+                              <div class="col-md-4 video-right">
+                                <div class="container" id="container-iframe">
+                                    <iframe src="https://www.youtube.com/embed/XNMywaYI2p0" allowfullscreen></iframe>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="swiper-slide">
+                      <div class="container">
+                          <div class="row">
+                              <div class="col-md-4 video-left">
+                                <div class="container" id="container-iframe">
+                                    <iframe src="https://www.youtube.com/embed/YqvryPQXL_g" allowfullscreen></iframe>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="swiper-pagination"></div>
+          
+              <div class="swiper-button-prev"></div>
+              <div class="swiper-button-next"></div>
+          </div>
+
+
+
+
+
+
+
+
+
+
+      <br />
+
       <h2>First-timers-only issues</h2>
 
       <p>Here are <a href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
@@ -195,6 +260,21 @@ $(document).ready(function() {
         $("html, body").animate({ scrollTop: 0 }, "slow");
         return false;
     });
+
+    const mySwiper = new Swiper('.swiper-container', {
+        // Optional parameters
+        direction: 'horizontal',
+        loop: true,
+        allowTouchMove: false,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        }
+      });
 
 });
  /*Scroll to top when arrow up clicked END*/
