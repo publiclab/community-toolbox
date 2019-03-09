@@ -23,14 +23,15 @@
     "urlhash": "~0.1.1"
   },
   "devDependencies": {
-    "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
-    "moment": "~2.23.0",
     "browserify": "13.0.0",
+    "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "grunt": "^0.4.5",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-uglify": "^4.0.0",
     "grunt-contrib-watch": "^0.6.1",
     "matchdep": "^0.3.0",
+    "moment": "~2.23.0",
     "tap-spec": "^5.0.0",
     "tape": ">=4.7.0",
     "tape-run": "^5.0.0"

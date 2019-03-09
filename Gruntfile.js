@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
@@ -28,10 +29,24 @@ module.exports = function(grunt) {
           }
       }
 
+      uglify: {  
+        options: {  
+            compress: true  
+        },  
+        dist: {  
+            src: [  
+            'dist/community-toolbox.js'  
+            ],  
+            dest: 'dist/community-toolbox.min.js'  
+        }  
+    }
+
     });
 
+      
+
     /* Default (development): Watch files and build on change. */
-    grunt.registerTask('default', ['watch']);
+    grunt.registerTask('default', ['watch', 'uglify']);
 
     grunt.registerTask('build', [
         'browserify:dist'
