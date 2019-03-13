@@ -30,7 +30,7 @@
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-watch": "^1.1.0",
-    "matchdep": "^0.3.0",
+    "matchdep": "^2.0.0",
     "tap-spec": "^5.0.0",
     "tape": ">=4.7.0",
     "tape-run": "^5.0.0"
