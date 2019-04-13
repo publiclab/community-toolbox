@@ -68,3 +68,9 @@ h1, h2, .section h3 {
     background-color: #DDF;
     color: #000;
 }
+#connectwithus {
+ margin: auto auto 5em;
+ }
+#connectwithusbody {
+ overflow: hidden;
+ }
