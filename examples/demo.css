@@ -43,6 +43,7 @@ h1, h2, .section h3 {
 .header {
   text-align: center;
 }
+
 #back2Top {
     width: 40px;
     line-height: 40px;
@@ -64,7 +65,16 @@ h1, h2, .section h3 {
     font-size: 30px;
     text-decoration: none;
 }
+
 #back2Top:hover {
     background-color: #DDF;
     color: #000;
+}
+
+#connectwithus {
+    margin: auto auto 5em;
+}
+
+#connectwithusbody {
+    overflow: hidden;
 }
