@@ -155,6 +155,10 @@ h1, h2, .section h3 {
   margin: 0px;
 }
 
+html, body {
+    overflow-x: hidden;
+}
+
 .iframe-row {
   padding-left: 31px;
 }
