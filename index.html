@@ -97,7 +97,7 @@
 
       <br />
 
-      <h2>First-timers-only issues</h2>
+      <h2>First-timers-only issues <span id='fto-count'></span></h2>
 
       <p>Here are <a href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
 
@@ -106,7 +106,7 @@
       <p>No issues left? See <a href="/#r=all">issues across this org here</a>, and see the almost-as-good "candidates" below. Or learn how to <a href="">prepare new <b>first-timers-only</b> issues here</a>.</p>
 
 
-      <h2>Candidates</h2>
+      <h2>Candidates <span id='candidate-count'></span></h2>
 
       <p>We put a lot of work into our first-timer-only issues. But if we haven't been able to prepare any recently, here's a set of candidates we haven't yet had time to prepare, but which have most of the needed information. (Also: Learn how to <a href="https://publiclab.org/n/13667">help turn these into first-timers-only issues</a> to help keep welcoming people in!</p>
 
@@ -130,7 +130,7 @@
 
 
       <h2 class="recent-contributors-head">Recent Contributors</h2>
-      
+
       <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
 
       <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
@@ -148,7 +148,7 @@
       <div class="row">
         <div class="col-md-6 text-center">
             <span class="float-md-left">  Page powered by <a href="https://github.com/publiclab/community-toolbox"><i class="fa fa-github"></i></a>
-        <a href="https://github.com/publiclab/community-toolbox" >Commmunity Toolbox</a> 
+        <a href="https://github.com/publiclab/community-toolbox" >Commmunity Toolbox</a>
         - Open Source
       </span>
         </div>
@@ -249,12 +249,21 @@ $(document).ready(function() {
         function displayIssues(selector) {
           return function displayIssues(issues) {
             if (typeof issues === "string") issues = JSON.parse(issues).items;
-	          issues.forEach(function(issue) {
-              toolbox.ui.insertIssue(issue, selector);
-            });
-	        }
+              issues.forEach(function(issue) {
+                toolbox.ui.insertIssue(issue, selector);
+              });
+            displayIssueCount(selector);
+          }
         }
 
+        // Display current count of first timer only issues and candidate issues
+        // First find the span needed. Then find the amount of issues displayed.
+        // Finally, insert the count into the span.
+        function displayIssueCount(selector) {
+          let countSpan = selector === '.first-timers-only' ? document.getElementById('fto-count') : document.getElementById('candidate-count');
+          let currentIssueCount = selector === '.first-timers-only' ? document.getElementsByClassName('first-timers-only')[0].children.length : document.getElementsByClassName('candidates')[0].children.length;
+          countSpan.innerText = ` (${currentIssueCount})`;
+        }
       })();
 
 
