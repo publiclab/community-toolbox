@@ -38,7 +38,7 @@ h1, h2, .section h3 {
   text-align: center;
 }
 #back2Top {
-    width: 40px;
+    width: 50px;
     line-height: 40px;
     overflow: hidden;
     z-index: 999;
@@ -51,14 +51,21 @@ h1, h2, .section h3 {
     transform: rotate(270deg);
     position: fixed;
     bottom: 50px;
-    right: 0;
+    right: 10px;
     background-color: #DDD;
     color: #555;
     text-align: center;
     font-size: 30px;
     text-decoration: none;
+    border-radius: 1em;
+    box-shadow: -1.5px 1.5px 1.5px 1.5px lightgrey;
+    transition: box-shadow 150ms;
 }
 #back2Top:hover {
     background-color: #DDF;
     color: #000;
+    box-shadow: -1px 1px 1px 1px lightgrey;
+}
+#back2Top:active {
+    box-shadow: none;
 }
