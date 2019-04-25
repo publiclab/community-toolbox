@@ -37,6 +37,7 @@ h1, h2, .section h3 {
 .header {
   text-align: center;
 }
+
 #back2Top {
     width: 50px;
     line-height: 40px;
@@ -61,6 +62,7 @@ h1, h2, .section h3 {
     box-shadow: -1.5px 1.5px 1.5px 1.5px lightgrey;
     transition: box-shadow 150ms;
 }
+
 #back2Top:hover {
     background-color: #DDF;
     color: #000;
@@ -68,4 +70,12 @@ h1, h2, .section h3 {
 }
 #back2Top:active {
     box-shadow: none;
+}
+
+#connectwithus {
+    margin: auto auto 5em;
+}
+
+#connectwithusbody {
+    overflow: hidden;
 }
