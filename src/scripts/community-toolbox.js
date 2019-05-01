@@ -206,7 +206,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                 if(repos!=null || repos!=undefined || repos.length>0) {
                   return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
                     .then((result) => {
-                    model_utils.setItem('recent-present', 'true');+ return result;
+                    model_utils.setItem('recent-present', 'true');
+                    return result;
                   })
                 }
               });
