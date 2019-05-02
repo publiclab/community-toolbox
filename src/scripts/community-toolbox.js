@@ -187,32 +187,35 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     let d = (new Date);
     d.setDate(d.getDate() - 30);
     let queryTime = d.toISOString();
-    let repos = JSON.parse(localStorage.getItem('repos'));
-    return model_utils.getItem('recent-present').then((result)=> {
-      if(result!=null && result!=undefined) {
-        return result;
-      }
-      else {
-        if(repos!=null || repos!=undefined) {
-          return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
-                  .then((result) => {
+    model_utils.getItem('repos').then((repos) => {
+      if(repos!=null && repos!=undefined) {
+        return model_utils.getItem('recent-present').then((result)=> {
+          if(result!=null && result!=undefined) {
+            return result;
+          }
+          else {
+            if(repos!=null || repos!=undefined) {
+              return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
+                .then((result) => {
+                model_utils.setItem('recent-present', 'true');
+                return result;
+              })
+            }
+            else {
+              getAllContribsUtility.getAllRepos(org).then((repos) => {
+                if(repos!=null || repos!=undefined || repos.length>0) {
+                  return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
+                    .then((result) => {
                     model_utils.setItem('recent-present', 'true');
                     return result;
                   })
-        }
-        else {
-          getAllContribsUtility.getAllRepos(org).then((repos) => {
-            if(repos!=null || repos!=undefined || repos.length>0) {
-              return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
-                      .then((result) => {
-                        model_utils.setItem('recent-present', 'true');
-                        return result;
-                      })
+                }
+              });
             }
-          });
-        }
+          }
+        });
       }
-    });
+    })
   }
 
 

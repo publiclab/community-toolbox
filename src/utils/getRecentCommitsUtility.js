@@ -142,21 +142,22 @@ function within_this_week(date) {
 
 // Fetches recent month's commits for a particular repo or all of the repos (10 repos)
 function getCommitsLastMonth(org, repo) {
-    let repos = JSON.parse(localStorage.getItem('repos'));
-    return model_utils.getItem(`recent-${repo}-month-expiry`)
-            .then((recentCommitsMonthExpiry) => {
+    model_utils.getItem('repos').then((repos) => {
+        if(repos!=null && repos!=undefined) {
+            return model_utils.getItem(`recent-${repo}-month-expiry`)
+                .then((recentCommitsMonthExpiry) => {
                 let timeToday = (new Date).getTime();
                 // If recentCommits expiry time is 1 day behind the current time, flush them out.
                 if(recentCommitsMonthExpiry!=null && recentCommitsMonthExpiry!=undefined && ((timeToday-recentCommitsMonthExpiry)/1000)>=86400) {
                     console.log("Deleting month contribs");
                     return Promise.all([model_utils.deleteItem(`recent-${repo}-month-commits`), model_utils.deleteItem(`recent-${repo}-month-expiry`)])
                         .then(() => {
-                            return true;
-                        })
+                        return true;
+                    })
                 }
                 return true;
             })
-            .then((boolean) => {
+                .then((boolean) => {
                 return model_utils.getItem(`recent-${repo}-month-commits`).then((result) => {
                     if(result!=null && result!=undefined) {
                         return result;
@@ -168,21 +169,23 @@ function getCommitsLastMonth(org, repo) {
                         let queryTime = d.toISOString();
                         if(repo==='all') {
                             return fetchAllRecentMonthCommits(org, repos, queryTime)
-                                    .then(function gotRecentCommitsInStorage(month_commits) {
-                                        console.log("got all monthly contribs from fetchAllRecentMonthCommits");
-                                        return month_commits;
-                                    });
+                                .then(function gotRecentCommitsInStorage(month_commits) {
+                                console.log("got all monthly contribs from fetchAllRecentMonthCommits");
+                                return month_commits;
+                            });
                         }
                         else {
                             return fetchRecentMonthCommits(org, repo, queryTime)
-                                    .then(function gotRecentCommitsInStorage(month_commits) {
-                                        console.log("got repo's month commits from fetch");
-                                        return month_commits;
-                                    })
+                                .then(function gotRecentCommitsInStorage(month_commits) {
+                                console.log("got repo's month commits from fetch");
+                                return month_commits;
+                            })
                         }
                     }
                 })
             })
+        }
+    })
 }
 
 
