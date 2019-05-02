@@ -26695,46 +26695,37 @@ utils.intFromLE = intFromLE;
 module.exports={
   "_args": [
     [
-      "elliptic@^6.0.0",
-      "/home/rishabh570/community-toolbox/node_modules/browserify-sign"
+      "elliptic@6.4.1",
+      "C:\\Users\\Stephanie\\Documents\\community-toolbox"
     ]
   ],
-  "_from": "elliptic@>=6.0.0 <7.0.0",
+  "_development": true,
+  "_from": "elliptic@6.4.1",
   "_id": "elliptic@6.4.1",
-  "_inCache": true,
-  "_installable": true,
+  "_inBundle": false,
+  "_integrity": "sha1-wtC3d2kRuGcixjLDwGxg8vgZk5o=",
   "_location": "/elliptic",
-  "_nodeVersion": "10.5.0",
-  "_npmOperationalInternal": {
-    "host": "s3://npm-registry-packages",
-    "tmp": "tmp/elliptic_6.4.1_1533787091502_0.6309761823717674"
-  },
-  "_npmUser": {
-    "email": "fedor@indutny.com",
-    "name": "indutny"
-  },
-  "_npmVersion": "6.3.0",
   "_phantomChildren": {},
   "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "elliptic@6.4.1",
     "name": "elliptic",
-    "raw": "elliptic@^6.0.0",
-    "rawSpec": "^6.0.0",
-    "scope": null,
-    "spec": ">=6.0.0 <7.0.0",
-    "type": "range"
+    "escapedName": "elliptic",
+    "rawSpec": "6.4.1",
+    "saveSpec": null,
+    "fetchSpec": "6.4.1"
   },
   "_requiredBy": [
     "/browserify-sign",
     "/create-ecdh"
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
-  "_shasum": "c2d0b7776911b86722c632c3c06c60f2f819939a",
-  "_shrinkwrap": null,
-  "_spec": "elliptic@^6.0.0",
-  "_where": "/home/rishabh570/community-toolbox/node_modules/browserify-sign",
+  "_spec": "6.4.1",
+  "_where": "C:\\Users\\Stephanie\\Documents\\community-toolbox",
   "author": {
-    "email": "fedor@indutny.com",
-    "name": "Fedor Indutny"
+    "name": "Fedor Indutny",
+    "email": "fedor@indutny.com"
   },
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
@@ -26765,37 +26756,19 @@ module.exports={
     "jshint": "^2.6.0",
     "mocha": "^2.1.0"
   },
-  "directories": {},
-  "dist": {
-    "fileCount": 17,
-    "integrity": "sha512-BsXLz5sqX8OHcsh7CqBMztyXARmGQ3LWPtGjJi6DiJHq5C/qvi9P3OqgswKSDftbu8+IoI/QDTAm2fFnQ9SZSQ==",
-    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJba7vUCRA9TVsSAnZWagAA+gcP/jWaj5GmDZ0YFi/X4g5O\nx+pxu9i3HbP9YqywT7rz3XFXSaytu0LQDeDEbddl523X69tsbKfzHRTcnW8n\n2r0VjPhttRm+0RpEhBwjSIK34VkQA1xIWh2ugOToKXVCFVLM5VFDPGzbiN6x\n/hpL7gj1hoCRVmuhjnqFQ+vPKACKfv1Eq4CsRmu2focmP37kQpWQlweD/z4V\nJF4NxA33Fvp13Fl+9g4sPHyhUVsW9ojVaG3Ijn70pCaGQM18UPlbODkWQ1QX\nAgteOFjkIOtcalJk3B3qsM8GZeHEcAFvt2T73miJkHdCGNmRQS45Ede+gnj0\nlLlZJsCCKUHtTqrlprHo6AgMnBZufmytyozYAHC1/JYniazSBi2yPHtQeniR\nl69BfiRBdD2rNrMPwmCNRkMqrgel5WMGpaD0xdaFAHF1Ru2ZQFKsA7KvPGgp\nA20+LN11cCib67Pg5XDyrZ92T3yXec+6gQ3iq9d9UBZKFGl0P8ebVqq1LrUJ\na6nekwMpRISWnKcqV72XVmQdBmUWHq9VfVLsWJzVIJqtpHmUO7q74ACP3i4W\n0/F1REeI0YEhh3NjeStdDecfjlu7PY0pLQpbk2I3ms+6DO+cAfeDEev5jFBK\nwQabRNhITeT1FVtxZAcApj33fnCdqwaWr1NS00K5ZRqhDTTzPr/O4KRN4CR1\npstU\r\n=UVBB\r\n-----END PGP SIGNATURE-----\r\n",
-    "shasum": "c2d0b7776911b86722c632c3c06c60f2f819939a",
-    "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
-    "unpackedSize": 118371
-  },
   "files": [
     "lib"
   ],
-  "gitHead": "523da1cf71ddcfd607fbdee1858bc2af47f0e700",
   "homepage": "https://github.com/indutny/elliptic",
   "keywords": [
-    "Cryptography",
     "EC",
     "Elliptic",
-    "curve"
+    "curve",
+    "Cryptography"
   ],
   "license": "MIT",
   "main": "lib/elliptic.js",
-  "maintainers": [
-    {
-      "name": "indutny",
-      "email": "fedor@indutny.com"
-    }
-  ],
   "name": "elliptic",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/indutny/elliptic.git"
@@ -27590,70 +27563,52 @@ exports = module.exports = GithubService;
 
 },{"./assets/routes.json":150,"./package":152,"extend":144,"path":279,"request-promise":323}],152:[function(require,module,exports){
 module.exports={
-  "_args": [
-    [
-      "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
-      "/home/rishabh570/community-toolbox"
-    ]
-  ],
   "_from": "git://github.com/jywarren/github-api-simple.git#patch-2",
   "_id": "github-api-simple@0.1.0",
-  "_inCache": true,
-  "_installable": true,
+  "_inBundle": false,
+  "_integrity": "",
   "_location": "/github-api-simple",
   "_phantomChildren": {},
   "_requested": {
-    "hosted": {
-      "directUrl": "https://raw.githubusercontent.com/jywarren/github-api-simple/patch-2/package.json",
-      "gitUrl": "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "httpsUrl": "git+https://github.com/jywarren/github-api-simple.git#patch-2",
-      "shortcut": "github:jywarren/github-api-simple#patch-2",
-      "ssh": "git@github.com:jywarren/github-api-simple.git#patch-2",
-      "sshUrl": "git+ssh://git@github.com/jywarren/github-api-simple.git#patch-2",
-      "type": "github"
-    },
-    "name": "github-api-simple",
+    "type": "git",
     "raw": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
+    "name": "github-api-simple",
+    "escapedName": "github-api-simple",
     "rawSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-    "scope": null,
-    "spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-    "type": "hosted"
+    "saveSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
+    "fetchSpec": "git://github.com/jywarren/github-api-simple.git",
+    "gitCommittish": "patch-2"
   },
   "_requiredBy": [
     "#DEV:/"
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
-  "_shasum": "ede23725122f109e6c816ad0212cf8b771844c11",
-  "_shrinkwrap": null,
   "_spec": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "/home/rishabh570/community-toolbox",
+  "_where": "C:\\Users\\Stephanie\\Documents\\community-toolbox",
   "author": {
-    "email": "michiel@michielvdvelde.nl",
-    "name": "Michiel van der Velde"
+    "name": "Michiel van der Velde",
+    "email": "michiel@michielvdvelde.nl"
   },
   "bugs": {
     "url": "https://github.com/MichielvdVelde/github-api-simple/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
     "debug": "^2.6.9",
     "request-promise": "^1.0.2"
   },
+  "deprecated": false,
   "description": "Simple Github API wrapper for unauthenticated end points",
-  "devDependencies": {},
-  "gitHead": "cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "homepage": "https://github.com/MichielvdVelde/github-api-simple#readme",
   "keywords": [
-    "api",
     "github",
-    "simple",
-    "wrapper"
+    "api",
+    "wrapper",
+    "simple"
   ],
   "license": "MIT",
   "main": "github-api.js",
   "name": "github-api-simple",
-  "optionalDependencies": {},
-  "readme": "# Simple GitHub API wrapper for node.js\r\n\r\nLots of times you don't need a full-fledged GitHub API client with authentication and what-not. Maybe you just want to load public data, or index and process your public repositories somehow. This simple GitHub API 'wrapper' provides the basics and can access all non-restricted API end points. And it's easily extendable too!\r\n\r\nThe wrapper loads a JSON file (`routes.json`) which contains a name space, a method name and an end point URI. Together, all methods are dynamically created at startup-time. This makes it very easy to add new end points in the future. The library makes use of promises through [request-promise](https://github.com/request/request-promise).\r\n\r\nCurrently _not all suitable end points_ have been added. You can either wait for me to add them to `routes.json`, or you can do it yourself (and submit a pull request, of course! ;)).\r\n\r\n## Install\r\n\r\n```\r\nnpm install github-api-simple\r\n```\r\n\r\n## Usage\r\n\r\n```js\r\nconst SimpleApi = require('github-api-simple');\r\nlet api = new SimpleApi(); // takes an options argument, see below\r\n\r\nsimpleApi.Repositories.getReposForUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\nThe constructor takes an options argument, which is fed to [request-promise](https://github.com/request/request-promise). The defaults are:\r\n\r\n```js\r\nconst DEFAULT_OPTIONS = {\r\n\t'baseUrl': 'https://api.github.com',\r\n\t'headers': {\r\n\t\t'User-Agent': 'github-api-simple v' + pkg.version + ' [nodejs] [https://github.com/MichielvdVelde/github-api-simple]'\r\n\t},\r\n\t'json': true\r\n};\r\n```\r\n\r\nYou can change the `User-Agent` header to set your own, the GitHub API requires one.\r\n\r\n## Routes\r\n\r\n### Users\r\n\r\n#### Single user\r\n\r\nAll route methods take an optional `options` object as the last argument. This object is `extend()`-ed with the options you gave when usig `new`. For example, if you want to get all your repositories sorted by when it was last pushed to, you can:\r\n\r\n```js\r\nlet options = {\r\n\t'qs': {\r\n\t\t'sort': 'pushed',\r\n\t\t'direction': 'desc' // optional, GitHub API uses 'desc' by default for 'pushed'\r\n\t}\r\n}\r\nsimpleApi.Users.getUser('MichielvdVelde', options)\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/#get-a-single-user)\r\n\r\n```js\r\nsimpleApi.Users.getUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n#### All users\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/#get-all-users)\r\n\r\n```js\r\nsimpleApi.Users.getUsers()\r\n\t.then(function(users) {\r\n\t\tconsole.log('I got %d users', users.length);\r\n\t});\r\n```\r\n\r\n### Repositories\r\n\r\n#### Repositories for a single user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-user-repositories)\r\n\r\n```js\r\nsimpleApi.Repositories.getReposForUser('MichielvdVelde')\r\n\t.then(function(repos) {\r\n\t\tconsole.log('This user has %d repos', repos.length);\r\n\t});\r\n```\r\n\r\n#### Single repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#get)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepo('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(repo) {\r\n\t\tconsole.log('This repo has %d watchers', repo.watchers_count);\r\n\t});\r\n```\r\n\r\n\r\n#### Contributors\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-contributors)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoContributors('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(contributors) {\r\n\t\tconsole.log('This repo has %d contributors', contributors.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Languages\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-languages)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoLanguages('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(languages) {\r\n\t\tfor(let language of languages) {\r\n\t\t\tconsole.log('language %s, %d bytes', language, languages[language]);\r\n\t\t}\r\n\t});\r\n```\r\n\r\n\r\n#### Teams\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-teams)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoTeams('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(teams) {\r\n\t\tif(teams) {\r\n\t\t\tconsole.log('This repo has %d teams', teams.length);\r\n\t\t}\r\n\t});\r\n```\r\n\r\n\r\n#### Tags\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-tags)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoTags('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(tags) {\r\n\t\tconsole.log('This repo has %d tags', tags.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Branches\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#list-branches)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoBranches('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(branches) {\r\n\t\tconsole.log('This repo has %d branches', branches.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Single branch\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/#get-branche)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoBranche('MichielvdVelde', 'github-api-simple', 'master')\r\n\t.then(function(branche) {\r\n\t\tconsole.log('Latest commit on master is %s', branche.commit.sha);\r\n\t});\r\n```\r\n\r\n\r\n#### Contents of a repository file\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/contents/#get-contents)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoFile('MichielvdVelde', 'github-api-simple', 'README.md')\r\n\t.then(function(content) {\r\n\t\tconsole.log('Readme sha is %s', content.sha);\r\n\t});\r\n```\r\n\r\n\r\n#### Repository commits\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoCommits('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(commits) {\r\n\t\tconsole.log('This repo has %d commits', commits.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Repository single commit\r\n\r\n[GitHub API reference](https://developer.github.com/v3/repos/commits/#get-a-single-commit)\r\n\r\n```js\r\nsimpleApi.Repositories.getRepoCommit('MichielvdVelde', 'github-api-simple', '6dcb09b5b57875f334f61aebed695e2e4193db5e')\r\n\t.then(function(commit) {\r\n\t\tconsole.log('Commit %s says %s', commit.sha, commit.commit.message);\r\n\t});\r\n```\r\n\r\n### Followers\r\n\r\n\r\n#### Get followers for user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/followers/#list-followers-of-a-user)\r\n\r\n```js\r\nsimpleApi.Followers.getFollowersForUser('MichielvdVelde')\r\n\t.then(function(followers) {\r\n\t\tconsole.log('This user has %d followers', followers.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get followers by user\r\n\r\n[GitHub API reference](https://developer.github.com/v3/users/followers/#list-followers-of-a-user)\r\n\r\n```js\r\nsimpleApi.Followers.getFollowersByUser('MichielvdVelde')\r\n\t.then(function(followers) {\r\n\t\tconsole.log('This user follows %d others', followers.length);\r\n\t});\r\n```\r\n\r\n### Issues\r\n\r\n\r\n#### Get issues for repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/#list-issues-for-a-repository)\r\n\r\n```js\r\nsimpleApi.Issues.getIssuesForRepo('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(issues) {\r\n\t\tconsole.log('This repo has %d issues', issues.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get a single issue\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/#get-a-single-issue)\r\n\r\n```js\r\nsimpleApi.Issues.getIssue('MichielvdVelde', 'github-api-simple', 138)\r\n\t.then(function(issue) {\r\n\t\tconsole.log('This issue is %s', issue.state);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comments\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#list-comments-on-an-issue)\r\n\r\n```js\r\nsimpleApi.Issues.getIssueComments('MichielvdVelde', 'github-api-simple', 138)\r\n\t.then(function(comments) {\r\n\t\tconsole.log('This issue has %d comments', comments.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comments\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#list-comments-in-a-repository)\r\n\r\n```js\r\nsimpleApi.Issues.getRepoIssues('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(issues) {\r\n\t\tconsole.log('This repo has %d issues', issues.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get issue comment\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/comments/#get-a-single-comment)\r\n\r\n```js\r\nsimpleApi.Issues.getIssueComment('MichielvdVelde', 'github-api-simple', 96)\r\n\t.then(function(comment) {\r\n\t\tconsole.log('Comment by %s', comment.owner.login);\r\n\t});\r\n```\r\n\r\n### Milestones\r\n\r\n\r\n#### Get all milestones for a repository\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/milestones/#list-milestones-for-a-repository)\r\n\r\n```js\r\nsimpleApi.Milestones.getRepoMilestones('MichielvdVelde', 'github-api-simple')\r\n\t.then(function(milestones) {\r\n\t\tconsole.log('This repo has %d milestones', milestones.length);\r\n\t});\r\n```\r\n\r\n\r\n#### Get a single milestone\r\n\r\n[GitHub API reference](https://developer.github.com/v3/issues/milestones/#get-a-single-milestone)\r\n\r\n```js\r\nsimpleApi.Milestones.getMilestone('MichielvdVelde', 'github-api-simple', 544)\r\n\t.then(function(milestone) {\r\n\t\tconsole.log('Milestone title i %s', milestone.title);\r\n\t});\r\n```\r\n\r\n# To do\r\n\r\n* Add the rest of the applicable API end points to the routes file\r\n* Add paging support\r\n* Make rate limiting headers available\r\n* Write some tests\r\n\r\n# Changelog\r\n\r\n* 0.1.0 - 25 October 2017\r\n  * Drop fs and .readFileSync() to support Browserify (thanks to [jywarren](https://github.com/jywarren))\r\n* 0.0.4 - 0.0.5 10 December 2015\r\n  * (0.0.6) Added `Repositories.getRepoCommits()` and `Repositories.getRepoCommit()`\r\n  * (0.0.5) Added `Repositories.getRepositoryFile(username, reponame, filename)`\r\n  * (0.0.4) Added a lot of new end points to `routes.json`\r\n  * (0.0.4) Fixed some readme mistakes\r\n* 0.0.1 - 0.0.3 - 9 December 2015\r\n  * (0.0.3) Improved readme\r\n  * (0.0.2) Moved `routes.json` to dir `assets`\r\n  * (0.0.2) Fixed stupid-ass path error\r\n  * (0.0.1) Initial commit\r\n\r\n## License\r\n\r\nCopyright 2015 Michiel van der Velde.\r\n\r\nThis software is licensed under [the MIT License](LICENSE).\r\n",
-  "readmeFilename": "README.md",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MichielvdVelde/github-api-simple.git"
@@ -54747,22 +54702,36 @@ utils.encode = function encode(arr, enc) {
     function createDate (y, m, d, h, M, s, ms) {
         // can't just apply() to create a date:
         // https://stackoverflow.com/q/181348
-        var date = new Date(y, m, d, h, M, s, ms);
-
+        var date;
         // the date constructor remaps years 0-99 to 1900-1999
-        if (y < 100 && y >= 0 && isFinite(date.getFullYear())) {
-            date.setFullYear(y);
+        if (y < 100 && y >= 0) {
+            // preserve leap years using a full 400 year cycle, then reset
+            date = new Date(y + 400, m, d, h, M, s, ms);
+            if (isFinite(date.getFullYear())) {
+                date.setFullYear(y);
+            }
+        } else {
+            date = new Date(y, m, d, h, M, s, ms);
         }
+
         return date;
     }
 
     function createUTCDate (y) {
-        var date = new Date(Date.UTC.apply(null, arguments));
-
+        var date;
         // the Date.UTC function remaps years 0-99 to 1900-1999
-        if (y < 100 && y >= 0 && isFinite(date.getUTCFullYear())) {
-            date.setUTCFullYear(y);
+        if (y < 100 && y >= 0) {
+            var args = Array.prototype.slice.call(arguments);
+            // preserve leap years using a full 400 year cycle, then reset
+            args[0] = y + 400;
+            date = new Date(Date.UTC.apply(null, args));
+            if (isFinite(date.getUTCFullYear())) {
+                date.setUTCFullYear(y);
+            }
+        } else {
+            date = new Date(Date.UTC.apply(null, arguments));
         }
+
         return date;
     }
 
@@ -54973,25 +54942,28 @@ utils.encode = function encode(arr, enc) {
     }
 
     // LOCALES
+    function shiftWeekdays (ws, n) {
+        return ws.slice(n, 7).concat(ws.slice(0, n));
+    }
 
     var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
     function localeWeekdays (m, format) {
-        if (!m) {
-            return isArray(this._weekdays) ? this._weekdays :
-                this._weekdays['standalone'];
-        }
-        return isArray(this._weekdays) ? this._weekdays[m.day()] :
-            this._weekdays[this._weekdays.isFormat.test(format) ? 'format' : 'standalone'][m.day()];
+        var weekdays = isArray(this._weekdays) ? this._weekdays :
+            this._weekdays[(m && m !== true && this._weekdays.isFormat.test(format)) ? 'format' : 'standalone'];
+        return (m === true) ? shiftWeekdays(weekdays, this._week.dow)
+            : (m) ? weekdays[m.day()] : weekdays;
     }
 
     var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
     function localeWeekdaysShort (m) {
-        return (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
+        return (m === true) ? shiftWeekdays(this._weekdaysShort, this._week.dow)
+            : (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
     }
 
     var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
     function localeWeekdaysMin (m) {
-        return (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
+        return (m === true) ? shiftWeekdays(this._weekdaysMin, this._week.dow)
+            : (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
     }
 
     function handleStrictParse$1(weekdayName, format, strict) {
@@ -56686,7 +56658,7 @@ utils.encode = function encode(arr, enc) {
     }
 
     function positiveMomentsDifference(base, other) {
-        var res = {milliseconds: 0, months: 0};
+        var res = {};
 
         res.months = other.month() - base.month() +
             (other.year() - base.year()) * 12;
@@ -57024,62 +56996,130 @@ utils.encode = function encode(arr, enc) {
         return this._locale;
     }
 
+    var MS_PER_SECOND = 1000;
+    var MS_PER_MINUTE = 60 * MS_PER_SECOND;
+    var MS_PER_HOUR = 60 * MS_PER_MINUTE;
+    var MS_PER_400_YEARS = (365 * 400 + 97) * 24 * MS_PER_HOUR;
+
+    // actual modulo - handles negative numbers (for dates before 1970):
+    function mod$1(dividend, divisor) {
+        return (dividend % divisor + divisor) % divisor;
+    }
+
+    function localStartOfDate(y, m, d) {
+        // the date constructor remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0) {
+            // preserve leap years using a full 400 year cycle, then reset
+            return new Date(y + 400, m, d) - MS_PER_400_YEARS;
+        } else {
+            return new Date(y, m, d).valueOf();
+        }
+    }
+
+    function utcStartOfDate(y, m, d) {
+        // Date.UTC remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0) {
+            // preserve leap years using a full 400 year cycle, then reset
+            return Date.UTC(y + 400, m, d) - MS_PER_400_YEARS;
+        } else {
+            return Date.UTC(y, m, d);
+        }
+    }
+
     function startOf (units) {
+        var time;
         units = normalizeUnits(units);
-        // the following switch intentionally omits break keywords
-        // to utilize falling through the cases.
+        if (units === undefined || units === 'millisecond' || !this.isValid()) {
+            return this;
+        }
+
+        var startOfDate = this._isUTC ? utcStartOfDate : localStartOfDate;
+
         switch (units) {
             case 'year':
-                this.month(0);
-                /* falls through */
+                time = startOfDate(this.year(), 0, 1);
+                break;
             case 'quarter':
+                time = startOfDate(this.year(), this.month() - this.month() % 3, 1);
+                break;
             case 'month':
-                this.date(1);
-                /* falls through */
+                time = startOfDate(this.year(), this.month(), 1);
+                break;
             case 'week':
+                time = startOfDate(this.year(), this.month(), this.date() - this.weekday());
+                break;
             case 'isoWeek':
+                time = startOfDate(this.year(), this.month(), this.date() - (this.isoWeekday() - 1));
+                break;
             case 'day':
             case 'date':
-                this.hours(0);
-                /* falls through */
+                time = startOfDate(this.year(), this.month(), this.date());
+                break;
             case 'hour':
-                this.minutes(0);
-                /* falls through */
+                time = this._d.valueOf();
+                time -= mod$1(time + (this._isUTC ? 0 : this.utcOffset() * MS_PER_MINUTE), MS_PER_HOUR);
+                break;
             case 'minute':
-                this.seconds(0);
-                /* falls through */
+                time = this._d.valueOf();
+                time -= mod$1(time, MS_PER_MINUTE);
+                break;
             case 'second':
-                this.milliseconds(0);
+                time = this._d.valueOf();
+                time -= mod$1(time, MS_PER_SECOND);
+                break;
         }
 
-        // weeks are a special case
-        if (units === 'week') {
-            this.weekday(0);
-        }
-        if (units === 'isoWeek') {
-            this.isoWeekday(1);
-        }
-
-        // quarters are also special
-        if (units === 'quarter') {
-            this.month(Math.floor(this.month() / 3) * 3);
-        }
-
+        this._d.setTime(time);
+        hooks.updateOffset(this, true);
         return this;
     }
 
     function endOf (units) {
+        var time;
         units = normalizeUnits(units);
-        if (units === undefined || units === 'millisecond') {
+        if (units === undefined || units === 'millisecond' || !this.isValid()) {
             return this;
         }
 
-        // 'date' is an alias for 'day', so it should be considered as such.
-        if (units === 'date') {
-            units = 'day';
+        var startOfDate = this._isUTC ? utcStartOfDate : localStartOfDate;
+
+        switch (units) {
+            case 'year':
+                time = startOfDate(this.year() + 1, 0, 1) - 1;
+                break;
+            case 'quarter':
+                time = startOfDate(this.year(), this.month() - this.month() % 3 + 3, 1) - 1;
+                break;
+            case 'month':
+                time = startOfDate(this.year(), this.month() + 1, 1) - 1;
+                break;
+            case 'week':
+                time = startOfDate(this.year(), this.month(), this.date() - this.weekday() + 7) - 1;
+                break;
+            case 'isoWeek':
+                time = startOfDate(this.year(), this.month(), this.date() - (this.isoWeekday() - 1) + 7) - 1;
+                break;
+            case 'day':
+            case 'date':
+                time = startOfDate(this.year(), this.month(), this.date() + 1) - 1;
+                break;
+            case 'hour':
+                time = this._d.valueOf();
+                time += MS_PER_HOUR - mod$1(time + (this._isUTC ? 0 : this.utcOffset() * MS_PER_MINUTE), MS_PER_HOUR) - 1;
+                break;
+            case 'minute':
+                time = this._d.valueOf();
+                time += MS_PER_MINUTE - mod$1(time, MS_PER_MINUTE) - 1;
+                break;
+            case 'second':
+                time = this._d.valueOf();
+                time += MS_PER_SECOND - mod$1(time, MS_PER_SECOND) - 1;
+                break;
         }
 
-        return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+        this._d.setTime(time);
+        hooks.updateOffset(this, true);
+        return this;
     }
 
     function valueOf () {
@@ -57785,10 +57825,14 @@ utils.encode = function encode(arr, enc) {
 
         units = normalizeUnits(units);
 
-        if (units === 'month' || units === 'year') {
-            days   = this._days   + milliseconds / 864e5;
+        if (units === 'month' || units === 'quarter' || units === 'year') {
+            days = this._days + milliseconds / 864e5;
             months = this._months + daysToMonths(days);
-            return units === 'month' ? months : months / 12;
+            switch (units) {
+                case 'month':   return months;
+                case 'quarter': return months / 3;
+                case 'year':    return months / 12;
+            }
         } else {
             // handle milliseconds separately because of floating point math errors (issue #1867)
             days = this._days + Math.round(monthsToDays(this._months));
@@ -57831,6 +57875,7 @@ utils.encode = function encode(arr, enc) {
     var asDays         = makeAs('d');
     var asWeeks        = makeAs('w');
     var asMonths       = makeAs('M');
+    var asQuarters     = makeAs('Q');
     var asYears        = makeAs('y');
 
     function clone$1 () {
@@ -58022,6 +58067,7 @@ utils.encode = function encode(arr, enc) {
     proto$2.asDays         = asDays;
     proto$2.asWeeks        = asWeeks;
     proto$2.asMonths       = asMonths;
+    proto$2.asQuarters     = asQuarters;
     proto$2.asYears        = asYears;
     proto$2.valueOf        = valueOf$1;
     proto$2._bubble        = bubble;
@@ -58066,7 +58112,7 @@ utils.encode = function encode(arr, enc) {
     // Side effect imports
 
 
-    hooks.version = '2.23.0';
+    hooks.version = '2.24.0';
 
     setHookCallback(createLocal);
 
@@ -68203,7 +68249,7 @@ module.exports = Sha512
 'use strict'
 
 function isFunction (funktion) {
-  return funktion && {}.toString.call(funktion) === '[object Function]'
+  return typeof funktion === 'function'
 }
 
 // Default to complaining loudly when things don't go according to plan.
@@ -77438,45 +77484,36 @@ Store.prototype.getAllCookies = function(cb) {
 module.exports={
   "_args": [
     [
-      "tough-cookie@~2.4.3",
-      "/home/rishabh570/community-toolbox/node_modules/request"
+      "tough-cookie@2.4.3",
+      "C:\\Users\\Stephanie\\Documents\\community-toolbox"
     ]
   ],
-  "_from": "tough-cookie@>=2.4.3 <2.5.0",
+  "_development": true,
+  "_from": "tough-cookie@2.4.3",
   "_id": "tough-cookie@2.4.3",
-  "_inCache": true,
-  "_installable": true,
+  "_inBundle": false,
+  "_integrity": "sha1-U/Nto/R3g7CSWvoG/587FlKA94E=",
   "_location": "/tough-cookie",
-  "_nodeVersion": "10.5.0",
-  "_npmOperationalInternal": {
-    "host": "s3://npm-registry-packages",
-    "tmp": "tmp/tough-cookie_2.4.3_1529960207843_0.4882910670728131"
-  },
-  "_npmUser": {
-    "email": "jstash@gmail.com",
-    "name": "jstash"
-  },
-  "_npmVersion": "6.1.0",
   "_phantomChildren": {},
   "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "tough-cookie@2.4.3",
     "name": "tough-cookie",
-    "raw": "tough-cookie@~2.4.3",
-    "rawSpec": "~2.4.3",
-    "scope": null,
-    "spec": ">=2.4.3 <2.5.0",
-    "type": "range"
+    "escapedName": "tough-cookie",
+    "rawSpec": "2.4.3",
+    "saveSpec": null,
+    "fetchSpec": "2.4.3"
   },
   "_requiredBy": [
     "/request"
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
-  "_shasum": "53f36da3f47783b0925afa06ff9f3b165280f781",
-  "_shrinkwrap": null,
-  "_spec": "tough-cookie@~2.4.3",
-  "_where": "/home/rishabh570/community-toolbox/node_modules/request",
+  "_spec": "2.4.3",
+  "_where": "C:\\Users\\Stephanie\\Documents\\community-toolbox",
   "author": {
-    "email": "jstash@gmail.com",
-    "name": "Jeremy Stashewsky"
+    "name": "Jeremy Stashewsky",
+    "email": "jstash@gmail.com"
   },
   "bugs": {
     "url": "https://github.com/salesforce/tough-cookie/issues"
@@ -77512,56 +77549,26 @@ module.exports={
     "string.prototype.repeat": "^0.2.0",
     "vows": "^0.8.1"
   },
-  "directories": {},
-  "dist": {
-    "fileCount": 9,
-    "integrity": "sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==",
-    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbMVcQCRA9TVsSAnZWagAAzX0P/2COkbzb3dOX/FTOYIVL\n7oHge7BvGODNkEHTjBtNsR0jO/AA/gVcUOq6CSmFH+UC14LrmCyNDemQvD15\njnYuJXUIiZsSZO7BGGbOFYrQF+DKLiwgf0LokrIM8KasZ5nxc5xS1jYHG5o+\nwCqutfhlRTqlPbZsexB+eRlIuYNvpsbRAdSDYXrhLJNMZgx49g/SZ7IwunGN\nJ/5Fe041MZqqdi7MAavM3T7vX9IvVRJJ3f4xAEVxY1vh4s0dN+h4fG2eMQzL\nOiaulRUIahs4xmJUYHZgZESc9eTIrI8K+YT7i3r35TGc0Du7ueB2KYxBqy7q\n6AUFbdX9Ep308kTVsTf/h4wE0RvdxKLfZ0ww7T1ivADX9xMi2oIvVtyhCQHo\nSIpyBhaav/fTufF0/Fu4Lcr7PMJxyvF0UcNRqrPmEQTw4UZkFKfT8HN2P5cH\nBvJsFwpeEjt84tt5pJ/bmD0j0EUCLUXLGH6fbA84fHpZGifO239zSf262Qdv\nSXeygU7YxnK8wOCnvlauZx/gp+/WTMfMdODxiX0QnqwS5BctiPCgGG1cKJcC\nqvTECaAEmxMVf/gEW73oxVXJgUO7f6jJaWoawV7ka+wR91W9Bp0pKGOOAxAG\nU72rmnwQKid9U7ly5833sb3D+lbzKJXGNIqohegP4daKZfNNTaLWZXmKE+Iy\n7Vml\r\n=8KpS\r\n-----END PGP SIGNATURE-----\r\n",
-    "shasum": "53f36da3f47783b0925afa06ff9f3b165280f781",
-    "tarball": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
-    "unpackedSize": 83959
-  },
   "engines": {
     "node": ">=0.8"
   },
   "files": [
     "lib"
   ],
-  "gitHead": "671ad413b38d7464352886772f57a7ec417d4760",
   "homepage": "https://github.com/salesforce/tough-cookie",
   "keywords": [
     "HTTP",
-    "RFC2965",
-    "RFC6265",
     "cookie",
-    "cookiejar",
     "cookies",
+    "set-cookie",
+    "cookiejar",
     "jar",
-    "set-cookie"
+    "RFC6265",
+    "RFC2965"
   ],
   "license": "BSD-3-Clause",
   "main": "./lib/cookie",
-  "maintainers": [
-    {
-      "name": "awaterma",
-      "email": "awaterma@awaterma.net"
-    },
-    {
-      "name": "jstash",
-      "email": "jstash@gmail.com"
-    },
-    {
-      "name": "maratto",
-      "email": "marat+npm@salesforce.com"
-    },
-    {
-      "name": "ruoho",
-      "email": "clint@ruoho.org"
-    }
-  ],
   "name": "tough-cookie",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git://github.com/salesforce/tough-cookie.git"
