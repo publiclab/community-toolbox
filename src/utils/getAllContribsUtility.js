@@ -15,7 +15,7 @@ function getAllRepos(org) {
               return repos[index] = repo.name;
             });
             // Storing the repos in localStorage
-            localStorage.setItem('repos', JSON.stringify(repos));
+            model_utils.setItem('repos', repos);
             return(repos);
           });
   }
