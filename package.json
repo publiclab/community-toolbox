@@ -33,7 +33,7 @@
     "matchdep": "^2.0.0",
     "tap-spec": "^5.0.0",
     "tape": ">=4.7.0",
-    "tape-run": "^5.0.0"
+    "tape-run": "^6.0.0"
   },
   "homepage": "https://github.com/publiclab/community-toolbox"
 }
