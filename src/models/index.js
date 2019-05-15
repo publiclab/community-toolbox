@@ -1,11 +1,15 @@
 
 let db;
 
+
+//changes by usamacjs
+let getReposUtil = require('../utils/getAllContribsUtility')
+
 function initialize() {
     let dbReq = indexedDB.open('publiclabDB');
 
     // Fires when upgrade needed
-    dbReq.onupgradeneeded = function(event) {
+    dbReq.onupgradeneeded = function (event) {
         // Set the db variable to our database so we can use it
         db = event.target.result;
 
@@ -13,7 +17,7 @@ function initialize() {
         // Object stores in databases are where data are stored.
         let toolbox;
         if (!db.objectStoreNames.contains('toolbox')) {
-            toolbox = db.createObjectStore('toolbox', {autoIncrement: true, keyPath: "keys"});
+            toolbox = db.createObjectStore('toolbox', { autoIncrement: true, keyPath: "keys" });
         } else {
             toolbox = db.transaction("toolbox", "readwrite").objectStore("toolbox");
         }
@@ -22,7 +26,7 @@ function initialize() {
         // by their KEY
         if (!toolbox.indexNames.contains('keys')) {
             toolbox.createIndex('keys', 'keys', { unique: true });
-        }else {
+        } else {
             console.log("KEY index is already created");
         }
 
@@ -37,19 +41,23 @@ function initialize() {
 
     // Fires once the database is opened (and onupgradeneeded completes, if
     // onupgradeneeded was called)
-    dbReq.onsuccess = function(event) {
+    dbReq.onsuccess = function (event) {
         // Set the db variable to our database so we can use it
         db = event.target.result;
     }
-    
+
     // Fires when we can't open the database
-    dbReq.onerror = function(event) {
+    dbReq.onerror = function (event) {
         console.log('error opening database');
     }
 }
 
 // We make sure that initialize function gets fired once the DOM content is loaded
-window.addEventListener('DOMContentLoaded', initialize());
+//changes by usamacjs
+window.addEventListener('DOMContentLoaded', () => {
+    initialize();
+    getReposUtil.getAllRepos();
+});
 
 
 function saveContentToDb(queryKey, queryContent) {
@@ -62,11 +70,11 @@ function saveContentToDb(queryKey, queryContent) {
     store.add(temp);
 
     // Wait for the database transaction to complete
-    tx.oncomplete = function() { 
+    tx.oncomplete = function () {
         console.log("Entry added to store successfully!");
         return;
     }
-    tx.onerror = function(event) {
+    tx.onerror = function (event) {
         console.log('error storing content');
         return;
     }
@@ -79,19 +87,19 @@ function getContentFromDb(query) {
     let index = store.index("keys");
 
     return new Promise((resolve, reject) => {
-    
+
         let request = index.openCursor(IDBKeyRange.only(query));
-    
-        request.onsuccess = function(e) {
+
+        request.onsuccess = function (e) {
             let cursor = e.target.result;
             if (cursor) {
                 // Called for each matching record.
                 resolve(cursor.value.content);
-              } else {
+            } else {
                 // This null is very important, because we have a check for null 
                 // in the functions of community-toolbox.js
                 resolve(null);
-              }
+            }
         }
     })
 }
@@ -104,21 +112,21 @@ function deleteItemFromDb(query) {
     let index = store.index("keys");
 
     return new Promise((resolve, reject) => {
-    
+
         let request = index.openCursor(IDBKeyRange.only(query));
-    
-        request.onsuccess = function(e) {
+
+        request.onsuccess = function (e) {
             let cursor = e.target.result;
             if (cursor) {
                 // Called for each matching record.
                 store.delete(cursor.key);
 
                 // Wait for the database transaction to complete
-                tx.oncomplete = function() { 
+                tx.oncomplete = function () {
                     console.log("Entry deleted from store successfully!");
                     resolve(true);
                 }
-                tx.onerror = function(event) {
+                tx.onerror = function (event) {
                     console.log('error deleting content: ' + event.target);
                     reject(false);
                 }
