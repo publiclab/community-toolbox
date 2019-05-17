@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Tools to understand and welcome people into a contributor community",
   "main": "src/community-toolbox.js",
-  "scripts": {},
+  "scripts": {
+    "start": "http-server -c-1 -p 8000"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/publiclab/community-toolbox.git"
@@ -23,14 +25,15 @@
     "urlhash": "~0.1.1"
   },
   "devDependencies": {
-    "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
-    "moment": "~2.24.0",
     "browserify": "16.2.3",
+    "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "grunt": "^1.0.3",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-watch": "^1.1.0",
+    "http-server": "^0.11.1",
     "matchdep": "^2.0.0",
+    "moment": "~2.24.0",
     "tap-spec": "^5.0.0",
     "tape": ">=4.7.0",
     "tape-run": "^6.0.0"

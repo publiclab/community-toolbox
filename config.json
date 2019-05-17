@@ -1,0 +1,19 @@
+{
+    "org-heading-name": "Public Lab",
+    "org": "publiclab",
+    "default-repository": "plots2",
+    "URL": "https://code.publiclab.org",
+    "favicon-link": "https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png",
+    "forkMe-ribbon-link": "https://github.com/publiclab/community-toolbox",
+    "code-of-conduct-link": "https://publiclab.org/conduct",
+    "README-link": "https://github.com/publiclab/plots2/blob/master/README.md",
+    "official-chatroom-link": "https://publiclab.org/chat",
+    "gitter-chatroom-link": "https://gitter.im/publiclab/publiclab",
+    "issue-label-for-newcomer": "first-timers-only",
+    "help-wanted-issue-label": "help-wanted",
+    "support-issue-label": "support",
+    "newcomer-welcoming-guidelines-page-link": "https://publiclab.org/n/13667",
+    "other-ways-to-support-guidelines-link": "https://publiclab.org/n/13687",
+    "facebook-link": "https://www.facebook.com/PublicLab/",
+    "twitter-link": "https://twitter.com/PublicLab?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+}
