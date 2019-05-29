@@ -15,7 +15,7 @@
     <script src="node_modules/chart.js/dist/Chart.js"></script>
     <script src="node_modules/urlhash/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
-
+    <script src="examples/demo.js"></script>
   </head>
 
   <body>
@@ -169,105 +169,6 @@
     </div>
     </footer>
 
-    <script type="text/javascript">
-      /*Scroll to top when arrow up clicked BEGIN*/
-$(window).scroll(function() {
-    var height = $(window).scrollTop();
-    if (height > 100) {
-        $('#back2Top').fadeIn();
-    } else {
-        $('#back2Top').fadeOut();
-    }
-});
-$(document).ready(function() {
-    $("#back2Top").click(function(event) {
-        event.preventDefault();
-        $("html, body").animate({ scrollTop: 0 }, "slow");
-        return false;
-    });
-
-});
- /*Scroll to top when arrow up clicked END*/
-
-      var toolbox;
-
-      (function() {
-
-        var org = urlHash().getUrlHashParameter('o') || 'publiclab';
-        var repo = urlHash().getUrlHashParameter('r') || 'plots2';
-        var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
-        var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
-        var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
-
-        toolbox = CommunityToolbox(org, repo);
-
-        let d = document.getElementById('toggle-contributors');
-        let recency_label = document.getElementById('recency-label');
-        d.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (recencyLabel=="week") {
-            toolbox.getRecentCommits(org, repo, recencyLabel);
-            d.innerHTML = "Show monthly";
-            recency_label.innerHTML = "last week: ";
-            recencyLabel = "month";
-          }else if (recencyLabel=="month") {
-            toolbox.getRecentCommits(org, repo, recencyLabel);
-            d.innerHTML = "Show weekly";
-            recency_label.innerHTML = "last month: ";
-            recencyLabel = "week";
-          }
-        })
-
-	if (repo === 'all') {
-
-      	  toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
-                 .then(displayIssues('.first-timers-only'));
-
-          toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
-                 .then(displayIssues('.candidates'));
-
-          // compile and display all contributors for given org/repo:
-          setTimeout(()=> {
-            toolbox.getAllContributors(org);
-            // Makes the toggle contributors list button click
-            d.click();
-          },500)
-
-
-	} else {
-
-          toolbox.api.Issues
-                 .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
-                 .then(displayIssues('.first-timers-only'));
-
-          toolbox.api.Issues
-                 .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
-                 .then(displayIssues('.candidates'));
-
-          // compile and display all contributors for given org/repo:
-          setTimeout(()=> {
-            toolbox.showRepoContributors(org, repo);
-            // Makes the toggle contributors list button click
-            d.click();
-          },500);
-
-	}
-
-        function displayIssues(selector) {
-          return function displayIssues(issues) {
-            if (typeof issues === "string") issues = JSON.parse(issues).items;
-	          issues.forEach(function(issue) {
-              toolbox.ui.insertIssue(issue, selector);
-            });
-	        }
-        }
-
-      })();
-
-
-
-
-    </script>
     <a id="back2Top" title="Back to top" href="#">&#10148;</a>
   </body>
 
