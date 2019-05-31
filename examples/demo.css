@@ -77,5 +77,29 @@ h1, h2, .section h3 {
 }
 
 #connectwithusbody {
-    overflow: hidden;
+    margin: auto;
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-shrink: initial;
+    background-color: yellow;
+}
+
+.links {
+    width: 20%;
+    margin: 10px;
+    text-align: center;
+}
+
+@media only screen and (max-width: 569px) {
+    .links {
+        width: 25%;
+        margin: 10px 0;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .links {
+        width: 50%;
+    }
 }
