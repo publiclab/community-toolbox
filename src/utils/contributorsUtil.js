@@ -4,7 +4,7 @@ var api = new SimpleApi()
 var parse = require('parse-link-header')
 var model_utils = require('../models/utils')
 var fetchRepoUtil = require('./fetchRepoUtil')
-var showRecentContribsUtil = require('../utils/showRecentContribsUtil')
+var recentContribsUtil = require('../utils/recentContribsUtil')
 
 // This is a utility function which decides whether to make a single request for fetching
 // each repository's contributors or multiple ones.
@@ -150,7 +150,7 @@ function storeAllRecentContribsInitially(org, repo) {
         }
         else {
           if(repos!=null || repos!=undefined) {
-            return showRecentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
+            return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
                     .then((result) => {
                       model_utils.setItem('recent-present', 'true');
                         return result;
@@ -158,7 +158,7 @@ function storeAllRecentContribsInitially(org, repo) {
           } else {
             fetchRepoUtil.getAllRepos(org).then((repos) => {
               if(repos!=null || repos!=undefined) {
-                return showRecentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
+                return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
                         .then((result) => {
                           model_utils.setItem('recent-present', 'true');
                           return result;

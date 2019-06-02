@@ -12,7 +12,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var contributorsUI = require('../UI/contributorsUI')
   var contributorsUtil = require('../utils/contributorsUtil')
   var recentContributorsUI = require('../UI/recentContributorsUI')
-  var showRecentContribsUtil = require('../utils/showRecentContribsUtil')
+  var recentContribsUtil = require('../utils/recentContribsUtil')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -165,14 +165,14 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   function showRecentContributors(org, repo, recencyLabel) {
     return contributorsUtil.storeAllRecentContribsInitially(org, repo).then((result)=>{
       if(recencyLabel==='month') {
-        return showRecentContribsUtil.getCommitsLastMonth(org, repo)
+        return recentContribsUtil.getCommitsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(commits);
                 return;
               });
       } else {
-        return showRecentContribsUtil.getCommitsLastWeek(org, repo)
+        return recentContribsUtil.getCommitsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);

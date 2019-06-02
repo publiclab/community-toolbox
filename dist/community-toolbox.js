@@ -81967,7 +81967,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var contributorsUI = require('../UI/contributorsUI')
   var contributorsUtil = require('../utils/contributorsUtil')
   var recentContributorsUI = require('../UI/recentContributorsUI')
-  var showRecentContribsUtil = require('../utils/showRecentContribsUtil')
+  var recentContribsUtil = require('../utils/recentContribsUtil')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82120,14 +82120,14 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   function showRecentContributors(org, repo, recencyLabel) {
     return contributorsUtil.storeAllRecentContribsInitially(org, repo).then((result)=>{
       if(recencyLabel==='month') {
-        return showRecentContribsUtil.getCommitsLastMonth(org, repo)
+        return recentContribsUtil.getCommitsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(commits);
                 return;
               });
       } else {
-        return showRecentContribsUtil.getCommitsLastWeek(org, repo)
+        return recentContribsUtil.getCommitsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);
@@ -82175,14 +82175,14 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/contributorsUtil":407,"../utils/fetchRepoUtil":408,"../utils/showRecentContribsUtil":409,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/contributorsUtil":407,"../utils/fetchRepoUtil":408,"../utils/recentContribsUtil":409,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
 
 var SimpleApi = require("github-api-simple")
 var api = new SimpleApi()
 var parse = require('parse-link-header')
 var model_utils = require('../models/utils')
 var fetchRepoUtil = require('./fetchRepoUtil')
-var showRecentContribsUtil = require('../utils/showRecentContribsUtil')
+var recentContribsUtil = require('../utils/recentContribsUtil')
 
 // This is a utility function which decides whether to make a single request for fetching
 // each repository's contributors or multiple ones.
@@ -82328,7 +82328,7 @@ function storeAllRecentContribsInitially(org, repo) {
         }
         else {
           if(repos!=null || repos!=undefined) {
-            return showRecentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
+            return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
                     .then((result) => {
                       model_utils.setItem('recent-present', 'true');
                         return result;
@@ -82336,7 +82336,7 @@ function storeAllRecentContribsInitially(org, repo) {
           } else {
             fetchRepoUtil.getAllRepos(org).then((repos) => {
               if(repos!=null || repos!=undefined) {
-                return showRecentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
+                return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
                         .then((result) => {
                           model_utils.setItem('recent-present', 'true');
                           return result;
@@ -82362,7 +82362,7 @@ module.exports = {
 }
 
 
-},{"../models/utils":404,"../utils/showRecentContribsUtil":409,"./fetchRepoUtil":408,"github-api-simple":151,"parse-link-header":278}],408:[function(require,module,exports){
+},{"../models/utils":404,"../utils/recentContribsUtil":409,"./fetchRepoUtil":408,"github-api-simple":151,"parse-link-header":278}],408:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 // Fetches all the publiclab's repositories
@@ -82411,7 +82411,7 @@ function fetchRecentMonthCommits(org, repo, queryTime) {
             .then(function gotResponseJson(response) {
                 if(response!=null) {
                     response.map(function mappingToCommits(commit, i) {
-                        if(commit.status!=null) {
+                        if(commit.author!=null) {
                             if(!commitersSet.has(commit.author.login)) {
                                 commitersSet.add(commit.author.login);
                                 result.push(commit);

@@ -14,7 +14,7 @@ function fetchRecentMonthCommits(org, repo, queryTime) {
             .then(function gotResponseJson(response) {
                 if(response!=null) {
                     response.map(function mappingToCommits(commit, i) {
-                        if(commit.status!=null) {
+                        if(commit.author!=null) {
                             if(!commitersSet.has(commit.author.login)) {
                                 commitersSet.add(commit.author.login);
                                 result.push(commit);
