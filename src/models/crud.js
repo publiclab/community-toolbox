@@ -1,57 +1,15 @@
-
 let db;
+let init = require('../models/initialize')
 
-function initialize() {
-    let dbReq = indexedDB.open('publiclabDB');
-
-    // Fires when upgrade needed
-    dbReq.onupgradeneeded = function(event) {
-        // Set the db variable to our database so we can use it
-        db = event.target.result;
-
-        // Create an object store named toolbox, or retrieve it if it already exists.
-        // Object stores in databases are where data are stored.
-        let toolbox;
-        if (!db.objectStoreNames.contains('toolbox')) {
-            toolbox = db.createObjectStore('toolbox', {autoIncrement: true, keyPath: "keys"});
-        } else {
-            toolbox = db.transaction("toolbox", "readwrite").objectStore("toolbox");
-        }
-
-        // If there isn't already a KEY index, make one so we can query toolbox
-        // by their KEY
-        if (!toolbox.indexNames.contains('keys')) {
-            toolbox.createIndex('keys', 'keys', { unique: true });
-        }else {
-            console.log("KEY index is already created");
-        }
-
-        // If there isn't already a CONTENT index, make one so we can query toolbox
-        // by their CONTENT
-        if (!toolbox.indexNames.contains('content')) {
-            toolbox.createIndex('content', 'content', { unique: false });
-        } else {
-            console.log("content index is already created");
-        }
-    }
-
-    // Fires once the database is opened (and onupgradeneeded completes, if
-    // onupgradeneeded was called)
-    dbReq.onsuccess = function(event) {
-        // Set the db variable to our database so we can use it
-        db = event.target.result;
-    }
-    
-    // Fires when we can't open the database
-    dbReq.onerror = function(event) {
-        console.log('error opening database');
-    }
+function populateDb() {
+    return init.dbInit().then((response) => {
+        db = response;
+        return;
+    });
 }
 
-// We make sure that initialize function gets fired once the DOM content is loaded
-window.addEventListener('DOMContentLoaded', initialize());
 
-
+// Stores items to the database
 function saveContentToDb(queryKey, queryContent) {
     // Start a database transaction and get the toolbox object store
     let tx = db.transaction(["toolbox"], 'readwrite');
@@ -73,6 +31,7 @@ function saveContentToDb(queryKey, queryContent) {
 }
 
 
+// Fetches items from the database
 function getContentFromDb(query) {
     let tx = db.transaction(["toolbox"], 'readonly');
     let store = tx.objectStore("toolbox");
@@ -97,7 +56,7 @@ function getContentFromDb(query) {
 }
 
 
-// This is not implemented fully yet...(this is WIP)
+// Deletes items from the database
 function deleteItemFromDb(query) {
     let tx = db.transaction(["toolbox"], 'readwrite');
     let store = tx.objectStore("toolbox");
@@ -138,8 +97,7 @@ function deleteItemFromDb(query) {
 
 
 // EXPORTS
-module.exports = {
-    saveContentToDb: saveContentToDb,
-    getContentFromDb: getContentFromDb,
-    deleteItemFromDb: deleteItemFromDb,
-}
+module.exports.saveContentToDb = saveContentToDb;
+module.exports.getContentFromDb = getContentFromDb;
+module.exports.deleteItemFromDb = deleteItemFromDb;
+module.exports.populateDb = populateDb;

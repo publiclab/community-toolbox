@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "/home/stephqian/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "/home/stephqian/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27584,7 +27584,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "/home/stephqian/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77485,7 +77485,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "/home/stephqian/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -77510,7 +77510,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "/home/stephqian/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -81613,138 +81613,108 @@ function extend() {
 }
 
 },{}],399:[function(require,module,exports){
-var moment = require('moment');
-
-function generateIssueHtml(title, body, githubUrl, repo) {
-  var repoName = githubUrl.split('/')[4],
-      repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
-      html = '<div class="panel panel-default">\
-    <div class="panel-heading">\
-      <h3 class="panel-title" style="float:right;font-size:12px;"><b><a href="' + repoUrl + '">' + repoName + '</a></b></h3>\
-      <h3 class="panel-title"><b><a href="' + githubUrl + '">' + title + '</a></b></h3>\
-    </div>\
-    <div class="panel-body">\
-      ' + body + '\
-    </div>\
-  </div>';
-  return html;
-}
-
-function insertIssue(issue, el) {
-  var body = "";
-  body += "<div style='float:right;' class='labels'>"
-  issue.labels.forEach(function(label) {
-    body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
-  });
-  body += "</div>";
-  body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
-  body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
-  body += " <i class='fa fa-comment-o'></i> " + issue.comments;
-  $(el).append(generateIssueHtml(issue.title, body, issue.html_url, issue));
-}
-
-//Check if function executed so we can add a comma
 var insertContributorsExec = false;
-var insertRecentContributorsExec = false;
+
 
 function insertContributors(AllContributors){
-  // This removes the spinner icon as soon as contributors list is loaded
-  document.getElementById("spinner-icon").style.display = "none";
+    // This removes the spinner icon as soon as contributors list is loaded
+    document.getElementById("spinner-icon").style.display = "none";
+  
+    let totalContributors = 0;
+    var usernames = AllContributors.map(function getContributorUsername(c) {
+      return `@${c.login}`;
+    });
+    var avatars = AllContributors.map(function getContributorAvatarURL(c) {
+      return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
+    });
+    totalContributors += AllContributors.length;
+    if(insertContributorsExec) $('.contributors > .usernames').append(', ');
+    $('.contributors-head').html('Contributors ('+totalContributors+'+)');
+    $('.contributors > .usernames').append(usernames.join(', '));
+    $('.contributors > .avatars').append(avatars.join(''));
+    insertContributorsExec=true;
+  }
 
-  let totalContributors = 0;
-  var usernames = AllContributors.map(function getContributorUsername(c) {
-    return `@${c.login}`;
-  });
-  var avatars = AllContributors.map(function getContributorAvatarURL(c) {
-    return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
-  });
-  totalContributors += AllContributors.length;
-  if(insertContributorsExec) $('.contributors > .usernames').append(', ');
-  $('.contributors-head').html('Contributors ('+totalContributors+'+)');
-  $('.contributors > .usernames').append(usernames.join(', '));
-  $('.contributors > .avatars').append(avatars.join(''));
-  insertContributorsExec=true;
-}
-
-function insertRecentContributors(AllContributors){
-  let recentContributors = 0;
-  let usernames = AllContributors.map((commit, i) => {
-    return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
-  })
-  let avatars = AllContributors.map((commit, i) => {
-    return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
-  })
-  recentContributors += AllContributors.length;
-
-  if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
-  $('.recent-contributors-head').html('Recent Contributors ('+recentContributors+'+)');
-  $('.recent-contributors > .usernames').html(usernames.join(', '));
-  $('.recent-contributors > .avatars').html(avatars.join(''));
-  insertRecentContributorsExec=true;
-}
 
 module.exports = {
-  generateIssueHtml: generateIssueHtml,
-  insertIssue: insertIssue,
-  insertContributors: insertContributors,
-  insertRecentContributors: insertRecentContributors,
+    insertContributors: insertContributors,
 };
+},{}],400:[function(require,module,exports){
+var moment = require('moment');
 
-},{"moment":271}],400:[function(require,module,exports){
 
-let db;
 
-function initialize() {
-    let dbReq = indexedDB.open('publiclabDB');
-
-    // Fires when upgrade needed
-    dbReq.onupgradeneeded = function(event) {
-        // Set the db variable to our database so we can use it
-        db = event.target.result;
-
-        // Create an object store named toolbox, or retrieve it if it already exists.
-        // Object stores in databases are where data are stored.
-        let toolbox;
-        if (!db.objectStoreNames.contains('toolbox')) {
-            toolbox = db.createObjectStore('toolbox', {autoIncrement: true, keyPath: "keys"});
-        } else {
-            toolbox = db.transaction("toolbox", "readwrite").objectStore("toolbox");
-        }
-
-        // If there isn't already a KEY index, make one so we can query toolbox
-        // by their KEY
-        if (!toolbox.indexNames.contains('keys')) {
-            toolbox.createIndex('keys', 'keys', { unique: true });
-        }else {
-            console.log("KEY index is already created");
-        }
-
-        // If there isn't already a CONTENT index, make one so we can query toolbox
-        // by their CONTENT
-        if (!toolbox.indexNames.contains('content')) {
-            toolbox.createIndex('content', 'content', { unique: false });
-        } else {
-            console.log("content index is already created");
-        }
-    }
-
-    // Fires once the database is opened (and onupgradeneeded completes, if
-    // onupgradeneeded was called)
-    dbReq.onsuccess = function(event) {
-        // Set the db variable to our database so we can use it
-        db = event.target.result;
-    }
-    
-    // Fires when we can't open the database
-    dbReq.onerror = function(event) {
-        console.log('error opening database');
-    }
+function generateIssueHtml(title, body, githubUrl, repo) {
+    var repoName = githubUrl.split('/')[4],
+        repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
+        html = '<div class="panel panel-default">\
+      <div class="panel-heading">\
+        <h3 class="panel-title" style="float:right;font-size:12px;"><b><a href="' + repoUrl + '">' + repoName + '</a></b></h3>\
+        <h3 class="panel-title"><b><a href="' + githubUrl + '">' + title + '</a></b></h3>\
+      </div>\
+      <div class="panel-body">\
+        ' + body + '\
+      </div>\
+    </div>';
+    return html;
+  }
+  
+function insertIssue(issue, el) {
+    var body = "";
+    body += "<div style='float:right;' class='labels'>"
+    issue.labels.forEach(function(label) {
+      body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
+    });
+    body += "</div>";
+    body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
+    body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
+    body += " <i class='fa fa-comment-o'></i> " + issue.comments;
+    $(el).append(generateIssueHtml(issue.title, body, issue.html_url, issue));
 }
 
-// We make sure that initialize function gets fired once the DOM content is loaded
-window.addEventListener('DOMContentLoaded', initialize());
+
+module.exports = {
+    generateIssueHtml: generateIssueHtml,
+    insertIssue: insertIssue,
+};
+},{"moment":271}],401:[function(require,module,exports){
+var insertRecentContributorsExec = false;
 
 
+function insertRecentContributors(AllContributors){
+    let recentContributors = 0;
+    let usernames = AllContributors.map((commit, i) => {
+      return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
+    })
+    let avatars = AllContributors.map((commit, i) => {
+      return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
+    })
+    recentContributors += AllContributors.length;
+  
+    if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
+    $('.recent-contributors-head').html('Recent Contributors ('+recentContributors+'+)');
+    $('.recent-contributors > .usernames').html(usernames.join(', '));
+    $('.recent-contributors > .avatars').html(avatars.join(''));
+    insertRecentContributorsExec=true;
+  }
+  
+
+module.exports = {
+  insertRecentContributors: insertRecentContributors,
+};
+},{}],402:[function(require,module,exports){
+let db;
+let init = require('../models/initialize')
+
+function populateDb() {
+    return init.dbInit().then((response) => {
+        db = response;
+        return;
+    });
+}
+
+
+// Stores items to the database
 function saveContentToDb(queryKey, queryContent) {
     // Start a database transaction and get the toolbox object store
     let tx = db.transaction(["toolbox"], 'readwrite');
@@ -81766,6 +81736,7 @@ function saveContentToDb(queryKey, queryContent) {
 }
 
 
+// Fetches items from the database
 function getContentFromDb(query) {
     let tx = db.transaction(["toolbox"], 'readonly');
     let store = tx.objectStore("toolbox");
@@ -81790,7 +81761,7 @@ function getContentFromDb(query) {
 }
 
 
-// This is not implemented fully yet...(this is WIP)
+// Deletes items from the database
 function deleteItemFromDb(query) {
     let tx = db.transaction(["toolbox"], 'readwrite');
     let store = tx.objectStore("toolbox");
@@ -81831,13 +81802,76 @@ function deleteItemFromDb(query) {
 
 
 // EXPORTS
-module.exports = {
-    saveContentToDb: saveContentToDb,
-    getContentFromDb: getContentFromDb,
-    deleteItemFromDb: deleteItemFromDb,
+module.exports.saveContentToDb = saveContentToDb;
+module.exports.getContentFromDb = getContentFromDb;
+module.exports.deleteItemFromDb = deleteItemFromDb;
+module.exports.populateDb = populateDb;
+
+},{"../models/initialize":403}],403:[function(require,module,exports){
+// This function is responsible for setting up the database
+function dbInit() {
+    let db;
+    let dbReq = indexedDB.open('publiclabDB');
+    return new Promise((resolve, reject) => {
+        // Fires when upgrade needed
+        dbReq.onupgradeneeded = function(event) {
+            // Set the db variable to our database so we can use it
+            db = event.target.result;
+    
+            // Create an object store named toolbox, or retrieve it if it already exists.
+            // Object stores in databases are where data are stored.
+            let toolbox;
+            if (!db.objectStoreNames.contains('toolbox')) {
+                toolbox = db.createObjectStore('toolbox', {autoIncrement: true, keyPath: "keys"});
+            } else {
+                toolbox = db.transaction("toolbox", "readwrite").objectStore("toolbox");
+            }
+    
+            // If there isn't already a KEY index, make one so we can query toolbox
+            // by their KEY
+            if (!toolbox.indexNames.contains('keys')) {
+                toolbox.createIndex('keys', 'keys', { unique: true });
+            }else {
+                console.log("KEY index is already created");
+            }
+    
+            // If there isn't already a CONTENT index, make one so we can query toolbox
+            // by their CONTENT
+            if (!toolbox.indexNames.contains('content')) {
+                toolbox.createIndex('content', 'content', { unique: false });
+            } else {
+                console.log("content index is already created");
+            }
+    
+        }
+    
+        // Fires once the database is opened (and onupgradeneeded completes, if
+        // onupgradeneeded was called)
+        dbReq.onsuccess = function(event) {
+            // Set the db variable to our database so we can use it
+            db = event.target.result;
+            resolve(db);
+        }
+        
+        // Fires when we can't open the database
+        dbReq.onerror = function(event) {
+            console.log('error opening database');
+            resolve(null);
+        }
+
+    })
+
+
 }
-},{}],401:[function(require,module,exports){
-var model = require('./index');
+
+
+module.exports = {
+    dbInit: dbInit,
+}
+
+
+},{}],404:[function(require,module,exports){
+var model = require('./crud');
 
 
 function setItem(queryKey, queryContent) {
@@ -81861,12 +81895,11 @@ function deleteItem(query) {
 
 
 //  EXPORTS
-module.exports = {
-    setItem: setItem,
-    getItem: getItem,
-    deleteItem: deleteItem,
-}
-},{"./index":400}],402:[function(require,module,exports){
+module.exports.setItem = setItem;
+module.exports.getItem = getItem;
+module.exports.deleteItem = deleteItem;
+
+},{"./crud":402}],405:[function(require,module,exports){
 // view-source:http://www.chartjs.org/samples/latest/charts/bar/vertical.html
 function generateChart(args) {
 
@@ -81919,22 +81952,28 @@ function generateChart(args) {
 
 module.exports = generateChart;
 
-},{}],403:[function(require,module,exports){
+},{}],406:[function(require,module,exports){
+
 CommunityToolbox = function CommunityToolbox(org, repo) {
-
-  var SimpleApi = require("github-api-simple")
+  
+  
+  var SimpleApi = require('github-api-simple')
   var api = new SimpleApi();
-  var ui = require('../UI/ui');
-  var getAllContribsUtility = require('../utils/getAllContribsUtility');
-  var repoContributorsUtility = require('../utils/repoContributorsUtility');
-  var getRecentCommitsUtility = require('../utils/getRecentCommitsUtility');
+  
+  var crud = require('../models/crud')
+  var issuesUI = require('../UI/issuesUI')
+  var model_utils = require('../models/utils')
+  var fetchReposUtil = require('../utils/fetchRepoUtil')
+  var contributorsUI = require('../UI/contributorsUI')
+  var contributorsUtil = require('../utils/contributorsUtil')
+  var recentContributorsUI = require('../UI/recentContributorsUI')
+  var recentContribsUtil = require('../utils/recentContribsUtil')
 
-  var model_utils = require('../models/utils');
-
-  const requestP = require('request-promise');
-  var parse = require('parse-link-header');
-
-  var options = {
+  const requestP = require('request-promise')
+  var parse = require('parse-link-header')
+  var chart = require('./chart');
+  
+  var options = { 
     'qs': {
       'sort': 'pushed',
       'direction': 'desc', // optional, GitHub API uses 'desc' by default for 'pushed'
@@ -81966,60 +82005,33 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        .then(callback);
   }
 
-  // This runs at the very start of page load and stores all the repos and all the
-  // contributors in the database
-  function storeAllContributorsInDatabase(org) {
-    let AllContributors = [];
-    let promises = [];
-    var contributorSet = new Set([]);
-    return new Promise((resolve, reject) => {
-      model_utils.getItem('allContributors').then((allContributors) => {
-        // If all contributors list is not in the database, it makes a fresh call to Github API
-        if(allContributors == null || allContributors == undefined || allContributors.length == 0) {
-          getAllContribsUtility.getAllRepos(org)
-          .then(function gotRepos(res) {
-            let splicedRepos = res.splice(0,20);
-            splicedRepos.map(function mappingToEachRepo(Repo, i) {
-              let promise =  repoContributorsUtility.fetchRepoContributorsUtil(org, Repo)
-                            .then(function gotRepoContributorsInStorage(contributors) {
-                              if(contributors!=undefined && contributors.length>0) {
-                                contributors.map((contributor, i)=> {
-                                  if(!contributorSet.has(contributor.login)) {
-                                    contributorSet.add(contributor.login);
-                                    AllContributors.push(contributor);
-                                  }
-                                })
-                              }
-                            });
-              promises.push(promise);
-            });
-            return Promise.all(promises)
-                    .then(()=> {
-                        // Storing array containing all the contributors list across 20 most active
-                        // repos to database
-                        model_utils.setItem('allContributors', AllContributors);
-                        // Saves current time in epoch, used for flushing out the stored data
-                        // after 24 hours
-                        let currentTime = (new Date).getTime();
-                        model_utils.setItem('allContributorsExpiry', currentTime);
-                        resolve(AllContributors);
-                    })
+
+  function initialize(org, repo) {
+      return new Promise((resolve, reject) => {
+        return crud.populateDb()
+          .then((res) => {
+            return true;
           })
-        }
-        // If all contributors list is in the database, it simply returns that as a resolved promise 
-        else {
-          resolve(allContributors);
-          console.log("allContributors already in database...");
-        }
-      })
-    });
-  }
+          .then((dummy) => {
+            return model_utils.getItem('repos').then((response) => {
+              if(response==null || response==undefined) {
+                // Fetches and stores the list of repositories when the page loads
+                return fetchReposUtil.getAllRepos(org)
+                  .then((resp) => {
+                      resolve(true);
+                  });
+              }
+              resolve(true);
+            });
+          });
+      });
+    }
 
 
   // This function is responsible for showing contributors
   // on a multi-repository view
-  function getAllContributors(org) {
-    return storeAllContributorsInDatabase(org).then((allContributors) => {
+  function showAllContributors(org) {
+    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
         // Flushes contributors list from the database after every single day
@@ -82039,15 +82051,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
             if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
   
-              storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
+                contributorsUtil.storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
                 // Provides fetched contributors list to UI function for rendering it
                 // to the user
-                ui.insertContributors(AllContributors);
+                contributorsUI.insertContributors(AllContributors);
               })
             } 
             // If stored data is not null and undefined, process it
             else {
-              ui.insertContributors(AllContributors);
+              contributorsUI.insertContributors(AllContributors);
             }
           })
         });
@@ -82063,7 +82075,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
-    return storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
         // Flushes repoContributors from the database after every single day
@@ -82082,15 +82094,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           model_utils.getItem(repo).then((repoContributors) => {
             // If we don't have repoContributors in the database, we fetch them from Github
             if (repoContributors == null || repoContributors == undefined) {
-              repoContributorsUtility.fetchRepoContributorsUtil(org, repo)
+              contributorsUtil.fetchRepoContributorsUtil(org, repo)
               .then(function gotRepoContributorsInStorage (contributors) {
-                ui.insertContributors(contributors);
+                contributorsUI.insertContributors(contributors);
                 return;
               })
             }
             // If we have repoContributors in the database, we save a network call :)
             else {
-              ui.insertContributors(repoContributors);
+              contributorsUI.insertContributors(repoContributors);
               return;
             }
           })
@@ -82103,59 +82115,22 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
-  // Stores all the Recent Contributors in the database
-  function storeAllRecentContribsInitially(org, repo) {
-    // We make queryTime 1 month behind the current time, to pass it as query in the request
-    let d = (new Date);
-    d.setDate(d.getDate() - 30);
-    let queryTime = d.toISOString();
-    model_utils.getItem('repos').then((repos) => {
-      if(repos!=null && repos!=undefined) {
-        return model_utils.getItem('recent-present').then((result)=> {
-          if(result!=null && result!=undefined) {
-            return result;
-          }
-          else {
-            if(repos!=null || repos!=undefined) {
-              return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
-                .then((result) => {
-                model_utils.setItem('recent-present', 'true');
-                return result;
-              })
-            }
-            else {
-              getAllContribsUtility.getAllRepos(org).then((repos) => {
-                if(repos!=null || repos!=undefined || repos.length>0) {
-                  return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
-                    .then((result) => {
-                    model_utils.setItem('recent-present', 'true');
-                    return result;
-                  })
-                }
-              });
-            }
-          }
-        });
-      }
-    })
-  }
-
 
   // Function for fetching and showing recent contributors
-  function getRecentCommits(org, repo, recencyLabel) {
-    return storeAllRecentContribsInitially(org, repo).then((result)=>{
+  function showRecentContributors(org, repo, recencyLabel) {
+    return contributorsUtil.storeAllRecentContribsInitially(org, repo).then((result)=>{
       if(recencyLabel==='month') {
-        return getRecentCommitsUtility.getCommitsLastMonth(org, repo)
+        return recentContribsUtil.getCommitsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
-                ui.insertRecentContributors(commits);
+                recentContributorsUI.insertRecentContributors(commits);
                 return;
               });
       } else {
-        return getRecentCommitsUtility.getCommitsLastWeek(org, repo)
+        return recentContribsUtil.getCommitsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
-                ui.insertRecentContributors(weekly_contribs);
+                recentContributorsUI.insertRecentContributors(weekly_contribs);
                 return;
               });
       }
@@ -82167,273 +82142,50 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
            .getIssuesForRepo(org, repo, { qs: { labels: label } })
            .then(function onGotIssues(issues) {
              issues.forEach(function(issue) {
-               toolbox.ui.insertIssue(issue, selector);
+               toolbox.issuesUI.insertIssue(issue, selector);
              });
            });
   }
 
-  var chart = require('./chart');
+
+
+
+
 
   // externally available API
   return {
     api:     api,
-    ui:      ui,
+    issuesUI:   issuesUI,
+    contributorsUI: contributorsUI,
+    recentContributorsUI: recentContributorsUI,
     parse:   parse,
     chart:   chart,
     options: options,
     getIssuesForRepo: getIssuesForRepo,
     getIssuesForOrg: getIssuesForOrg,
-    getRecentCommits: getRecentCommits,
-    getCommitsForRepo: getCommitsForRepo,
-    storeAllContributorsInDatabase: storeAllContributorsInDatabase,
-    getAllContributors: getAllContributors,
+    showRecentContributors: showRecentContributors,
+    getCommitsForRepo: getCommitsForRepo, // storeAllContributorsInDatabase: storeAllContributorsInDatabase,
+    showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
-    displayIssuesForRepo: displayIssuesForRepo
+    displayIssuesForRepo: displayIssuesForRepo,
+    initialize: initialize
   }
 
 }
 
 module.exports = CommunityToolbox;
 
-},{"../UI/ui":399,"../models/utils":401,"../utils/getAllContribsUtility":404,"../utils/getRecentCommitsUtility":405,"../utils/repoContributorsUtility":406,"./chart":402,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],404:[function(require,module,exports){
-// Fetches all the publiclab's repositories
-function getAllRepos(org) {
+},{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/contributorsUtil":407,"../utils/fetchRepoUtil":408,"../utils/recentContribsUtil":409,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
 
-  // This array is used to store all the repositories fetched from Github
-  let repos = [];
-
-  return fetch(`https://api.github.com/users/${org}/repos?sort=pushed&direction=desc&per_page=100`)
-          .then(function gotRepos(data) {
-            if(data.status=='200') {
-              return data.json();
-            }
-          })
-          .then(function mapToEachRepo(results) {
-            results.map(function mappingToEachRepo(repo, index) {
-              return repos[index] = repo.name;
-            });
-            // Storing the repos in localStorage
-            model_utils.setItem('repos', repos);
-            return(repos);
-          });
-  }
-
-
-// EXPORTS
-module.exports = {
-    getAllRepos: getAllRepos,
-}
-
-},{}],405:[function(require,module,exports){
-var getAllContribsUtility = require('../utils/getAllContribsUtility');
-var model_utils = require('../models/utils');
-
-// Fetches recent month commits for a particular repository 
-function fetchRecentMonthCommits(org, repo, queryTime) {
-    let commitersSet = new Set([]);
-    let result=[];
-    return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
-            .then(function gotResponse(response) {
-                if(response.status=="200") {
-                    return response.json();
-                }
-            })
-            .then(function gotResponseJson(response) {
-                if(response!=null) {
-                    response.map(function mappingToCommits(commit, i) {
-                        if(commit!=null) {
-                            if(!commitersSet.has(commit.author.login)) {
-                                commitersSet.add(commit.author.login);
-                                result.push(commit);
-                            }
-                        }
-                        return true;
-                    });
-
-                    // Save each repo's commits data to the database
-                    let currTime = (new Date).getTime();
-                    console.log(`in fetchRecentMonthCommits, storing recent-${repo}-month-commits`);
-                    model_utils.setItem(`recent-${repo}-month-commits`, result);
-                    model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
-                }
-                return result;
-            });
-}
-
-// Fetches recent month commits for top 10 repositories
-function fetchAllRecentMonthCommits(org, repos, queryTime) {
-    let results = [];
-    let commitersSet = new Set([]);
-    let timeToday = (new Date).getTime();
-
-    // We take only 10 repos just for API quota reasons
-    let splicedRepos = repos.splice(0,10);
-
-    let promises = splicedRepos.map(function mapToEachRepo(repo, i) {
-        return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
-                .then(function gotResponse(response) {
-                    if(response.status=="200") {
-                        return response.json();
-                    }
-                })
-                .then(function gotResponseJson(response) {
-                    if(response!=null) {
-                        let partialResult = [];
-                        response.map(function mappingToCommits(commit, i) {
-                            if(commit!=null) {
-                                if(!commitersSet.has(commit.author.login)) {
-                                    commitersSet.add(commit.author.login);
-                                    partialResult.push(commit);
-                                    results.push(commit);
-                                }
-                            }
-                            return true;
-                        });
-                        // Save each repo's commits data to the database
-                        let currTime = (new Date).getTime();
-                        model_utils.setItem(`recent-${repo}-month-commits`, partialResult);
-                        model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
-                        
-                        // Push every repo's contribs to results array
-                        // results.push(partialResult);
-                    }
-                    return true;
-                });
-        });
-
-    return Promise.all(promises)
-           .then(function promisesResolved() {
-                // Store recentMonthCommits and recentMonthCommitsExpiry in the database
-                console.log(`in fetchALLRecentMonthCommits, storing recent-ALL-month-commits`);
-                model_utils.setItem('recent-all-month-commits', results);
-                model_utils.setItem('recent-all-month-expiry', timeToday);
-                return results;
-            });
-}
-
-
-function getCommitsLastWeek(org, repo) {
-    let contribs = [];
-
-    return model_utils.getItem(`recent-${repo}-week-expiry`)
-            .then((recentCommitsWeekExpiry) => {
-                let timeToday = (new Date).getTime();
-                // If recent month's commits expiry time is 1 day behind the current time, flush them out.
-                if(recentCommitsWeekExpiry!=null && recentCommitsWeekExpiry!=undefined && ((timeToday-recentCommitsWeekExpiry)/1000)>=86400) {
-                    console.log("deleting");
-                    return Promise.all([model_utils.deleteItem(`recent-${repo}-week-expiry`), model_utils.deleteItem(`recent-${repo}-week-commits`)])
-                        .then(()=> {
-                            return true;
-                        })
-                }
-            })
-            .then(() => {
-                return model_utils.getItem(`recent-${repo}-week-commits`).then((result) => {
-                    if(result!=null && result!=undefined) {
-                        return result;
-                    }
-                    else {
-                        return getCommitsLastMonth(org, repo)
-                                .then((commits_last_month) => {
-                                    commits_last_month.map((commit_last_month, index) => {
-                                        let commit_date = commit_last_month['commit']['committer']['date'];
-                                        let check = within_this_week(commit_date);
-                                        if(check) {
-                                            contribs.push(commit_last_month);
-                                        }
-                                    });
-                                    // Store recentWeekCommits and recentWeekCommitsExpiry in the database
-                                    let currTime = (new Date).getTime();
-                                    model_utils.setItem(`recent-${repo}-week-commits`, contribs);
-                                    model_utils.setItem(`recent-${repo}-week-expiry`, currTime);
-                                    return contribs;
-                                });
-                    }
-                });
-            });
-}
-
-
-
-// Utility function that checks if a given date is behind the current date
-// by 7 or less
-function within_this_week(date) {
-    let current = (new Date).getTime();
-    let past_date = (new Date(`${date}`)).getTime();
-    let measure = Math.ceil(Math.abs(current - past_date) / (1000*3600*24));
-    if(measure<=7) {
-        return true;
-    }
-    return false;
-}
-
-// Fetches recent month's commits for a particular repo or all of the repos (10 repos)
-function getCommitsLastMonth(org, repo) {
-    model_utils.getItem('repos').then((repos) => {
-        if(repos!=null && repos!=undefined) {
-            return model_utils.getItem(`recent-${repo}-month-expiry`)
-                .then((recentCommitsMonthExpiry) => {
-                let timeToday = (new Date).getTime();
-                // If recentCommits expiry time is 1 day behind the current time, flush them out.
-                if(recentCommitsMonthExpiry!=null && recentCommitsMonthExpiry!=undefined && ((timeToday-recentCommitsMonthExpiry)/1000)>=86400) {
-                    console.log("Deleting month contribs");
-                    return Promise.all([model_utils.deleteItem(`recent-${repo}-month-commits`), model_utils.deleteItem(`recent-${repo}-month-expiry`)])
-                        .then(() => {
-                        return true;
-                    })
-                }
-                return true;
-            })
-                .then((boolean) => {
-                return model_utils.getItem(`recent-${repo}-month-commits`).then((result) => {
-                    if(result!=null && result!=undefined) {
-                        return result;
-                    }
-                    else {
-                        // We make queryTime 1 month behind the current time, to pass it as query in the request
-                        let d = (new Date);
-                        d.setDate(d.getDate() - 30);
-                        let queryTime = d.toISOString();
-                        if(repo==='all') {
-                            return fetchAllRecentMonthCommits(org, repos, queryTime)
-                                .then(function gotRecentCommitsInStorage(month_commits) {
-                                console.log("got all monthly contribs from fetchAllRecentMonthCommits");
-                                return month_commits;
-                            });
-                        }
-                        else {
-                            return fetchRecentMonthCommits(org, repo, queryTime)
-                                .then(function gotRecentCommitsInStorage(month_commits) {
-                                console.log("got repo's month commits from fetch");
-                                return month_commits;
-                            })
-                        }
-                    }
-                })
-            })
-        }
-    })
-}
-
-
-
-// EXPORTS
-module.exports = {
-    fetchAllRecentMonthCommits: fetchAllRecentMonthCommits,
-    fetchRecentMonthCommits: fetchRecentMonthCommits,
-    getCommitsLastMonth: getCommitsLastMonth,
-    getCommitsLastWeek: getCommitsLastWeek,
-    within_this_week: within_this_week
-}
-
-},{"../models/utils":401,"../utils/getAllContribsUtility":404}],406:[function(require,module,exports){
 var SimpleApi = require("github-api-simple")
-var api = new SimpleApi();
-var parse = require('parse-link-header');
-var model_utils = require('../models/utils');
+var api = new SimpleApi()
+var parse = require('parse-link-header')
+var model_utils = require('../models/utils')
+var fetchRepoUtil = require('./fetchRepoUtil')
+var recentContribsUtil = require('../utils/recentContribsUtil')
 
 // This is a utility function which decides whether to make a single request for fetching
-// each repo's contributors or multiple ones.
+// each repository's contributors or multiple ones.
 function fetchRepoContributorsUtil(org, repo) {
   return new Promise((resolve, reject) => {
     if(repo === 'plots2') {
@@ -82460,11 +82212,9 @@ function fetchRepoContributors(org, repo) {
             .then(() => {
               let now = (new Date).getTime();
               model_utils.setItem(repo, contributorsArray);
-              console.log("saving ",repo,"'s all contribs");
               model_utils.setItem(`${repo}Expiry`, now);
               return contributorsArray;
             })
-
 }
 
 
@@ -82514,14 +82264,335 @@ function fetchAllRepoContributors(org, repo) {
                       return contributorsArray;
                     });
            });
-  }
+}
+
+
+// This runs at the very start of page load and stores all the repositories and all the
+// contributors in the database on initial page load
+function storeAllContributorsInDatabase(org) {
+  let AllContributors = [];
+  let promises = [];
+  var contributorSet = new Set([]);
+  return new Promise((resolve, reject) => {
+      model_utils.getItem('allContributors').then((allContributors) => {
+        // If all contributors list is not in the database, it makes a fresh call to Github API
+        if(allContributors == null || allContributors == undefined || allContributors.length == 0) {
+            return model_utils.getItem('repos').then((res) => {
+              let splicedRepos = res.splice(0,20);
+              splicedRepos.map(function mappingToEachRepo(Repo, i) {
+                let promise =  fetchRepoContributorsUtil(org, Repo)
+                              .then(function gotRepoContributorsInStorage(contributors) {
+                                if(contributors!=undefined && contributors.length>0) {
+                                  contributors.map((contributor, i)=> {
+                                    if(!contributorSet.has(contributor.login)) {
+                                      contributorSet.add(contributor.login);
+                                      AllContributors.push(contributor);
+                                    }
+                                  })
+                                }
+                              });
+                promises.push(promise);
+              });
+              return Promise.all(promises)
+                      .then(()=> {
+                          // Storing array containing all the contributors' list across 20 most active
+                          // repos to database
+                          model_utils.setItem('allContributors', AllContributors);
+                          // Saves current time in epoch, used for flushing out the stored data
+                          // after 24 hours
+                          let currentTime = (new Date).getTime();
+                          model_utils.setItem('allContributorsExpiry', currentTime);
+                          resolve(AllContributors);
+                      })
+            })
+        }
+        // If all contributors list is in the database, it simply returns that as a resolved promise 
+        else {
+          resolve(allContributors);
+        }
+      })
+    });
+}
+
+
+// Stores all the Recent Contributors in the database
+function storeAllRecentContribsInitially(org, repo) {
+  // We make queryTime 1 month behind the current time, to pass it as query in the request
+  let d = (new Date);
+  d.setDate(d.getDate() - 30);
+  let queryTime = d.toISOString();
+  return model_utils.getItem('repos').then((repos) => {
+      return model_utils.getItem('recent-present').then((result)=> {
+        if(result!=null && result!=undefined) {
+          return result;
+        }
+        else {
+          if(repos!=null || repos!=undefined) {
+            return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
+                    .then((result) => {
+                      model_utils.setItem('recent-present', 'true');
+                        return result;
+                    })
+          } else {
+            fetchRepoUtil.getAllRepos(org).then((repos) => {
+              if(repos!=null || repos!=undefined) {
+                return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
+                        .then((result) => {
+                          model_utils.setItem('recent-present', 'true');
+                          return result;
+                        })
+              }
+            });
+          }
+        }
+      });
+  })
+  
+}
 
 
 
 // EXPORTS
 module.exports = {
-    fetchAllRepoContributors: fetchAllRepoContributors,
-    fetchRepoContributors: fetchRepoContributors,
-    fetchRepoContributorsUtil: fetchRepoContributorsUtil,
+  fetchAllRepoContributors: fetchAllRepoContributors,
+  fetchRepoContributors: fetchRepoContributors,
+  fetchRepoContributorsUtil: fetchRepoContributorsUtil,
+  storeAllRecentContribsInitially: storeAllRecentContribsInitially,
+  storeAllContributorsInDatabase: storeAllContributorsInDatabase,
 }
-},{"../models/utils":401,"github-api-simple":151,"parse-link-header":278}]},{},[403]);
+
+
+},{"../models/utils":404,"../utils/recentContribsUtil":409,"./fetchRepoUtil":408,"github-api-simple":151,"parse-link-header":278}],408:[function(require,module,exports){
+let model_utils = require('../models/utils')
+
+// Fetches all the publiclab's repositories
+function getAllRepos(org) {
+
+  // This array is used to store all the repositories fetched from Github
+  let repos = [];
+
+  return fetch(`https://api.github.com/users/${org}/repos?sort=pushed&direction=desc&per_page=100`)
+          .then(function gotRepos(data) {
+            if(data.status=='200') {
+              return data.json();
+            }
+          })
+          .then(function mapToEachRepo(results) {
+            results.map(function mappingToEachRepo(repo, index) {
+              return repos[index] = repo.name;
+            });
+            return(repos);
+          })
+          .then((repos) => {
+            // Storing the repos in the database
+            model_utils.setItem('repos', repos);
+            return(repos);
+          })
+  }
+
+
+// EXPORTS
+module.exports.getAllRepos = getAllRepos;
+
+},{"../models/utils":404}],409:[function(require,module,exports){
+var fetchRepoUtil = require('./fetchRepoUtil');
+var model_utils = require('../models/utils');
+
+// Fetches recent month commits for a particular repository 
+function fetchRecentMonthCommits(org, repo, queryTime) {
+    let commitersSet = new Set([]);
+    let result=[];
+    return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
+            .then(function gotResponse(response) {
+                if(response.status=="200") {
+                    return response.json();
+                }
+            })
+            .then(function gotResponseJson(response) {
+                if(response!=null) {
+                    response.map(function mappingToCommits(commit, i) {
+                        if(commit.author!=null) {
+                            if(!commitersSet.has(commit.author.login)) {
+                                commitersSet.add(commit.author.login);
+                                result.push(commit);
+                            }
+                        }
+                        return true;
+                    });
+
+                    // Save each repo's commits data to the database
+                    let currTime = (new Date).getTime();
+                    console.log(`in fetchRecentMonthCommits, storing recent-${repo}-month-commits`);
+                    model_utils.setItem(`recent-${repo}-month-commits`, result);
+                    model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
+                }
+                return result;
+            });
+}
+
+// Fetches recent month commits for top 10 repositories
+function fetchAllRecentMonthCommits(org, repos, queryTime) {
+    let results = [];
+    let commitersSet = new Set([]);
+    let timeToday = (new Date).getTime();
+
+    // We take only 10 repos just for API quota reasons
+    let splicedRepos = repos.splice(0,10);
+
+    let promises = splicedRepos.map(function mapToEachRepo(repo, i) {
+        return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
+                .then(function gotResponse(response) {
+                    if(response.status=="200") {
+                        return response.json();
+                    }
+                })
+                .then(function gotResponseJson(response) {
+                    if(response!=null) {
+                        let partialResult = [];
+                        response.map(function mappingToCommits(commit, i) {
+                            if(commit.author!=null) {
+                                if(!commitersSet.has(commit.author.login)) {
+                                    commitersSet.add(commit.author.login);
+                                    partialResult.push(commit);
+                                    results.push(commit);
+                                }
+                            }
+                            return true;
+                        });
+                        // Save each repo's commits data to the database
+                        let currTime = (new Date).getTime();
+                        model_utils.setItem(`recent-${repo}-month-commits`, partialResult);
+                        model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
+                    }
+                    return true;
+                });
+        });
+
+    return Promise.all(promises)
+           .then(function promisesResolved() {
+                // Store recentMonthCommits and recentMonthCommitsExpiry in the database
+                console.log(`in fetchALLRecentMonthCommits, storing recent-ALL-month-commits`);
+                model_utils.setItem('recent-all-month-commits', results);
+                model_utils.setItem('recent-all-month-expiry', timeToday);
+                return results;
+            });
+}
+
+
+// Fetches recent week's commits for a particular repo
+function getCommitsLastWeek(org, repo) {
+    let contribs = [];
+
+    return model_utils.getItem(`recent-${repo}-week-expiry`)
+            .then((recentCommitsWeekExpiry) => {
+                let timeToday = (new Date).getTime();
+                // If recent month's commits expiry time is 1 day behind the current time, flush them out.
+                if(recentCommitsWeekExpiry!=null && recentCommitsWeekExpiry!=undefined && ((timeToday-recentCommitsWeekExpiry)/1000)>=86400) {
+                    return Promise.all([model_utils.deleteItem(`recent-${repo}-week-expiry`), model_utils.deleteItem(`recent-${repo}-week-commits`)])
+                        .then(()=> {
+                            return true;
+                        })
+                }
+            })
+            .then(() => {
+                return model_utils.getItem(`recent-${repo}-week-commits`).then((result) => {
+                    if(result!=null && result!=undefined) {
+                        return result;
+                    }
+                    else {
+                        // We save extra request by filtering commits-made-last-week from commits-made-last month
+                        return getCommitsLastMonth(org, repo)
+                                .then((commits_last_month) => {
+                                    commits_last_month.map((commit_last_month, index) => {
+                                        let commit_date = commit_last_month['commit']['committer']['date'];
+                                        let check = within_this_week(commit_date);
+                                        if(check) {
+                                            contribs.push(commit_last_month);
+                                        }
+                                    });
+                                    // Store recentWeekCommits and recentWeekCommitsExpiry in the database
+                                    let currTime = (new Date).getTime();
+                                    model_utils.setItem(`recent-${repo}-week-commits`, contribs);
+                                    model_utils.setItem(`recent-${repo}-week-expiry`, currTime);
+                                    return contribs;
+                                });
+                    }
+                });
+            });
+}
+
+
+
+// Utility function that checks if a given date is behind the current date
+// by 7 or less
+function within_this_week(date) {
+    let current = (new Date).getTime();
+    let past_date = (new Date(`${date}`)).getTime();
+    let measure = Math.ceil(Math.abs(current - past_date) / (1000*3600*24));
+    if(measure<=7) {
+        return true;
+    }
+    return false;
+}
+
+// Fetches recent month's commits for a particular repo or all of the repos (10 repos)
+function getCommitsLastMonth(org, repo) {
+    return model_utils.getItem('repos').then((repos) => {
+        if(repos!=null && repos!=undefined) {
+            return model_utils.getItem(`recent-${repo}-month-expiry`)
+                .then((recentCommitsMonthExpiry) => {
+                    let timeToday = (new Date).getTime();
+                    // If recentCommits expiry time is 1 day behind the current time, flush them out.
+                    if(recentCommitsMonthExpiry!=null && recentCommitsMonthExpiry!=undefined && ((timeToday-recentCommitsMonthExpiry)/1000)>=86400) {
+                        return Promise.all([model_utils.deleteItem(`recent-${repo}-month-commits`), model_utils.deleteItem(`recent-${repo}-month-expiry`)])
+                            .then(() => {
+                            return true;
+                        })
+                    }
+                    return true;
+                })
+                .then((boolean) => {
+                    return model_utils.getItem(`recent-${repo}-month-commits`).then((result) => {
+                        if(result!=null && result!=undefined) {
+                            return result;
+                        }
+                        else {
+                            // We make queryTime 1 month behind the current time, to pass it as query in the request
+                            let d = (new Date);
+                            d.setDate(d.getDate() - 30);
+                            let queryTime = d.toISOString();
+                            if(repo==='all') {
+                                return fetchAllRecentMonthCommits(org, repos, queryTime)
+                                    .then(function gotRecentCommitsInStorage(month_commits) {
+                                    console.log("got all monthly contribs from fetchAllRecentMonthCommits");
+                                    return month_commits;
+                                });
+                            }
+                            else {
+                                return fetchRecentMonthCommits(org, repo, queryTime)
+                                    .then(function gotRecentCommitsInStorage(month_commits) {
+                                    console.log("got repo's month commits from fetch");
+                                    return month_commits;
+                                })
+                            }
+                        }
+                    })
+                })
+        } else {
+            console.log("repos are not there yet!!!");
+        }
+    })
+}
+
+
+
+// EXPORTS
+module.exports = {
+    fetchAllRecentMonthCommits: fetchAllRecentMonthCommits,
+    fetchRecentMonthCommits: fetchRecentMonthCommits,
+    getCommitsLastMonth: getCommitsLastMonth,
+    getCommitsLastWeek: getCommitsLastWeek,
+    within_this_week: within_this_week
+}
+
+},{"../models/utils":404,"./fetchRepoUtil":408}]},{},[406]);
