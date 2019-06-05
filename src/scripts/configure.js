@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', (e)=> {
         $('.newcomer-issues').each(function() {
             $(this).html(`${data['issue-label-for-newcomer']}`)
         })
+        $('.newcomer-like-issues').each(function() {
+            $(this).html(`${data['issue-label-for-issues-like-newcomer']}`)
+        })
+
         $('#newcomer-issues-link').attr("href", `https://github.com/${data['org']}/${data['default-repository']}/labels/${data['issue-label-for-newcomer']}`)
         $('#help-wanted-issues').attr("href", `https://github.com/${data['org']}/${data['default-repository']}/labels/${data['help-wanted-issue-label']}`)
         
