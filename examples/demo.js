@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
   
         if (repo === 'all') {
-  
+
+            
             toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
                     .then(displayIssuesAndFtoAuthors('.first-timers-only'));
   
@@ -62,11 +63,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Makes the toggle contributors list button click
                     d.click();
                     toolbox.dropdownInit();
+                    // Fetch stale issues
+                    toolbox.showStaleIssues(org, repo);
                 }
             })
   
         } else {
-  
+
+            
             toolbox.api.Issues
                    .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
                    .then(displayIssuesAndFtoAuthors('.first-timers-only'));
@@ -82,6 +86,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Makes the toggle contributors list button click
                     d.click();
                     toolbox.dropdownInit();
+                    // Fetch stale issues
+                    toolbox.showStaleIssues(org, repo);
                 }
             })
         }

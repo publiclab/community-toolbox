@@ -31,7 +31,17 @@ function insertIssue(issue, el) {
 }
 
 
+function insertStale(issues, selector) {
+  issues.forEach(function (issue) {
+    insertIssue(issue, selector);
+  })
+}
+
+
+
+
 module.exports = {
     generateIssueHtml: generateIssueHtml,
     insertIssue: insertIssue,
+    insertStale: insertStale
 };
