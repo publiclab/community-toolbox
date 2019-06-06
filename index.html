@@ -8,7 +8,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF8">
 
     <title>Community toolbox</title>
-    <link rel="shortcut icon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
+    <link rel="shortcut icon"  id="favicon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -16,6 +16,8 @@
     <script src="node_modules/urlhash/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
     <script src="examples/demo.js"></script>
+    <script src="src/scripts/configure.js"></script>
+
   </head>
 
   <body>
@@ -26,12 +28,12 @@
 
 
     <div class="container-fluid">
-	    
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
- <a class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+      
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
+      <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 	  
       <header class="text-center">
-        <h1>Welcome to Public Lab's coding community!</h1>
+        <h1>Welcome to <span class=" org-display-name">Public Lab</span>'s coding community!</h1>
       </header>
 
       <hr />
@@ -45,18 +47,18 @@
 
           <p>We especially welcome contributions from people from <b>groups underrepresented</b> in free and open source software!</p>
 
-          <p>Our community aspires to be a respectful place. Please read and abide by our <a href="https://publiclab.org/conduct">Code of Conduct</a>.</p>
+          <p>Our community aspires to be a respectful place. Please read and abide by our <a  id="codeofconduct" href="https://publiclab.org/conduct">Code of Conduct</a>.</p>
 
-	  <p>To explore issues across the entire organization, check out <a href="https://code.publiclab.org/#r=all">Public Lab issues</a>.</p>
+	  <p>To explore issues across the entire organization, check out <a  id="org-wide-issues" href="https://code.publiclab.org/#r=all"><span class="org-display-name">Public Lab</span> issues</a>.</p>
         </div>
 
         <div class="col-md-6">
 
-          <p>If you're new, and looking to get involved, you're in the right place. Check out <a href="https://github.com/publiclab/plots2/blob/master/README.md">our README</a> to get started.</p>
+          <p>If you're new, and looking to get involved, you're in the right place. Check out <a  id="readme-link" href="https://github.com/publiclab/plots2/blob/master/README.md">our README</a> to get started.</p>
 
           <p>If you're new to GitHub, using branches, or opening pull requests, <a href="https://guides.github.com/activities/hello-world/">read here for an introduction</a>.</p>
 
-          <p>If you have trouble, check out <a href="https://publiclab.org/chat">our chatroom</a> to ask for help, or you can talk directly with the other contributors on <a href="https://gitter.im/publiclab/publiclab">our Gitter chatroom</a> or just <a href="https://github.com/publiclab/plots2/issues/new">open an issue</a> and we'll write back!</p>
+          <p>If you have trouble, check out <a  id="chat1" href="https://publiclab.org/chat">our chatroom</a> to ask for help, or you can talk directly with the other contributors on <a  id="chat2" href="https://gitter.im/publiclab/publiclab">our Gitter chatroom</a> or just <a  id="createissue" href="https://github.com/publiclab/plots2/issues/new">open an issue</a> and we'll write back!</p>
 
 
         </div>
@@ -77,7 +79,7 @@
 
           <img class="img-circle" src="images/wrench.png" />
           <h3>1.<br />Try an issue</h3>
-          <p>We've prepared extra-welcoming "first timers only" issues just for you.</p>
+          <p>We've prepared extra-welcoming "<span class=" newcomer-issues">first timers only</span>" issues just for you.</p>
 
         </div>
 
@@ -85,7 +87,7 @@
 
           <img class="img-circle" src="images/help.png" />
           <h3>2.<br />Help someone else out</h3>
-	<p>Use your new skills to <a href="https://github.com/publiclab/plots2/labels/support">assist someone else</a> who's just starting out. Browse issues below to see who needs help!</p>
+	<p>Use your new skills to <a  id="support-issues" href="https://github.com/publiclab/plots2/labels/support">assist someone else</a> who's just starting out. Browse issues below to see who needs help!</p>
 
         </div>
 
@@ -93,7 +95,7 @@
 
           <img class="img-circle" src="images/issue.png" />
           <h3>3.<br />Create a welcoming issue for someone else</h3>
-          <p><a href="#whats-next">Read below</a> to learn how to create a "first timers only" issue yourself!</p>
+          <p><a href="#whats-next">Read below</a> to learn how to create a "<span class=" newcomer-issues">first timers only</span> " issue yourself!</p>
 
         </div>
 
@@ -101,33 +103,33 @@
 
       <br />
 
-      <h2>First-timers-only issues</h2>
+      <h2><span class=" newcomer-issues">first timers only</span> issues</h2>
 
-      <p>Here are <a href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
+      <p>Here are <a  id="newcomer-issues-link" href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a class=" guidelines-link" href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
 
       <div class="row first-timers-only"></div>
 
-      <p>No issues left? See <a href="/#r=all">issues across this org here</a>, and see the almost-as-good "candidates" below. Or learn how to <a href="">prepare new <b>first-timers-only</b> issues here</a>.</p>
+      <p>No issues left? See <a href="/#r=all">issues across this org here</a>, and see the almost-as-good "<span class=" newcomer-like-issues">candidates</span>" below. Or learn how to <a href="">prepare new <b><span  id="issue-label-for-newcomer">first-timers-only</span> </b> issues here</a>.</p>
 
       <h2 id="whats-next">What's next?</h2>
 
-      <p>Once you've completed a <b>first-timers-only</b> issue, there are <a href="https://github.com/publiclab/plots2/labels/help-wanted">plenty of other challenges</a> we'd love to have your help on.</p>
+      <p>Once you've completed a <b><span  id="issue-label-for-newcomer">first-timers-only</span></b> issue, there are <a  id="help-wanted-issues" href="https://github.com/publiclab/plots2/labels/help-wanted">plenty of other challenges</a> we'd love to have your help on.</p>
 
-      <p>In "Candidates" below, there are some issues we think would make good <b>first-timers-only</b> issues, but haven't finished formatting. They could make a good second-time contribution!</p>
+      <p>In "<span class=" newcomer-like-issues">candidates</span>" below, there are some issues we think would make good <b><span class=" newcomer-issues">first-timers-only</span></b> issues, but haven't finished formatting. They could make a good second-time contribution!</p>
 	    
-      <h2>Candidates</h2>
+      <h2 class=" newcomer-like-issues">Candidates</h2>
 
-      <p>We put a lot of work into our first-timer-only issues. But if we haven't been able to prepare any recently, here's a set of candidates we haven't yet had time to prepare, but which have most of the needed information. (Also: Learn how to <a href="https://publiclab.org/n/13667">help turn these into first-timers-only issues</a> to help keep welcoming people in!</p>
+      <p>We put a lot of work into our <span class=" newcomer-issues">first-timer-only</span> issues. But if we haven't been able to prepare any recently, here's a set of <span class=" newcomer-like-issues">candidates</span> we haven't yet had time to prepare, but which have most of the needed information. (Also: Learn how to <a  href="https://publiclab.org/n/13667">help turn these into <span class=" newcomer-issues">first-timers-only</span> issues</a> to help keep welcoming people in!</p>
 
       <div class="row candidates"></div>
 
       <h2>You're now an expert on being a newcomer!</h2>
 
-      <p>After finishing a first-timers-only issue, you're uniquely suited to help others make their own first contribution. We'd love to help you welcome another new person into our community! Here are some ways to help:</p>
+      <p>After finishing a <span class=" newcomer-issues">first-timers-only</span> issue, you're uniquely suited to help others make their own first contribution. We'd love to help you welcome another new person into our community! Here are some ways to help:</p>
 
-      <p><a href="https://publiclab.org/n/13667">Create your own first-timers-only issue</a> to welcome others into the project.</p>
+      <p><a class="guidelines-link " href="https://publiclab.org/n/13667">Create your own <span class=" newcomer-issues">first-timers-only</span> issue</a> to welcome others into the project.</p>
 
-      <p>Also consider <a href="https://publiclab.org/n/13687">other ways you can support</a> even without coding!</p>
+      <p>Also consider <a  id="other-ways-to-support" href="https://publiclab.org/n/13687">other ways you can support</a> even without coding!</p>
 
       <hr />
 
@@ -149,10 +151,10 @@
 		<h2 class="text-center d-block">Connect with us</h2>
 		<p>You can connect with us on any of these platforms:</p>
 	  <div id="connectwithusbody">
-		  <a class="col-md-2 links" href="https://www.facebook.com/PublicLab/" title="Facebook" ><i class="fa fa-facebook fa-3x"></i> </a>
-		  <a class="col-md-2 links" href="https://twitter.com/PublicLab?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" title="Twitter" ><i class="fa fa-twitter fa-3x"></i> </a>
-		  <a class="col-md-2 links" href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github fa-3x"></i> </a>
-		  <a class="col-md-2 links" href="https://publiclab.org" title="Publiclab Website"><i class="fa fa-globe fa-3x"></i></a>
+		  <a class="col-md-2 links " href="https://www.facebook.com/PublicLab/" title="Facebook" ><i class="fa fa-facebook fa-3x"></i> </a>
+		  <a class="col-md-2 links " href="https://twitter.com/PublicLab?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" title="Twitter" ><i class="fa fa-twitter fa-3x"></i> </a>
+		  <a class="col-md-2 links " href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github fa-3x"></i> </a>
+		  <a class="col-md-2 links " href="https://publiclab.org" title="Publiclab Website"><i class="fa fa-globe fa-3x"></i></a>
 	  </div>
 	</div>
     </div>

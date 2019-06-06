@@ -82,7 +82,6 @@ h1, h2, .section h3 {
     display: flex;
     flex-wrap: wrap;
     flex-shrink: initial;
-    background-color: yellow;
 }
 
 .links {
