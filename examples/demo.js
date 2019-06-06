@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
   
         if (repo === 'all') {
 
-            
             toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
                     .then(displayIssuesAndFtoAuthors('.first-timers-only'));
   
@@ -70,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
   
         } else {
 
-            
             toolbox.api.Issues
                    .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
                    .then(displayIssuesAndFtoAuthors('.first-timers-only'));
