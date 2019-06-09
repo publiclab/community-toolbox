@@ -9,9 +9,12 @@
 
     <title>Community toolbox</title>
     <link rel="shortcut icon"  id="favicon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
-
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
+    
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="node_modules/chart.js/dist/Chart.js"></script>
     <script src="node_modules/urlhash/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
@@ -26,12 +29,18 @@
     <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="examples/demo.css">
 
-
+    
     <div class="container-fluid">
       
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
       <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
-	  
+      
+      <!-- DROPDOWN STARTS -->
+      <div>
+        <input id="tags" placeholder="Search repository">
+      </div>
+      <!-- DROPDOWN ENDS -->
+
       <header class="text-center">
         <h1>Welcome to <span class=" org-display-name">Public Lab</span>'s coding community!</h1>
       </header>

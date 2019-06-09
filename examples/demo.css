@@ -90,6 +90,12 @@ h1, h2, .section h3 {
     text-align: center;
 }
 
+#tags {
+    border-radius: 5px;
+    padding: 4px;
+    background-color: #f8f8fa;
+}
+
 @media only screen and (max-width: 569px) {
     .links {
         width: 25%;

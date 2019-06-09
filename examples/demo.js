@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return false;
     });
     /*Scroll to top when arrow up clicked END*/
-  
+
+
     var toolbox;
   
     (function() {
@@ -60,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     toolbox.showAllContributors(org, repo);
                     // Makes the toggle contributors list button click
                     d.click();
+                    toolbox.dropdownInit();
                 }
             })
   
@@ -79,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     toolbox.showRepoContributors(org, repo);
                     // Makes the toggle contributors list button click
                     d.click();
+                    toolbox.dropdownInit();
                 }
             })
         }
