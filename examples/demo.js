@@ -16,7 +16,17 @@ document.addEventListener('DOMContentLoaded', function () {
         return false;
     });
     /*Scroll to top when arrow up clicked END*/
-
+  
+    $('.stale').hover((e) => {
+        e.preventDefault();
+        let height = $('.stale').prop("scrollHeight")
+        let top = $('.stale').prop("scrollTop")
+        if(top==0) {
+            $('.stale').animate({ scrollTop: height*0.05 }, 'slow')
+        }
+    }, (e) => {
+        e.preventDefault();
+    })
 
     var toolbox;
   

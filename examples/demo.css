@@ -115,6 +115,18 @@ h1, h2, .section h3 {
     cursor: pointer;
     background-color: rgba(221, 221, 255, 0.226);
 }
+.stale-container {
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+
+}
+
+.stale {
+    overflow: scroll;
+    height: 1000px;
+}
+
 
 .fto-authors {
     padding: 19px;

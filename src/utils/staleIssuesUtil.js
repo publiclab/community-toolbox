@@ -14,7 +14,7 @@ function getOrgWideIssues(org) {
     })
     .then(() => {
         return model_utils.getItem("staleIssues").then((issues) => {
-            let pages = 2; // we take 2 to stay under API limit
+            let pages = 5; // we take 2 to stay under API limit
             if(issues!=undefined && issues!=null) {
                 return issues;
             }
