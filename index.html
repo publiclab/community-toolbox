@@ -17,6 +17,7 @@
     <script src="node_modules/urlhash/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
     <script src="examples/demo.js"></script>
+    <script src="examples/night-mode.js"></script>
     <script src="src/scripts/configure.js"></script>
 
   </head>
@@ -29,6 +30,12 @@
 
     
     <div class="container-fluid">
+
+      <div class="row">
+          <button class="btn btn-primary" id="toggle-theme">
+            Toggle night mode
+          </button>    
+      </div>
       
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
       <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
@@ -150,7 +157,7 @@
 
       <h2 class="recent-contributors-head">Recent Contributors</h2>
       
-      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
+      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" class="nightmode-adapt"id="toggle-contributors">(Show monthly)</a></p>
 
       <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 
