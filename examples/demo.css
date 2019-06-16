@@ -90,10 +90,21 @@ h1, h2, .section h3 {
     text-align: center;
 }
 
-#tags {
+#dropdown-container {
+    height: 300px;
+    width: 200px;
+    overflow: scroll;
+    padding: 5px;
     border-radius: 5px;
-    padding: 4px;
-    background-color: #f8f8fa;
+}
+
+.dropdown-items {
+    padding: 3px;
+}
+
+.dropdown-items:hover{
+    cursor: pointer;
+    background-color: rgba(221, 221, 255, 0.226);
 }
 
 @media only screen and (max-width: 569px) {

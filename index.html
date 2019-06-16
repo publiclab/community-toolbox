@@ -9,12 +9,10 @@
 
     <title>Community toolbox</title>
     <link rel="shortcut icon"  id="favicon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     
     
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="node_modules/chart.js/dist/Chart.js"></script>
     <script src="node_modules/urlhash/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
@@ -37,7 +35,14 @@
       
       <!-- DROPDOWN STARTS -->
       <div>
-        <input id="tags" placeholder="Search repository">
+        <div class="dropdown">
+          <label for="dropdownMenuButton">Select Repository: </label>
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Select repository
+          </button>
+          <div id="dropdown-container" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          </div>
+        </div>
       </div>
       <!-- DROPDOWN ENDS -->
 

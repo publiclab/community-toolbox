@@ -82190,16 +82190,32 @@ module.exports = CommunityToolbox;
 
 },{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/autocomplete":407,"../utils/contributorsUtil":408,"../utils/fetchRepoUtil":409,"../utils/recentContribsUtil":410,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
 function generateAutocomplete(repos) {
-    $("#tags").autocomplete({
-        source: repos,
-        select: function (event, ui) {
-            event.target.value = ui.item;
+    let repoAlreadySelected = urlHash().getUrlHashParameters('r');
+    console.log("reposs  = ", repoAlreadySelected);
+    if(jQuery.isEmptyObject(repoAlreadySelected)) { 
+        repoAlreadySelected = "plots2";
+    }else {
+        repoAlreadySelected = repoAlreadySelected.r;
+        console.log("not empty");
+    }
+    $('#dropdownMenuButton').html(repoAlreadySelected);
 
-            urlHash().setUrlHashParameter("r", ui.item.value);
-            location.reload();
-        }
-    });    
+    repos.map((repo,i) => {
+        $('<p>', {
+            class: 'dropdown-items',
+            text: repo
+        }).appendTo('#dropdown-container');
+    });
+    
+    $('.dropdown-items').click((e) => {
+        let repo = e.target.textContent;
+        urlHash().setUrlHashParameter("r", repo);
+        console.log("select = ",$('#dropdownMenuButton'), "  repo = ", repo);
+        $('#dropdownMenuButton').html(repo);
+        location.reload();
+    })
 }
+
 
 
 module.exports.generateAutocomplete = generateAutocomplete;

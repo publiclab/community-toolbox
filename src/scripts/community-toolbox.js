@@ -74,15 +74,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     }
 
 
-    function dropdownInit() {
-      return model_utils.getItem('repos').then((res) => {
-          if(res!=null && res!=undefined) {
-              autoCompleteUtil.generateAutocomplete(res);
-          }else {
-              console.log("not working");
-          }
-      });
-    }
+  function dropdownInit() {
+    return model_utils.getItem('repos').then((res) => {
+      if(res!=null && res!=undefined) {
+        autoCompleteUtil.generateAutocomplete(res);
+      }else {
+        console.log("not working");
+      }
+    });
+  }
 
 
   // This function is responsible for showing contributors
