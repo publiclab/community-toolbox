@@ -1,3 +1,5 @@
+let model_utils = require('../models/utils')
+
 // Fetches all the publiclab's repositories
 function getAllRepos(org) {
 
@@ -14,14 +16,15 @@ function getAllRepos(org) {
             results.map(function mappingToEachRepo(repo, index) {
               return repos[index] = repo.name;
             });
-            // Storing the repos in localStorage
-            localStorage.setItem('repos', JSON.stringify(repos));
             return(repos);
-          });
+          })
+          .then((repos) => {
+            // Storing the repos in the database
+            model_utils.setItem('repos', repos);
+            return(repos);
+          })
   }
 
 
 // EXPORTS
-module.exports = {
-    getAllRepos: getAllRepos,
-}
+module.exports.getAllRepos = getAllRepos;

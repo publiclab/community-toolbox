@@ -1,18 +1,24 @@
+
 CommunityToolbox = function CommunityToolbox(org, repo) {
-
-  var SimpleApi = require("github-api-simple")
+  
+  
+  var SimpleApi = require('github-api-simple')
   var api = new SimpleApi();
-  var ui = require('../UI/ui');
-  var getAllContribsUtility = require('../utils/getAllContribsUtility');
-  var repoContributorsUtility = require('../utils/repoContributorsUtility');
-  var getRecentCommitsUtility = require('../utils/getRecentCommitsUtility');
+  
+  var crud = require('../models/crud')
+  var issuesUI = require('../UI/issuesUI')
+  var model_utils = require('../models/utils')
+  var fetchReposUtil = require('../utils/fetchRepoUtil')
+  var contributorsUI = require('../UI/contributorsUI')
+  var contributorsUtil = require('../utils/contributorsUtil')
+  var recentContributorsUI = require('../UI/recentContributorsUI')
+  var recentContribsUtil = require('../utils/recentContribsUtil')
 
-  var model_utils = require('../models/utils');
-
-  const requestP = require('request-promise');
-  var parse = require('parse-link-header');
-
-  var options = {
+  const requestP = require('request-promise')
+  var parse = require('parse-link-header')
+  var chart = require('./chart');
+  
+  var options = { 
     'qs': {
       'sort': 'pushed',
       'direction': 'desc', // optional, GitHub API uses 'desc' by default for 'pushed'
@@ -44,60 +50,33 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
        .then(callback);
   }
 
-  // This runs at the very start of page load and stores all the repos and all the
-  // contributors in the database
-  function storeAllContributorsInDatabase(org) {
-    let AllContributors = [];
-    let promises = [];
-    var contributorSet = new Set([]);
-    return new Promise((resolve, reject) => {
-      model_utils.getItem('allContributors').then((allContributors) => {
-        // If all contributors list is not in the database, it makes a fresh call to Github API
-        if(allContributors == null || allContributors == undefined || allContributors.length == 0) {
-          getAllContribsUtility.getAllRepos(org)
-          .then(function gotRepos(res) {
-            let splicedRepos = res.splice(0,20);
-            splicedRepos.map(function mappingToEachRepo(Repo, i) {
-              let promise =  repoContributorsUtility.fetchRepoContributorsUtil(org, Repo)
-                            .then(function gotRepoContributorsInStorage(contributors) {
-                              if(contributors!=undefined && contributors.length>0) {
-                                contributors.map((contributor, i)=> {
-                                  if(!contributorSet.has(contributor.login)) {
-                                    contributorSet.add(contributor.login);
-                                    AllContributors.push(contributor);
-                                  }
-                                })
-                              }
-                            });
-              promises.push(promise);
-            });
-            return Promise.all(promises)
-                    .then(()=> {
-                        // Storing array containing all the contributors list across 20 most active
-                        // repos to database
-                        model_utils.setItem('allContributors', AllContributors);
-                        // Saves current time in epoch, used for flushing out the stored data
-                        // after 24 hours
-                        let currentTime = (new Date).getTime();
-                        model_utils.setItem('allContributorsExpiry', currentTime);
-                        resolve(AllContributors);
-                    })
+
+  function initialize(org, repo) {
+      return new Promise((resolve, reject) => {
+        return crud.populateDb()
+          .then((res) => {
+            return true;
           })
-        }
-        // If all contributors list is in the database, it simply returns that as a resolved promise 
-        else {
-          resolve(allContributors);
-          console.log("allContributors already in database...");
-        }
-      })
-    });
-  }
+          .then((dummy) => {
+            return model_utils.getItem('repos').then((response) => {
+              if(response==null || response==undefined) {
+                // Fetches and stores the list of repositories when the page loads
+                return fetchReposUtil.getAllRepos(org)
+                  .then((resp) => {
+                      resolve(true);
+                  });
+              }
+              resolve(true);
+            });
+          });
+      });
+    }
 
 
   // This function is responsible for showing contributors
   // on a multi-repository view
-  function getAllContributors(org) {
-    return storeAllContributorsInDatabase(org).then((allContributors) => {
+  function showAllContributors(org) {
+    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
         // Flushes contributors list from the database after every single day
@@ -117,15 +96,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
             if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
   
-              storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
+                contributorsUtil.storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
                 // Provides fetched contributors list to UI function for rendering it
                 // to the user
-                ui.insertContributors(AllContributors);
+                contributorsUI.insertContributors(AllContributors);
               })
             } 
             // If stored data is not null and undefined, process it
             else {
-              ui.insertContributors(AllContributors);
+              contributorsUI.insertContributors(AllContributors);
             }
           })
         });
@@ -141,7 +120,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
-    return storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
         // Flushes repoContributors from the database after every single day
@@ -160,15 +139,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           model_utils.getItem(repo).then((repoContributors) => {
             // If we don't have repoContributors in the database, we fetch them from Github
             if (repoContributors == null || repoContributors == undefined) {
-              repoContributorsUtility.fetchRepoContributorsUtil(org, repo)
+              contributorsUtil.fetchRepoContributorsUtil(org, repo)
               .then(function gotRepoContributorsInStorage (contributors) {
-                ui.insertContributors(contributors);
+                contributorsUI.insertContributors(contributors);
                 return;
               })
             }
             // If we have repoContributors in the database, we save a network call :)
             else {
-              ui.insertContributors(repoContributors);
+              contributorsUI.insertContributors(repoContributors);
               return;
             }
           })
@@ -181,56 +160,22 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
-  // Stores all the Recent Contributors in the database
-  function storeAllRecentContribsInitially(org, repo) {
-    // We make queryTime 1 month behind the current time, to pass it as query in the request
-    let d = (new Date);
-    d.setDate(d.getDate() - 30);
-    let queryTime = d.toISOString();
-    let repos = JSON.parse(localStorage.getItem('repos'));
-    return model_utils.getItem('recent-present').then((result)=> {
-      if(result!=null && result!=undefined) {
-        return result;
-      }
-      else {
-        if(repos!=null || repos!=undefined) {
-          return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
-                  .then((result) => {
-                    model_utils.setItem('recent-present', 'true');
-                    return result;
-                  })
-        }
-        else {
-          getAllContribsUtility.getAllRepos(org).then((repos) => {
-            if(repos!=null || repos!=undefined || repos.length>0) {
-              return getRecentCommitsUtility.fetchAllRecentMonthCommits(org, repos, queryTime)
-                      .then((result) => {
-                        model_utils.setItem('recent-present', 'true');
-                        return result;
-                      })
-            }
-          });
-        }
-      }
-    });
-  }
-
 
   // Function for fetching and showing recent contributors
-  function getRecentCommits(org, repo, recencyLabel) {
-    return storeAllRecentContribsInitially(org, repo).then((result)=>{
+  function showRecentContributors(org, repo, recencyLabel) {
+    return contributorsUtil.storeAllRecentContribsInitially(org, repo).then((result)=>{
       if(recencyLabel==='month') {
-        return getRecentCommitsUtility.getCommitsLastMonth(org, repo)
+        return recentContribsUtil.getCommitsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
-                ui.insertRecentContributors(commits);
+                recentContributorsUI.insertRecentContributors(commits);
                 return;
               });
       } else {
-        return getRecentCommitsUtility.getCommitsLastWeek(org, repo)
+        return recentContribsUtil.getCommitsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
-                ui.insertRecentContributors(weekly_contribs);
+                recentContributorsUI.insertRecentContributors(weekly_contribs);
                 return;
               });
       }
@@ -242,28 +187,33 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
            .getIssuesForRepo(org, repo, { qs: { labels: label } })
            .then(function onGotIssues(issues) {
              issues.forEach(function(issue) {
-               toolbox.ui.insertIssue(issue, selector);
+               toolbox.issuesUI.insertIssue(issue, selector);
              });
            });
   }
 
-  var chart = require('./chart');
+
+
+
+
 
   // externally available API
   return {
     api:     api,
-    ui:      ui,
+    issuesUI:   issuesUI,
+    contributorsUI: contributorsUI,
+    recentContributorsUI: recentContributorsUI,
     parse:   parse,
     chart:   chart,
     options: options,
     getIssuesForRepo: getIssuesForRepo,
     getIssuesForOrg: getIssuesForOrg,
-    getRecentCommits: getRecentCommits,
-    getCommitsForRepo: getCommitsForRepo,
-    storeAllContributorsInDatabase: storeAllContributorsInDatabase,
-    getAllContributors: getAllContributors,
+    showRecentContributors: showRecentContributors,
+    getCommitsForRepo: getCommitsForRepo, // storeAllContributorsInDatabase: storeAllContributorsInDatabase,
+    showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
-    displayIssuesForRepo: displayIssuesForRepo
+    displayIssuesForRepo: displayIssuesForRepo,
+    initialize: initialize
   }
 
 }

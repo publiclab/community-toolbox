@@ -1,4 +1,4 @@
-var model = require('./index');
+var model = require('./crud');
 
 
 function setItem(queryKey, queryContent) {
@@ -22,8 +22,6 @@ function deleteItem(query) {
 
 
 //  EXPORTS
-module.exports = {
-    setItem: setItem,
-    getItem: getItem,
-    deleteItem: deleteItem,
-}
+module.exports.setItem = setItem;
+module.exports.getItem = getItem;
+module.exports.deleteItem = deleteItem;
