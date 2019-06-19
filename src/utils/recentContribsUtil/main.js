@@ -4,8 +4,8 @@ let storeAllRecentContribsInDb = require('./storeAllRecentContribsInDb')
 
 
 
-function fetchContribsLastMonth(org, repo) {
-    return getContribsLastMonth.getContribsLastMonth(org, repo)
+function fetchContribsLastMonth(org, repo, forMonths=6) {
+    return getContribsLastMonth.getContribsLastMonth(org, repo, forMonths)
     .then((contribs) => {
         return contribs;
     })

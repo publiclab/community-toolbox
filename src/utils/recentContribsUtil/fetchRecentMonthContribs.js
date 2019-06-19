@@ -1,40 +1,58 @@
-let model_utils = require('../../models/utils');
+let model_utils = require('../../models/utils')
+let monthsQuery = require('./queryTime')
+let withinMonthsOrNot = require('./withinMonthsOrNot')
+let freshFetch = require('./freshFetch')
 
 // Fetches recent month commits for a particular repository 
 function fetchRecentMonthContribs(org, repo, queryTime) {
-    let commitersSet = new Set([]);
-    let result=[];
-    return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
-            .then(function gotResponse(response) {
-                if(response.status=="200") {
-                    return response.json();
-                }else {
-                    throw `Couldn't fetch recent contributors for ${repo}`;
-                }
-            })
-            .then(function gotResponseJson(response) {
-                if(response!=null) {
-                    response.map(function mappingToCommits(commit, i) {
-                        if(commit.author!=null) {
-                            if(!commitersSet.has(commit.author.login)) {
-                                commitersSet.add(commit.author.login);
-                                result.push(commit);
-                            }
-                        }
-                        return true;
-                    });
+    let contribs = [];
+    let monthsInd = monthsQuery.findMonthInd(queryTime);
 
-                    // Save each repo's commits data to the database
+    return model_utils.getItem(`recent-${repo}-${monthsInd}-month-commits`)
+    .then((stored) => {
+        if(stored!=null && stored!=undefined) {
+            return stored;
+        }
+        else {
+            return model_utils.getItem(`recent-${repo}-6-month-commits`)
+            .then((wholeContribsList) => {
+                if(wholeContribsList!=undefined && wholeContribsList!=null) {
+                    wholeContribsList.map((contributor, index) => {
+                        let commit_date = contributor['commit']['committer']['date'];
+                        let check = withinMonthsOrNot.within_months(commit_date, monthsInd);
+                        if(check) {
+                            contribs.push(contributor);
+                        }
+                    });
+                    // Store recentWeekCommits and recentWeekCommitsExpiry in the database
                     let currTime = (new Date).getTime();
-                    model_utils.setItem(`recent-${repo}-month-commits`, result);
-                    model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
+                    model_utils.setItem(`recent-${repo}-${monthsInd}-month-commits`, contribs);
+                    model_utils.setItem(`recent-${repo}-${monthsInd}-month-expiry`, currTime);
+                    return contribs;
                 }
-                return result;
+                else {
+                    // We don't have any recent month contributors' data for desired repository
+                    // so we need to do all the work now
+                    return freshFetch.freshFetch(org, repo, queryTime)
+                    .then((response) => {
+                        return response;
+                    })
+                    .catch((err) => {
+                        throw err;
+                    })
+                }
             })
             .catch((err) => {
-                console.log("throwing from fetchRecentMonthContribs");
                 throw err;
             })
+            
+        }
+    })
+    .catch((err) => {
+        throw err;
+    })
+
+    
 }
 
 

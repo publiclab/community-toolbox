@@ -7,7 +7,7 @@ let model_utils = require('../../models/utils')
 function storeAllRecentContribsInDb(org, repo) {
 	// We make queryTime 1 month behind the current time, to pass it as query in the request
 	let d = (new Date);
-	d.setDate(d.getDate() - 30);
+	d.setDate(d.getDate() - 180);
 	let queryTime = d.toISOString();
 	return model_utils.getItem('repos')
 	.then((repos) => {

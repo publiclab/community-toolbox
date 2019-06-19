@@ -95,26 +95,6 @@ h1, h2, .section h3 {
     margin-top: 2em;
 }
 
-.dropdown {
-    margin-left: auto;
-}
-
-#dropdown-container {
-    height: 300px;
-    width: 200px;
-    overflow: scroll;
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.dropdown-items {
-    padding: 3px;
-}
-
-.dropdown-items:hover{
-    cursor: pointer;
-    background-color: rgba(221, 221, 255, 0.226);
-}
 .stale-container {
     padding: 10px;
     background-color: rgba(221, 221, 221, 0.493);
@@ -137,10 +117,107 @@ h1, h2, .section h3 {
     box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
 }
 
+
+.recent-contrib-content-box {
+    padding: 19px;
+}
+
+.recent-contributors-body {
+    padding: 0;
+}
+
+/* DROPDOWNS */
+
+.dropdown-Repo {
+    margin-left: auto;
+}
+
+#dropdown-container {
+    height: 300px;
+    width: 200px;
+    overflow: scroll;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.dropdown-items {
+    padding: 3px;
+}
+
+.dropdown-items:hover,
+.past p:hover,
+.sort-items:hover {
+    cursor: pointer;
+    background-color: rgba(221, 221, 255, 0.226);
+}
+
+.past {
+    margin-bottom: 5px;
+    height: 1.7em;
+    width: auto;
+    text-align: center;
+}
+
+.past p {
+    margin: 0;
+}
+
+.recent-contribs-show-dropdown,
+.recent-contribs-dropdown {
+    display: inline-block;
+    height: 100%;
+}
+.recent-contribs-dropdown {
+    width: 10%;
+    text-align: center;
+}
+.recent-contribs-show-dropdown {
+    width: 12em;
+}
+
+.dropdown-toggle-RC {
+    display: inline-block;
+    text-align: center;
+    margin-top: 9px;
+}
+
+.dropdown-menu {
+    top: 80%;
+    background-color: #f6f8fa;
+}
+
+#dropdownMenuButtonRCS {
+    font-weight: bolder;
+}
+#dropdownMenuButtonRC,
+#dropdownMenuButtonRCS {
+    font-family: 'Open sans', serif;
+}
+
+#dropdownMenuButtonRC:hover,
+#dropdownMenuButtonRCS:hover {
+    cursor: pointer;
+    color: #111111;
+    font-weight: bold;
+}
+
+.filter-options {
+    border: 1px solid #d1d5da;
+    background-color: #f6f8fa;
+    color: #566069;
+    height: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+
+/* COPY TO CLIPBOARD BUTTON */
+
 .copybutton {
     width: 30px;
     height: 25px;
-    float: right;
+    /* float: right; */
     border-radius: 3px;
     border: none;
     box-shadow: 1px 1px 1px 1px #e2abab;
@@ -162,6 +239,8 @@ h1, h2, .section h3 {
     box-shadow: 0.1px 0.1px 0.1px 0.1px #e2abab;
 }
 
+
+/* MEDIA QUERIES */
 
 @media only screen and (max-width: 569px) {
     .links {

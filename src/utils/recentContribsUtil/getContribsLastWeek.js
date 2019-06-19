@@ -24,7 +24,7 @@ function getContribsLastWeek(org, repo) {
                     }
                     else {
                         // We save extra request by filtering commits-made-last-week from commits-made-last month
-                        return getContribsLastMonth.getContribsLastMonth(org, repo)
+                        return getContribsLastMonth.getContribsLastMonth(org, repo, 6)
                                 .then((commits_last_month) => {
                                     commits_last_month.map((commit_last_month, index) => {
                                         let commit_date = commit_last_month['commit']['committer']['date'];

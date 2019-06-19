@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     copyButton.map(function(item, ele) {
         ele.addEventListener("click", function(event) {
             event.preventDefault();
-            usernames = $(this).parent().children(this.lastChild).find(".usernames")[0];
+            usernames = $(this).parent().parent().find(".usernames")[0];
             let names = usernames.textContent;
             dummyInp.setAttribute('type', 'text');
             dummyInp.setAttribute('value', `${names}`);

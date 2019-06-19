@@ -13,8 +13,8 @@ function insertRecentContributors(AllContributors){
   
     if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
     $('.recent-contributors-head').html('Recent Contributors ('+recentContributors+'+)');
-    $('.recent-contributors > .usernames').html(usernames.join(', '));
-    $('.recent-contributors > .avatars').html(avatars.join(''));
+    $('.recent-contributors-body > .recent-contrib-content-box > .usernames').html(usernames.join(', '));
+    $('.recent-contributors-body > .recent-contrib-content-box > .avatars').html(avatars.join(''));
     insertRecentContributorsExec=true;
   }
   
