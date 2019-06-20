@@ -1,0 +1,39 @@
+.onoffswitch {
+  position: relative; width: 60px;
+  -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+  display: none;
+}
+.onoffswitch-label {
+  display: block; overflow: hidden; cursor: pointer;
+  border: 2px solid rgb(165, 165, 165); border-radius: 50px;
+}
+.onoffswitch-inner {
+  display: block; width: 200%; margin-left: -100%;
+  transition: margin 0.2s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+  display: block; float: left; width: 50%; height: 20px; padding: 0; line-height: 20px;
+  font-size: 9px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+  box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+  content: "NIGHT";
+  padding-left: 8px;
+  background-color: #EEEEEE; color: #34A7C1;
+}
+.onoffswitch-inner:after {
+  content: "DAY";
+  padding-right: 8px;
+  background-color: #f8f8fa; color: #999999;
+  text-align: right;
+}
+.onoffswitch-switch {
+  display: block; width: 25px; margin: -2.5px; height: 30px;
+  background: #A1A1A1;
+  position: absolute; top: 0; bottom: 0;
+  right: 41px;
+  border: 2px solid #FFFFFF; border-radius: 50px;
+  transition: all 0.2s ease-in 0s; 
+}

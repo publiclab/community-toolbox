@@ -27563,17 +27563,22 @@ exports = module.exports = GithubService;
 
 },{"./assets/routes.json":150,"./package":152,"extend":144,"path":279,"request-promise":323}],152:[function(require,module,exports){
 module.exports={
+  "_args": [
+    [
+      "git://github.com/jywarren/github-api-simple.git#patch-2",
+      "/home/rishabh570/community-toolbox"
+    ]
+  ],
+  "_development": true,
   "_from": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_id": "github-api-simple@0.1.0",
+  "_id": "github-api-simple@git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_inBundle": false,
   "_integrity": "",
   "_location": "/github-api-simple",
   "_phantomChildren": {},
   "_requested": {
     "type": "git",
-    "raw": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
-    "name": "github-api-simple",
-    "escapedName": "github-api-simple",
+    "raw": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "rawSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "saveSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "fetchSpec": "git://github.com/jywarren/github-api-simple.git",
@@ -27583,7 +27588,7 @@ module.exports={
     "#DEV:/"
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
-  "_spec": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
+  "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
   "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
@@ -27592,12 +27597,10 @@ module.exports={
   "bugs": {
     "url": "https://github.com/MichielvdVelde/github-api-simple/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "debug": "^2.6.9",
     "request-promise": "^1.0.2"
   },
-  "deprecated": false,
   "description": "Simple Github API wrapper for unauthenticated end points",
   "homepage": "https://github.com/MichielvdVelde/github-api-simple#readme",
   "keywords": [
