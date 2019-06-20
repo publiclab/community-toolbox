@@ -81991,14 +81991,14 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var crud = require('../models/crud')
   var issuesUI = require('../UI/issuesUI')
   var model_utils = require('../models/utils')
-  var fetchReposUtil = require('../utils/fetchRepoUtil')
+  var fetchReposUtil = require('../utils/repoUtil/fetchRepoUtil')
   var contributorsUI = require('../UI/contributorsUI')
-  var contributorsUtil = require('../utils/contributorsUtil')
+  var contributorsUtil = require('../utils/contribsUtil/main')
   var recentContributorsUI = require('../UI/recentContributorsUI')
-  var recentContribsUtil = require('../utils/recentContribsUtil')
   var autoCompleteUtil = require('../utils/autocomplete')
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
+  var recentContribsUtil = require('../utils/recentContribsUtil/main')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82073,7 +82073,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   // This function is responsible for showing contributors
   // on a multi-repository view
   function showAllContributors(org) {
-    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
         // Flushes contributors list from the database after every single day
@@ -82093,7 +82093,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
             if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
   
-                contributorsUtil.storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
+                contributorsUtil.fetchAllContribsInDb(org).then(function gotAllContributors(AllContributors) {
                 // Provides fetched contributors list to UI function for rendering it
                 // to the user
                 contributorsUI.insertContributors(AllContributors);
@@ -82117,7 +82117,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
-    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
         // Flushes repoContributors from the database after every single day
@@ -82136,7 +82136,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           model_utils.getItem(repo).then((repoContributors) => {
             // If we don't have repoContributors in the database, we fetch them from Github
             if (repoContributors == null || repoContributors == undefined) {
-              contributorsUtil.fetchRepoContributorsUtil(org, repo)
+              contributorsUtil.repoContribsUtil(org, repo)
               .then(function gotRepoContributorsInStorage (contributors) {
                 contributorsUI.insertContributors(contributors);
                 return;
@@ -82160,16 +82160,16 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   // Function for fetching and showing recent contributors
   function showRecentContributors(org, repo, recencyLabel) {
-    return contributorsUtil.storeAllRecentContribsInitially(org, repo).then((result)=>{
+    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo).then((result)=>{
       if(recencyLabel==='month') {
-        return recentContribsUtil.getCommitsLastMonth(org, repo)
+        return recentContribsUtil.fetchContribsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(commits);
                 return;
               });
       } else {
-        return recentContribsUtil.getCommitsLastWeek(org, repo)
+        return recentContribsUtil.fetchContribsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);
@@ -82227,7 +82227,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/autocomplete":408,"../utils/contributorsUtil":409,"../utils/fetchRepoUtil":410,"../utils/recentContribsUtil":411,"../utils/staleIssuesUtil":412,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/autocomplete":408,"../utils/contribsUtil/main":412,"../utils/recentContribsUtil/main":418,"../utils/repoUtil/fetchRepoUtil":421,"../utils/staleIssuesUtil":422,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
 function generateAutocomplete(repos) {
     let repoAlreadySelected = urlHash().getUrlHashParameter('r');
     
@@ -82263,52 +82263,13 @@ function generateAutocomplete(repos) {
 module.exports.generateAutocomplete = generateAutocomplete;
 
 },{}],409:[function(require,module,exports){
-
-var SimpleApi = require("github-api-simple")
-var api = new SimpleApi()
-var parse = require('parse-link-header')
-var model_utils = require('../models/utils')
-var fetchRepoUtil = require('./fetchRepoUtil')
-var recentContribsUtil = require('../utils/recentContribsUtil')
-
-// This is a utility function which decides whether to make a single request for fetching
-// each repository's contributors or multiple ones.
-function fetchRepoContributorsUtil(org, repo) {
-  return new Promise((resolve, reject) => {
-    if(repo === 'plots2') {
-      resolve(fetchAllRepoContributors(org, repo));
-    }else {
-      resolve(fetchRepoContributors(org, repo));
-    }
-  })
-}
-
-
-// This utility helps us in getting CONTRIBUTORS for a particular repository
-function fetchRepoContributors(org, repo) {
-  // This array is used to store the contributors from all of the repositories
-  let contributorsArray = [];
-
-  return api.Repositories
-            .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 }})
-            .then(function gotRepoContributors(contributors) {
-              if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
-                contributors.map((contributor, i) => contributorsArray.push(contributor));
-              }
-            })
-            .then(() => {
-              let now = (new Date).getTime();
-              model_utils.setItem(repo, contributorsArray);
-              model_utils.setItem(`${repo}Expiry`, now);
-              return contributorsArray;
-            })
-}
-
-
-
+let SimpleApi = require("github-api-simple")
+let api = new SimpleApi()
+let model_utils = require('../../models/utils')
+let parse = require('parse-link-header')
 
 // This utility helps us in getting all the contributors for a particular repository
-function fetchAllRepoContributors(org, repo) {
+function fetchAllRepoContribs(org, repo) {
     // This array is used to store the contributors from all of the repositories
     let contributorsArray = [];
 
@@ -82354,171 +82315,159 @@ function fetchAllRepoContributors(org, repo) {
 }
 
 
-// This runs at the very start of page load and stores all the repositories and all the
-// contributors in the database on initial page load
-function storeAllContributorsInDatabase(org) {
-  let AllContributors = [];
-  let promises = [];
-  var contributorSet = new Set([]);
-  return new Promise((resolve, reject) => {
-      model_utils.getItem('allContributors').then((allContributors) => {
-        // If all contributors list is not in the database, it makes a fresh call to Github API
-        if(allContributors == null || allContributors == undefined || allContributors.length == 0) {
-            return model_utils.getItem('repos').then((res) => {
-              let splicedRepos = res.splice(0,20);
-              splicedRepos.map(function mappingToEachRepo(Repo, i) {
-                let promise =  fetchRepoContributorsUtil(org, Repo)
-                              .then(function gotRepoContributorsInStorage(contributors) {
-                                if(contributors!=undefined && contributors.length>0) {
-                                  contributors.map((contributor, i)=> {
-                                    if(!contributorSet.has(contributor.login)) {
-                                      contributorSet.add(contributor.login);
-                                      AllContributors.push(contributor);
-                                    }
-                                  })
-                                }
-                              });
-                promises.push(promise);
-              });
-              return Promise.all(promises)
-                      .then(()=> {
-                          // Storing array containing all the contributors' list across 20 most active
-                          // repos to database
-                          model_utils.setItem('allContributors', AllContributors);
-                          // Saves current time in epoch, used for flushing out the stored data
-                          // after 24 hours
-                          let currentTime = (new Date).getTime();
-                          model_utils.setItem('allContributorsExpiry', currentTime);
-                          resolve(AllContributors);
-                      })
-            })
-        }
-        // If all contributors list is in the database, it simply returns that as a resolved promise 
-        else {
-          resolve(allContributors);
-        }
-      })
-    });
+
+
+// EXPORTS
+module.exports = {
+	fetchAllRepoContribs: fetchAllRepoContribs
 }
+},{"../../models/utils":405,"github-api-simple":151,"parse-link-header":278}],410:[function(require,module,exports){
+let SimpleApi = require("github-api-simple")
+let api = new SimpleApi()
+let model_utils = require('../../models/utils')
 
 
-// Stores all the Recent Contributors in the database
-function storeAllRecentContribsInitially(org, repo) {
-  // We make queryTime 1 month behind the current time, to pass it as query in the request
-  let d = (new Date);
-  d.setDate(d.getDate() - 30);
-  let queryTime = d.toISOString();
-  return model_utils.getItem('repos').then((repos) => {
-      return model_utils.getItem('recent-present').then((result)=> {
-        if(result!=null && result!=undefined) {
-          return result;
-        }
-        else {
-          if(repos!=null || repos!=undefined) {
-            return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
-                    .then((result) => {
-                      model_utils.setItem('recent-present', 'true');
-                        return result;
-                    })
-          } else {
-            fetchRepoUtil.getAllRepos(org).then((repos) => {
-              if(repos!=null || repos!=undefined) {
-                return recentContribsUtil.fetchAllRecentMonthCommits(org, repos, queryTime)
-                        .then((result) => {
-                          model_utils.setItem('recent-present', 'true');
-                          return result;
-                        })
-              }
-            });
-          }
-        }
-      });
-  })
+// This utility helps us in getting CONTRIBUTORS for a particular repository
+function fetchRepoContribs(org, repo) {
+	// This array is used to store the contributors from all of the repositories
+	let contributorsArray = [];
   
+	return api.Repositories
+			  .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100 }})
+			  .then(function gotRepoContributors(contributors) {
+				if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+				  contributors.map((contributor, i) => contributorsArray.push(contributor));
+				}
+			  })
+			  .then(() => {
+				let now = (new Date).getTime();
+				model_utils.setItem(repo, contributorsArray);
+				model_utils.setItem(`${repo}Expiry`, now);
+				return contributorsArray;
+			  })
+  }
+
+  
+
+
+// EXPORTS
+module.exports = {
+	fetchRepoContribs: fetchRepoContribs
 }
+},{"../../models/utils":405,"github-api-simple":151}],411:[function(require,module,exports){
+let fetchAllRepoContribs = require('./fetchAllRepoContribs')
+let fetchRepoContribs = require('./fetchRepoContribs')
+
+// This is a utility function which decides whether to make a single request for fetching
+// each repository's contributors or multiple ones.
+function fetchRepoContributorsUtil(org, repo) {
+	return new Promise((resolve, reject) => {
+	  if(repo === 'plots2') {
+		resolve(fetchAllRepoContribs.fetchAllRepoContribs(org, repo));
+	  }else {
+		resolve(fetchRepoContribs.fetchRepoContribs(org, repo));
+	  }
+	})
+}
+
+
+// EXPORTS
+module.exports = {
+	fetchRepoContributorsUtil: fetchRepoContributorsUtil
+}
+},{"./fetchAllRepoContribs":409,"./fetchRepoContribs":410}],412:[function(require,module,exports){
+let fetchRepoContribsUtil = require('./fetchRepoContribsUtil')
+let storeAllContribsInDb = require('./storeAllContribsInDb')
+
+
+function fetchAllContribsInDb(org) {
+  return storeAllContribsInDb.storeAllContribsInDb(org)
+  .then((response) => {
+    return response;
+  })
+}
+
+
+function repoContribsUtil(org, repo) {
+  return fetchRepoContribsUtil.fetchRepoContributorsUtil(org, repo)
+  .then((response) => {
+    return response;
+  })
+}
+
 
 
 
 // EXPORTS
 module.exports = {
-  fetchAllRepoContributors: fetchAllRepoContributors,
-  fetchRepoContributors: fetchRepoContributors,
-  fetchRepoContributorsUtil: fetchRepoContributorsUtil,
-  storeAllRecentContribsInitially: storeAllRecentContribsInitially,
-  storeAllContributorsInDatabase: storeAllContributorsInDatabase,
+  repoContribsUtil: repoContribsUtil, 
+  fetchAllContribsInDb: fetchAllContribsInDb
 }
 
 
-},{"../models/utils":405,"../utils/recentContribsUtil":411,"./fetchRepoUtil":410,"github-api-simple":151,"parse-link-header":278}],410:[function(require,module,exports){
-let model_utils = require('../models/utils')
+},{"./fetchRepoContribsUtil":411,"./storeAllContribsInDb":413}],413:[function(require,module,exports){
+let fetchRepoContributorsUtil = require('./fetchRepoContribsUtil')
+let model_utils = require('../../models/utils')
 
-// Fetches all the publiclab's repositories
-function getAllRepos(org) {
-
-  // This array is used to store all the repositories fetched from Github
-  let repos = [];
-
-  return fetch(`https://api.github.com/users/${org}/repos?sort=pushed&direction=desc&per_page=100`)
-          .then(function gotRepos(data) {
-            if(data.status=='200') {
-              return data.json();
-            }
-          })
-          .then(function mapToEachRepo(results) {
-            results.map(function mappingToEachRepo(repo, index) {
-              return repos[index] = repo.name;
-            });
-            return(repos);
-          })
-          .then((repos) => {
-            // Storing the repos in the database
-            model_utils.setItem('repos', repos);
-            return(repos);
-          })
+// This runs at the very start of page load and stores all the repositories and all the
+// contributors in the database on initial page load
+function storeAllContribsInDb(org) {
+	let AllContributors = [];
+	let promises = [];
+	var contributorSet = new Set([]);
+	return new Promise((resolve, reject) => {
+		model_utils.getItem('allContributors').then((allContributors) => {
+		  // If all contributors list is not in the database, it makes a fresh call to Github API
+		  if(allContributors == null || allContributors == undefined || allContributors.length == 0) {
+			  return model_utils.getItem('repos').then((res) => {
+				let splicedRepos = res.splice(0, 20);
+				splicedRepos.map(function mappingToEachRepo(Repo, i) {
+				  let promise = fetchRepoContributorsUtil.fetchRepoContributorsUtil(org, Repo)
+								.then(function gotRepoContributorsInStorage(contributors) {
+								  if(contributors!=undefined && contributors.length>0) {
+									contributors.map((contributor, i)=> {
+									  if(!contributorSet.has(contributor.login)) {
+										contributorSet.add(contributor.login);
+										AllContributors.push(contributor);
+									  }
+									})
+								  }
+								});
+				  promises.push(promise);
+				});
+				return Promise.all(promises)
+						.then(()=> {
+							// Storing array containing all the contributors' list across 20 most active
+							// repos to database
+							model_utils.setItem('allContributors', AllContributors);
+							// Saves current time in epoch, used for flushing out the stored data
+							// after 24 hours
+							let currentTime = (new Date).getTime();
+							model_utils.setItem('allContributorsExpiry', currentTime);
+							resolve(AllContributors);
+						})
+			  })
+		  }
+		  // If all contributors list is in the database, it simply returns that as a resolved promise 
+		  else {
+			resolve(allContributors);
+		  }
+		})
+	  });
   }
+
+  
 
 
 // EXPORTS
-module.exports.getAllRepos = getAllRepos;
-
-},{"../models/utils":405}],411:[function(require,module,exports){
-var fetchRepoUtil = require('./fetchRepoUtil');
-var model_utils = require('../models/utils');
-
-// Fetches recent month commits for a particular repository 
-function fetchRecentMonthCommits(org, repo, queryTime) {
-    let commitersSet = new Set([]);
-    let result=[];
-    return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
-            .then(function gotResponse(response) {
-                if(response.status=="200") {
-                    return response.json();
-                }
-            })
-            .then(function gotResponseJson(response) {
-                if(response!=null) {
-                    response.map(function mappingToCommits(commit, i) {
-                        if(commit.author!=null) {
-                            if(!commitersSet.has(commit.author.login)) {
-                                commitersSet.add(commit.author.login);
-                                result.push(commit);
-                            }
-                        }
-                        return true;
-                    });
-
-                    // Save each repo's commits data to the database
-                    let currTime = (new Date).getTime();
-                    console.log(`in fetchRecentMonthCommits, storing recent-${repo}-month-commits`);
-                    model_utils.setItem(`recent-${repo}-month-commits`, result);
-                    model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
-                }
-                return result;
-            });
+module.exports = {
+	storeAllContribsInDb: storeAllContribsInDb
 }
+},{"../../models/utils":405,"./fetchRepoContribsUtil":411}],414:[function(require,module,exports){
+let model_utils = require('../../models/utils');
 
 // Fetches recent month commits for top 10 repositories
-function fetchAllRecentMonthCommits(org, repos, queryTime) {
+function fetchAllRecentMonthContribs(org, repos, queryTime) {
     let results = [];
     let commitersSet = new Set([]);
     let timeToday = (new Date).getTime();
@@ -82558,7 +82507,6 @@ function fetchAllRecentMonthCommits(org, repos, queryTime) {
     return Promise.all(promises)
            .then(function promisesResolved() {
                 // Store recentMonthCommits and recentMonthCommitsExpiry in the database
-                console.log(`in fetchALLRecentMonthCommits, storing recent-ALL-month-commits`);
                 model_utils.setItem('recent-all-month-commits', results);
                 model_utils.setItem('recent-all-month-expiry', timeToday);
                 return results;
@@ -82566,64 +82514,62 @@ function fetchAllRecentMonthCommits(org, repos, queryTime) {
 }
 
 
-// Fetches recent week's commits for a particular repo
-function getCommitsLastWeek(org, repo) {
-    let contribs = [];
 
-    return model_utils.getItem(`recent-${repo}-week-expiry`)
-            .then((recentCommitsWeekExpiry) => {
-                let timeToday = (new Date).getTime();
-                // If recent month's commits expiry time is 1 day behind the current time, flush them out.
-                if(recentCommitsWeekExpiry!=null && recentCommitsWeekExpiry!=undefined && ((timeToday-recentCommitsWeekExpiry)/1000)>=86400) {
-                    return Promise.all([model_utils.deleteItem(`recent-${repo}-week-expiry`), model_utils.deleteItem(`recent-${repo}-week-commits`)])
-                        .then(()=> {
-                            return true;
-                        })
+
+// EXPORTS
+module.exports = {
+	fetchAllRecentMonthContribs: fetchAllRecentMonthContribs
+}
+},{"../../models/utils":405}],415:[function(require,module,exports){
+let model_utils = require('../../models/utils');
+
+// Fetches recent month commits for a particular repository 
+function fetchRecentMonthContribs(org, repo, queryTime) {
+    let commitersSet = new Set([]);
+    let result=[];
+    return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
+            .then(function gotResponse(response) {
+                if(response.status=="200") {
+                    return response.json();
                 }
             })
-            .then(() => {
-                return model_utils.getItem(`recent-${repo}-week-commits`).then((result) => {
-                    if(result!=null && result!=undefined) {
-                        return result;
-                    }
-                    else {
-                        // We save extra request by filtering commits-made-last-week from commits-made-last month
-                        return getCommitsLastMonth(org, repo)
-                                .then((commits_last_month) => {
-                                    commits_last_month.map((commit_last_month, index) => {
-                                        let commit_date = commit_last_month['commit']['committer']['date'];
-                                        let check = within_this_week(commit_date);
-                                        if(check) {
-                                            contribs.push(commit_last_month);
-                                        }
-                                    });
-                                    // Store recentWeekCommits and recentWeekCommitsExpiry in the database
-                                    let currTime = (new Date).getTime();
-                                    model_utils.setItem(`recent-${repo}-week-commits`, contribs);
-                                    model_utils.setItem(`recent-${repo}-week-expiry`, currTime);
-                                    return contribs;
-                                });
-                    }
-                });
+            .then(function gotResponseJson(response) {
+                if(response!=null) {
+                    response.map(function mappingToCommits(commit, i) {
+                        if(commit.author!=null) {
+                            if(!commitersSet.has(commit.author.login)) {
+                                commitersSet.add(commit.author.login);
+                                result.push(commit);
+                            }
+                        }
+                        return true;
+                    });
+
+                    // Save each repo's commits data to the database
+                    let currTime = (new Date).getTime();
+                    model_utils.setItem(`recent-${repo}-month-commits`, result);
+                    model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
+                }
+                return result;
             });
 }
 
 
 
-// Utility function that checks if a given date is behind the current date
-// by 7 or less
-function within_this_week(date) {
-    let current = (new Date).getTime();
-    let past_date = (new Date(`${date}`)).getTime();
-    let measure = Math.ceil(Math.abs(current - past_date) / (1000*3600*24));
-    if(measure<=7) {
-        return true;
-    }
-    return false;
+
+
+// EXPORTS
+module.exports = {
+	fetchRecentMonthContribs: fetchRecentMonthContribs
 }
+},{"../../models/utils":405}],416:[function(require,module,exports){
+let model_utils = require('../../models/utils');
+let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
+let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
+
 
 // Fetches recent month's commits for a particular repo or all of the repos (10 repos)
-function getCommitsLastMonth(org, repo) {
+function getContribsLastMonth(org, repo) {
     return model_utils.getItem('repos').then((repos) => {
         if(repos!=null && repos!=undefined) {
             return model_utils.getItem(`recent-${repo}-month-expiry`)
@@ -82649,16 +82595,14 @@ function getCommitsLastMonth(org, repo) {
                             d.setDate(d.getDate() - 30);
                             let queryTime = d.toISOString();
                             if(repo==='all') {
-                                return fetchAllRecentMonthCommits(org, repos, queryTime)
+                                return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
-                                    console.log("got all monthly contribs from fetchAllRecentMonthCommits");
                                     return month_commits;
                                 });
                             }
                             else {
-                                return fetchRecentMonthCommits(org, repo, queryTime)
+                                return fetchRecentMonthContribs.fetchRecentMonthContribs(org, repo, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
-                                    console.log("got repo's month commits from fetch");
                                     return month_commits;
                                 })
                             }
@@ -82673,16 +82617,203 @@ function getCommitsLastMonth(org, repo) {
 
 
 
+
+
 // EXPORTS
 module.exports = {
-    fetchAllRecentMonthCommits: fetchAllRecentMonthCommits,
-    fetchRecentMonthCommits: fetchRecentMonthCommits,
-    getCommitsLastMonth: getCommitsLastMonth,
-    getCommitsLastWeek: getCommitsLastWeek,
-    within_this_week: within_this_week
+	getContribsLastMonth: getContribsLastMonth
+}
+},{"../../models/utils":405,"./fetchAllRecentMonthContribs":414,"./fetchRecentMonthContribs":415}],417:[function(require,module,exports){
+let model_utils = require('../../models/utils');
+let getContribsLastMonth = require('./getContribsLastMonth')
+let withinThisWeekOrNot = require('./withinThisWeekOrNot')
+
+// Fetches recent week's commits for a particular repo
+function getContribsLastWeek(org, repo) {
+    let contribs = [];
+
+    return model_utils.getItem(`recent-${repo}-week-expiry`)
+            .then((recentCommitsWeekExpiry) => {
+                let timeToday = (new Date).getTime();
+                // If recent month's commits expiry time is 1 day behind the current time, flush them out.
+                if(recentCommitsWeekExpiry!=null && recentCommitsWeekExpiry!=undefined && ((timeToday-recentCommitsWeekExpiry)/1000)>=86400) {
+                    return Promise.all([model_utils.deleteItem(`recent-${repo}-week-expiry`), model_utils.deleteItem(`recent-${repo}-week-commits`)])
+                        .then(()=> {
+                            return true;
+                        })
+                }
+            })
+            .then(() => {
+                return model_utils.getItem(`recent-${repo}-week-commits`).then((result) => {
+                    if(result!=null && result!=undefined) {
+                        return result;
+                    }
+                    else {
+                        // We save extra request by filtering commits-made-last-week from commits-made-last month
+                        return getContribsLastMonth.getContribsLastMonth(org, repo)
+                                .then((commits_last_month) => {
+                                    commits_last_month.map((commit_last_month, index) => {
+                                        let commit_date = commit_last_month['commit']['committer']['date'];
+                                        let check = withinThisWeekOrNot.within_this_week(commit_date);
+                                        if(check) {
+                                            contribs.push(commit_last_month);
+                                        }
+                                    });
+                                    // Store recentWeekCommits and recentWeekCommitsExpiry in the database
+                                    let currTime = (new Date).getTime();
+                                    model_utils.setItem(`recent-${repo}-week-commits`, contribs);
+                                    model_utils.setItem(`recent-${repo}-week-expiry`, currTime);
+                                    return contribs;
+                                });
+                    }
+                });
+            });
 }
 
-},{"../models/utils":405,"./fetchRepoUtil":410}],412:[function(require,module,exports){
+
+
+
+
+// EXPORTS 
+module.exports = {
+	getContribsLastWeek: getContribsLastWeek
+}
+},{"../../models/utils":405,"./getContribsLastMonth":416,"./withinThisWeekOrNot":420}],418:[function(require,module,exports){
+let getContribsLastMonth = require('./getContribsLastMonth')
+let getContribsLastWeek = require('./getContribsLastWeek')
+let storeAllRecentContribsInDb = require('./storeAllRecentContribsInDb')
+
+
+
+function fetchContribsLastMonth(org, repo) {
+    return getContribsLastMonth.getContribsLastMonth(org, repo)
+    .then((contribs) => {
+        return contribs;
+    })
+}
+
+function fetchContribsLastWeek(org, repo) {
+    return getContribsLastWeek.getContribsLastWeek(org, repo)
+    .then((contribs) => {
+        return contribs;
+    })
+}
+
+function fetchAllRecentContribsInDb(org, repo) {
+    return storeAllRecentContribsInDb.storeAllRecentContribsInDb(org, repo)
+    .then((response) => {
+      return response;
+    })
+}
+
+
+
+// EXPORTS
+module.exports = {
+    fetchContribsLastMonth: fetchContribsLastMonth,
+    fetchContribsLastWeek: fetchContribsLastWeek,
+    fetchAllRecentContribsInDb: fetchAllRecentContribsInDb
+}
+
+},{"./getContribsLastMonth":416,"./getContribsLastWeek":417,"./storeAllRecentContribsInDb":419}],419:[function(require,module,exports){
+let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
+let fetchRepoUtil = require('../repoUtil/fetchRepoUtil')
+let model_utils = require('../../models/utils')
+
+
+// Stores all the Recent Contributors in the database
+function storeAllRecentContribsInDb(org, repo) {
+	// We make queryTime 1 month behind the current time, to pass it as query in the request
+	let d = (new Date);
+	d.setDate(d.getDate() - 30);
+	let queryTime = d.toISOString();
+	return model_utils.getItem('repos').then((repos) => {
+		return model_utils.getItem('recent-present').then((result)=> {
+		  if(result!=null && result!=undefined) {
+			return result;
+		  }
+		  else {
+			if(repos!=null || repos!=undefined) {
+			  return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
+					  .then((result) => {
+						model_utils.setItem('recent-present', 'true');
+						  return result;
+					  })
+			} else {
+			  fetchRepoUtil.getAllRepos(org).then((repos) => {
+				if(repos!=null || repos!=undefined) {
+				  return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
+						  .then((result) => {
+							model_utils.setItem('recent-present', 'true');
+							return result;
+						  })
+				}
+			  });
+			}
+		  }
+		});
+	})
+	
+}
+
+
+
+// EXPORTS
+module.exports = {
+	storeAllRecentContribsInDb: storeAllRecentContribsInDb
+}
+
+},{"../../models/utils":405,"../repoUtil/fetchRepoUtil":421,"./fetchAllRecentMonthContribs":414}],420:[function(require,module,exports){
+// Utility function that checks if a given date is behind the current date
+// by 7 or less
+function within_this_week(date) {
+    let current = (new Date).getTime();
+    let past_date = (new Date(`${date}`)).getTime();
+    let measure = Math.ceil(Math.abs(current - past_date) / (1000*3600*24));
+    if(measure<=7) {
+        return true;
+    }
+    return false;
+}
+
+
+// EXPORTS
+module.exports = {
+	within_this_week: within_this_week
+}
+},{}],421:[function(require,module,exports){
+let model_utils = require('../../models/utils')
+
+// Fetches all the publiclab's repositories
+function getAllRepos(org) {
+
+  // This array is used to store all the repositories fetched from Github
+  let repos = [];
+
+  return fetch(`https://api.github.com/users/${org}/repos?sort=pushed&direction=desc&per_page=100`)
+          .then(function gotRepos(data) {
+            if(data.status=='200') {
+              return data.json();
+            }
+          })
+          .then(function mapToEachRepo(results) {
+            results.map(function mappingToEachRepo(repo, index) {
+              return repos[index] = repo.name;
+            });
+            return(repos);
+          })
+          .then((repos) => {
+            // Storing the repos in the database
+            model_utils.setItem('repos', repos);
+            return(repos);
+          })
+  }
+
+
+// EXPORTS
+module.exports.getAllRepos = getAllRepos;
+
+},{"../../models/utils":405}],422:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 function getOrgWideIssues(org) {
