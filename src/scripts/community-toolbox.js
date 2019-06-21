@@ -13,6 +13,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var contributorsUtil = require('../utils/contributorsUtil')
   var recentContributorsUI = require('../UI/recentContributorsUI')
   var recentContribsUtil = require('../utils/recentContribsUtil')
+  var autoCompleteUtil = require('../utils/autocomplete')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -71,6 +72,17 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           });
       });
     }
+
+
+  function dropdownInit() {
+    return model_utils.getItem('repos').then((res) => {
+      if(res!=null && res!=undefined) {
+        autoCompleteUtil.generateAutocomplete(res);
+      }else {
+        console.log("not working");
+      }
+    });
+  }
 
 
   // This function is responsible for showing contributors
@@ -213,7 +225,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo,
-    initialize: initialize
+    initialize: initialize,
+    dropdownInit: dropdownInit
   }
 
 }

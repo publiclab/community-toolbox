@@ -81968,6 +81968,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var contributorsUtil = require('../utils/contributorsUtil')
   var recentContributorsUI = require('../UI/recentContributorsUI')
   var recentContribsUtil = require('../utils/recentContribsUtil')
+  var autoCompleteUtil = require('../utils/autocomplete')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82024,6 +82025,17 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
               resolve(true);
             });
           });
+      });
+    }
+
+
+    function dropdownInit() {
+      return model_utils.getItem('repos').then((res) => {
+          if(res!=null && res!=undefined) {
+              autoCompleteUtil.generateAutocomplete(res);
+          }else {
+              console.log("not working");
+          }
       });
     }
 
@@ -82168,14 +82180,46 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo,
-    initialize: initialize
+    initialize: initialize,
+    dropdownInit: dropdownInit
   }
 
 }
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/contributorsUtil":407,"../utils/fetchRepoUtil":408,"../utils/recentContribsUtil":409,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/autocomplete":407,"../utils/contributorsUtil":408,"../utils/fetchRepoUtil":409,"../utils/recentContribsUtil":410,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
+function generateAutocomplete(repos) {
+    let repoAlreadySelected = urlHash().getUrlHashParameters('r');
+    console.log("reposs  = ", repoAlreadySelected);
+    if(jQuery.isEmptyObject(repoAlreadySelected)) { 
+        repoAlreadySelected = "plots2";
+    }else {
+        repoAlreadySelected = repoAlreadySelected.r;
+        console.log("not empty");
+    }
+    $('#dropdownMenuButton').html(repoAlreadySelected);
+
+    repos.map((repo,i) => {
+        $('<p>', {
+            class: 'dropdown-items',
+            text: repo
+        }).appendTo('#dropdown-container');
+    });
+    
+    $('.dropdown-items').click((e) => {
+        let repo = e.target.textContent;
+        urlHash().setUrlHashParameter("r", repo);
+        console.log("select = ",$('#dropdownMenuButton'), "  repo = ", repo);
+        $('#dropdownMenuButton').html(repo);
+        location.reload();
+    })
+}
+
+
+
+module.exports.generateAutocomplete = generateAutocomplete;
+},{}],408:[function(require,module,exports){
 
 var SimpleApi = require("github-api-simple")
 var api = new SimpleApi()
@@ -82362,7 +82406,7 @@ module.exports = {
 }
 
 
-},{"../models/utils":404,"../utils/recentContribsUtil":409,"./fetchRepoUtil":408,"github-api-simple":151,"parse-link-header":278}],408:[function(require,module,exports){
+},{"../models/utils":404,"../utils/recentContribsUtil":410,"./fetchRepoUtil":409,"github-api-simple":151,"parse-link-header":278}],409:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 // Fetches all the publiclab's repositories
@@ -82394,7 +82438,7 @@ function getAllRepos(org) {
 // EXPORTS
 module.exports.getAllRepos = getAllRepos;
 
-},{"../models/utils":404}],409:[function(require,module,exports){
+},{"../models/utils":404}],410:[function(require,module,exports){
 var fetchRepoUtil = require('./fetchRepoUtil');
 var model_utils = require('../models/utils');
 
@@ -82595,4 +82639,4 @@ module.exports = {
     within_this_week: within_this_week
 }
 
-},{"../models/utils":404,"./fetchRepoUtil":408}]},{},[406]);
+},{"../models/utils":404,"./fetchRepoUtil":409}]},{},[406]);
