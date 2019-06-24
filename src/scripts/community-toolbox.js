@@ -14,6 +14,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var recentContributorsUI = require('../UI/recentContributorsUI')
   var recentContribsUtil = require('../utils/recentContribsUtil')
   var autoCompleteUtil = require('../utils/autocomplete')
+  var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -226,7 +227,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     showRepoContributors: showRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo,
     initialize: initialize,
-    dropdownInit: dropdownInit
+    dropdownInit: dropdownInit,
+    ftoAuthorsUI: ftoAuthorsUI
   }
 
 }

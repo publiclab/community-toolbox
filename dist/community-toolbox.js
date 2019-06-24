@@ -81643,6 +81643,19 @@ module.exports = {
     insertContributors: insertContributors,
 };
 },{}],400:[function(require,module,exports){
+function insertFtoIssueAuthor(issueSet) {
+    let avatars=[];
+    for(let [key, value] of Object.entries(issueSet)) {
+      avatars.push(`<a href="https://github.com/${value.user.login}" title="${value.user.login}"><img width="100px" src="${value.user.avatar_url}"></a>`);
+    }
+    $('.fto-authors').append(avatars.join(' '));
+  }
+
+
+module.exports = {
+    insertFtoIssueAuthor: insertFtoIssueAuthor
+}
+},{}],401:[function(require,module,exports){
 var moment = require('moment');
 
 
@@ -81680,7 +81693,7 @@ module.exports = {
     generateIssueHtml: generateIssueHtml,
     insertIssue: insertIssue,
 };
-},{"moment":271}],401:[function(require,module,exports){
+},{"moment":271}],402:[function(require,module,exports){
 var insertRecentContributorsExec = false;
 
 
@@ -81705,7 +81718,7 @@ function insertRecentContributors(AllContributors){
 module.exports = {
   insertRecentContributors: insertRecentContributors,
 };
-},{}],402:[function(require,module,exports){
+},{}],403:[function(require,module,exports){
 let db;
 let init = require('../models/initialize')
 
@@ -81810,7 +81823,7 @@ module.exports.getContentFromDb = getContentFromDb;
 module.exports.deleteItemFromDb = deleteItemFromDb;
 module.exports.populateDb = populateDb;
 
-},{"../models/initialize":403}],403:[function(require,module,exports){
+},{"../models/initialize":404}],404:[function(require,module,exports){
 // This function is responsible for setting up the database
 function dbInit() {
     let db;
@@ -81873,7 +81886,7 @@ module.exports = {
 }
 
 
-},{}],404:[function(require,module,exports){
+},{}],405:[function(require,module,exports){
 var model = require('./crud');
 
 
@@ -81902,7 +81915,7 @@ module.exports.setItem = setItem;
 module.exports.getItem = getItem;
 module.exports.deleteItem = deleteItem;
 
-},{"./crud":402}],405:[function(require,module,exports){
+},{"./crud":403}],406:[function(require,module,exports){
 // view-source:http://www.chartjs.org/samples/latest/charts/bar/vertical.html
 function generateChart(args) {
 
@@ -81955,7 +81968,7 @@ function generateChart(args) {
 
 module.exports = generateChart;
 
-},{}],406:[function(require,module,exports){
+},{}],407:[function(require,module,exports){
 
 CommunityToolbox = function CommunityToolbox(org, repo) {
   
@@ -81972,6 +81985,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var recentContributorsUI = require('../UI/recentContributorsUI')
   var recentContribsUtil = require('../utils/recentContribsUtil')
   var autoCompleteUtil = require('../utils/autocomplete')
+  var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82184,14 +82198,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     showRepoContributors: showRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo,
     initialize: initialize,
-    dropdownInit: dropdownInit
+    dropdownInit: dropdownInit,
+    ftoAuthorsUI: ftoAuthorsUI
   }
 
 }
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/autocomplete":407,"../utils/contributorsUtil":408,"../utils/fetchRepoUtil":409,"../utils/recentContribsUtil":410,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/autocomplete":408,"../utils/contributorsUtil":409,"../utils/fetchRepoUtil":410,"../utils/recentContribsUtil":411,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
 function generateAutocomplete(repos) {
     let repoAlreadySelected = urlHash().getUrlHashParameter('r');
     
@@ -82226,7 +82241,7 @@ function generateAutocomplete(repos) {
 
 module.exports.generateAutocomplete = generateAutocomplete;
 
-},{}],408:[function(require,module,exports){
+},{}],409:[function(require,module,exports){
 
 var SimpleApi = require("github-api-simple")
 var api = new SimpleApi()
@@ -82413,7 +82428,7 @@ module.exports = {
 }
 
 
-},{"../models/utils":404,"../utils/recentContribsUtil":410,"./fetchRepoUtil":409,"github-api-simple":151,"parse-link-header":278}],409:[function(require,module,exports){
+},{"../models/utils":405,"../utils/recentContribsUtil":411,"./fetchRepoUtil":410,"github-api-simple":151,"parse-link-header":278}],410:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 // Fetches all the publiclab's repositories
@@ -82445,7 +82460,7 @@ function getAllRepos(org) {
 // EXPORTS
 module.exports.getAllRepos = getAllRepos;
 
-},{"../models/utils":404}],410:[function(require,module,exports){
+},{"../models/utils":405}],411:[function(require,module,exports){
 var fetchRepoUtil = require('./fetchRepoUtil');
 var model_utils = require('../models/utils');
 
@@ -82646,4 +82661,4 @@ module.exports = {
     within_this_week: within_this_week
 }
 
-},{"../models/utils":404,"./fetchRepoUtil":409}]},{},[406]);
+},{"../models/utils":405,"./fetchRepoUtil":410}]},{},[407]);
