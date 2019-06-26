@@ -90,6 +90,15 @@ h1, h2, .section h3 {
     text-align: center;
 }
 
+#options-bar {
+    display: flex;
+    margin-top: 2em;
+}
+
+.dropdown {
+    margin-left: auto;
+}
+
 #dropdown-container {
     height: 300px;
     width: 200px;
