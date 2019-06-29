@@ -82032,15 +82032,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     }
 
 
-    function dropdownInit() {
-      return model_utils.getItem('repos').then((res) => {
-          if(res!=null && res!=undefined) {
-              autoCompleteUtil.generateAutocomplete(res);
-          }else {
-              console.log("not working");
-          }
-      });
-    }
+  function dropdownInit() {
+    return model_utils.getItem('repos').then((res) => {
+      if(res!=null && res!=undefined) {
+        autoCompleteUtil.generateAutocomplete(res);
+      }else {
+        console.log("not working");
+      }
+    });
+  }
 
 
   // This function is responsible for showing contributors
@@ -82193,27 +82193,30 @@ module.exports = CommunityToolbox;
 
 },{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/autocomplete":407,"../utils/contributorsUtil":408,"../utils/fetchRepoUtil":409,"../utils/recentContribsUtil":410,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
 function generateAutocomplete(repos) {
-    let repoAlreadySelected = urlHash().getUrlHashParameters('r');
-    console.log("reposs  = ", repoAlreadySelected);
-    if(jQuery.isEmptyObject(repoAlreadySelected)) { 
+    let repoAlreadySelected = urlHash().getUrlHashParameter('r');
+    
+    // populates the current dropdown selected html
+    if(jQuery.isEmptyObject(repoAlreadySelected)) {
         repoAlreadySelected = "plots2";
     }else {
-        repoAlreadySelected = repoAlreadySelected.r;
-        console.log("not empty");
+        repoAlreadySelected = (repoAlreadySelected.r == undefined) ? repoAlreadySelected : repoAlreadySelected.r;
     }
     $('#dropdownMenuButton').html(repoAlreadySelected);
 
+
+    // populates the dropdown list
     repos.map((repo,i) => {
         $('<p>', {
             class: 'dropdown-items',
             text: repo
         }).appendTo('#dropdown-container');
     });
-    
+
+
+    // click handler for dropdown items 
     $('.dropdown-items').click((e) => {
         let repo = e.target.textContent;
         urlHash().setUrlHashParameter("r", repo);
-        console.log("select = ",$('#dropdownMenuButton'), "  repo = ", repo);
         $('#dropdownMenuButton').html(repo);
         location.reload();
     })
@@ -82222,6 +82225,7 @@ function generateAutocomplete(repos) {
 
 
 module.exports.generateAutocomplete = generateAutocomplete;
+
 },{}],408:[function(require,module,exports){
 
 var SimpleApi = require("github-api-simple")
