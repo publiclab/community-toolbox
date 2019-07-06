@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return false;
     });
     /*Scroll to top when arrow up clicked END*/
-  
+
+
     var toolbox;
   
     (function() {
@@ -49,10 +50,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (repo === 'all') {
   
             toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
-                    .then(displayIssues('.first-timers-only'));
+                    .then(displayIssuesAndFtoAuthors('.first-timers-only'));
   
             toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
-                    .then(displayIssues('.candidates'));
+                    .then(displayIssuesAndFtoAuthors('.candidates'));
   
             toolbox.initialize(org, repo).then((res)=> {
                 if(res) {
@@ -60,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     toolbox.showAllContributors(org, repo);
                     // Makes the toggle contributors list button click
                     d.click();
+                    toolbox.dropdownInit();
                 }
             })
   
@@ -67,11 +69,11 @@ document.addEventListener('DOMContentLoaded', function () {
   
             toolbox.api.Issues
                    .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
-                   .then(displayIssues('.first-timers-only'));
+                   .then(displayIssuesAndFtoAuthors('.first-timers-only'));
   
             toolbox.api.Issues
                    .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
-                   .then(displayIssues('.candidates'));
+                   .then(displayIssuesAndFtoAuthors('.candidates'));
   
             toolbox.initialize(org, repo).then((res)=> {
                 if(res) {
@@ -79,18 +81,34 @@ document.addEventListener('DOMContentLoaded', function () {
                     toolbox.showRepoContributors(org, repo);
                     // Makes the toggle contributors list button click
                     d.click();
+                    toolbox.dropdownInit();
                 }
             })
         }
   
-        function displayIssues(selector) {
-            return function displayIssues(issues) {
-                if (typeof issues === "string") issues = JSON.parse(issues).items;
-                    issues.forEach(function(issue) {
-                    toolbox.issuesUI.insertIssue(issue, selector);
-                });
+        function displayIssuesAndFtoAuthors(selector) {
+            let ftoAuthorSet = new Set([]);
+            let ftoAuthArray=[];
+            return function displayIssuesAndFtoAuthors(issues) {
+              if (typeof issues === "string") issues = JSON.parse(issues).items;
+              
+                issues.forEach(function(issue) {
+                toolbox.issuesUI.insertIssue(issue, selector);
+  
+                issue.labels.forEach((ftoLabel) => {
+                  if(ftoLabel.name==="first-timers-only" || ftoLabel.name==="fto") {
+                    if(!ftoAuthorSet.has(issue.user.login)) {
+                      ftoAuthorSet.add(issue.user.login);
+                      ftoAuthArray.push(issue);
+                    }
+  
+                  }
+                })
+              })
+              toolbox.ftoAuthorsUI.insertFtoIssueAuthor(ftoAuthArray);  
             }
         }
   
     })();
+
 })

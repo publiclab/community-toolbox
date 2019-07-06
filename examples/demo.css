@@ -90,6 +90,42 @@ h1, h2, .section h3 {
     text-align: center;
 }
 
+#options-bar {
+    display: flex;
+    margin-top: 2em;
+}
+
+.dropdown {
+    margin-left: auto;
+}
+
+#dropdown-container {
+    height: 300px;
+    width: 200px;
+    overflow: scroll;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.dropdown-items {
+    padding: 3px;
+}
+
+.dropdown-items:hover{
+    cursor: pointer;
+    background-color: rgba(221, 221, 255, 0.226);
+}
+
+.fto-authors {
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+}
+
+
 @media only screen and (max-width: 569px) {
     .links {
         width: 25%;

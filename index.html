@@ -9,13 +9,15 @@
 
     <title>Community toolbox</title>
     <link rel="shortcut icon"  id="favicon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
-
+    
+    
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="node_modules/chart.js/dist/Chart.js"></script>
-    <script src="node_modules/urlhash/urlHash.js"></script>
+    <script src="examples/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
     <script src="examples/demo.js"></script>
+    <script src="examples/themes.js"></script>
     <script src="src/scripts/configure.js"></script>
 
   </head>
@@ -25,16 +27,45 @@
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="examples/demo.css">
+    <link rel="stylesheet" href="examples/themes.css">
 
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
+    <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+    
 
     <div class="container-fluid">
-      
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
-      <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
-	  
+
       <header class="text-center">
         <h1>Welcome to <span class=" org-display-name">Public Lab</span>'s coding community!</h1>
       </header>
+
+      <!-- <hr /> -->
+
+      <div id="options-bar">
+
+        <div class="onoffswitch">
+          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
+          <label class="onoffswitch-label" for="myonoffswitch">
+              <span class="onoffswitch-inner"></span>
+              <span class="onoffswitch-switch"></span>
+          </label>
+        </div>
+
+
+        <!-- DROPDOWN STARTS -->
+        <div class="dropdown">
+          <label for="dropdownMenuButton">Select Repository: </label>
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Select repository
+          </button>
+          <div id="dropdown-container" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          </div>
+        </div>
+        <!-- DROPDOWN ENDS -->
+
+      </div>
 
       <hr />
 
@@ -133,10 +164,16 @@
 
       <hr />
 
+      <h2>FTO Authors</h2>
+
+      <p>These people took some time out of their busy schedule to help in welcoming newcomers by creating FTO issues: </p>
+
+      <div class="fto-authors"></div>
+
 
       <h2 class="recent-contributors-head">Recent Contributors</h2>
       
-      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" id="toggle-contributors">(Show monthly)</a></p>
+      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" class="nightmode-adapt"id="toggle-contributors">(Show monthly)</a></p>
 
       <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
 

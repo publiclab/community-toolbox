@@ -27563,17 +27563,22 @@ exports = module.exports = GithubService;
 
 },{"./assets/routes.json":150,"./package":152,"extend":144,"path":279,"request-promise":323}],152:[function(require,module,exports){
 module.exports={
+  "_args": [
+    [
+      "git://github.com/jywarren/github-api-simple.git#patch-2",
+      "/home/rishabh570/community-toolbox"
+    ]
+  ],
+  "_development": true,
   "_from": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_id": "github-api-simple@0.1.0",
+  "_id": "github-api-simple@git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_inBundle": false,
   "_integrity": "",
   "_location": "/github-api-simple",
   "_phantomChildren": {},
   "_requested": {
     "type": "git",
-    "raw": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
-    "name": "github-api-simple",
-    "escapedName": "github-api-simple",
+    "raw": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "rawSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "saveSpec": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "fetchSpec": "git://github.com/jywarren/github-api-simple.git",
@@ -27583,7 +27588,7 @@ module.exports={
     "#DEV:/"
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
-  "_spec": "github-api-simple@git://github.com/jywarren/github-api-simple.git#patch-2",
+  "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
   "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
@@ -27592,12 +27597,10 @@ module.exports={
   "bugs": {
     "url": "https://github.com/MichielvdVelde/github-api-simple/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "debug": "^2.6.9",
     "request-promise": "^1.0.2"
   },
-  "deprecated": false,
   "description": "Simple Github API wrapper for unauthenticated end points",
   "homepage": "https://github.com/MichielvdVelde/github-api-simple#readme",
   "keywords": [
@@ -81640,6 +81643,19 @@ module.exports = {
     insertContributors: insertContributors,
 };
 },{}],400:[function(require,module,exports){
+function insertFtoIssueAuthor(issueSet) {
+    let avatars=[];
+    for(let [key, value] of Object.entries(issueSet)) {
+      avatars.push(`<a href="https://github.com/${value.user.login}" title="${value.user.login}"><img width="100px" src="${value.user.avatar_url}"></a>`);
+    }
+    $('.fto-authors').append(avatars.join(' '));
+  }
+
+
+module.exports = {
+    insertFtoIssueAuthor: insertFtoIssueAuthor
+}
+},{}],401:[function(require,module,exports){
 var moment = require('moment');
 
 
@@ -81677,7 +81693,7 @@ module.exports = {
     generateIssueHtml: generateIssueHtml,
     insertIssue: insertIssue,
 };
-},{"moment":271}],401:[function(require,module,exports){
+},{"moment":271}],402:[function(require,module,exports){
 var insertRecentContributorsExec = false;
 
 
@@ -81702,7 +81718,7 @@ function insertRecentContributors(AllContributors){
 module.exports = {
   insertRecentContributors: insertRecentContributors,
 };
-},{}],402:[function(require,module,exports){
+},{}],403:[function(require,module,exports){
 let db;
 let init = require('../models/initialize')
 
@@ -81807,7 +81823,7 @@ module.exports.getContentFromDb = getContentFromDb;
 module.exports.deleteItemFromDb = deleteItemFromDb;
 module.exports.populateDb = populateDb;
 
-},{"../models/initialize":403}],403:[function(require,module,exports){
+},{"../models/initialize":404}],404:[function(require,module,exports){
 // This function is responsible for setting up the database
 function dbInit() {
     let db;
@@ -81870,7 +81886,7 @@ module.exports = {
 }
 
 
-},{}],404:[function(require,module,exports){
+},{}],405:[function(require,module,exports){
 var model = require('./crud');
 
 
@@ -81899,7 +81915,7 @@ module.exports.setItem = setItem;
 module.exports.getItem = getItem;
 module.exports.deleteItem = deleteItem;
 
-},{"./crud":402}],405:[function(require,module,exports){
+},{"./crud":403}],406:[function(require,module,exports){
 // view-source:http://www.chartjs.org/samples/latest/charts/bar/vertical.html
 function generateChart(args) {
 
@@ -81952,7 +81968,7 @@ function generateChart(args) {
 
 module.exports = generateChart;
 
-},{}],406:[function(require,module,exports){
+},{}],407:[function(require,module,exports){
 
 CommunityToolbox = function CommunityToolbox(org, repo) {
   
@@ -81968,6 +81984,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var contributorsUtil = require('../utils/contributorsUtil')
   var recentContributorsUI = require('../UI/recentContributorsUI')
   var recentContribsUtil = require('../utils/recentContribsUtil')
+  var autoCompleteUtil = require('../utils/autocomplete')
+  var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82026,6 +82044,17 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           });
       });
     }
+
+
+  function dropdownInit() {
+    return model_utils.getItem('repos').then((res) => {
+      if(res!=null && res!=undefined) {
+        autoCompleteUtil.generateAutocomplete(res);
+      }else {
+        console.log("not working");
+      }
+    });
+  }
 
 
   // This function is responsible for showing contributors
@@ -82168,14 +82197,51 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo,
-    initialize: initialize
+    initialize: initialize,
+    dropdownInit: dropdownInit,
+    ftoAuthorsUI: ftoAuthorsUI
   }
 
 }
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/issuesUI":400,"../UI/recentContributorsUI":401,"../models/crud":402,"../models/utils":404,"../utils/contributorsUtil":407,"../utils/fetchRepoUtil":408,"../utils/recentContribsUtil":409,"./chart":405,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],407:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/autocomplete":408,"../utils/contributorsUtil":409,"../utils/fetchRepoUtil":410,"../utils/recentContribsUtil":411,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
+function generateAutocomplete(repos) {
+    let repoAlreadySelected = urlHash().getUrlHashParameter('r');
+    
+    // populates the current dropdown selected html
+    if(jQuery.isEmptyObject(repoAlreadySelected)) {
+        repoAlreadySelected = "plots2";
+    }else {
+        repoAlreadySelected = (repoAlreadySelected.r == undefined) ? repoAlreadySelected : repoAlreadySelected.r;
+    }
+    $('#dropdownMenuButton').html(repoAlreadySelected);
+
+
+    // populates the dropdown list
+    repos.map((repo,i) => {
+        $('<p>', {
+            class: 'dropdown-items',
+            text: repo
+        }).appendTo('#dropdown-container');
+    });
+
+
+    // click handler for dropdown items 
+    $('.dropdown-items').click((e) => {
+        let repo = e.target.textContent;
+        urlHash().setUrlHashParameter("r", repo);
+        $('#dropdownMenuButton').html(repo);
+        location.reload();
+    })
+}
+
+
+
+module.exports.generateAutocomplete = generateAutocomplete;
+
+},{}],409:[function(require,module,exports){
 
 var SimpleApi = require("github-api-simple")
 var api = new SimpleApi()
@@ -82362,7 +82428,7 @@ module.exports = {
 }
 
 
-},{"../models/utils":404,"../utils/recentContribsUtil":409,"./fetchRepoUtil":408,"github-api-simple":151,"parse-link-header":278}],408:[function(require,module,exports){
+},{"../models/utils":405,"../utils/recentContribsUtil":411,"./fetchRepoUtil":410,"github-api-simple":151,"parse-link-header":278}],410:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 // Fetches all the publiclab's repositories
@@ -82394,7 +82460,7 @@ function getAllRepos(org) {
 // EXPORTS
 module.exports.getAllRepos = getAllRepos;
 
-},{"../models/utils":404}],409:[function(require,module,exports){
+},{"../models/utils":405}],411:[function(require,module,exports){
 var fetchRepoUtil = require('./fetchRepoUtil');
 var model_utils = require('../models/utils');
 
@@ -82595,4 +82661,4 @@ module.exports = {
     within_this_week: within_this_week
 }
 
-},{"../models/utils":404,"./fetchRepoUtil":408}]},{},[406]);
+},{"../models/utils":405,"./fetchRepoUtil":410}]},{},[407]);
