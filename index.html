@@ -19,6 +19,7 @@
     <script src="examples/demo.js"></script>
     <script src="examples/themes.js"></script>
     <script src="src/scripts/configure.js"></script>
+    <script src="examples/copyToClipboard.js"></script>
 
   </head>
 
@@ -179,10 +180,12 @@
 
 
       <h2 class="contributors-head">Contributors</h2>
-
+      
+      <div title="copy to clipboard" id="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+      
       <p>This project was made possible by many contributors, including the following GitHub users:</p>
-
-      <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars text-center"></p></div>
+      
+      <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p id="contrib-names" class="usernames"></p><hr /><p class="avatars text-center"></p></div>
 	
 	  <div class="row" id="connectwithus">
 		<h2 class="text-center d-block">Connect with us</h2>
