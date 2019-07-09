@@ -16,7 +16,17 @@ document.addEventListener('DOMContentLoaded', function () {
         return false;
     });
     /*Scroll to top when arrow up clicked END*/
-
+  
+    $('.stale').hover((e) => {
+        e.preventDefault();
+        let height = $('.stale').prop("scrollHeight")
+        let top = $('.stale').prop("scrollTop")
+        if(top==0) {
+            $('.stale').animate({ scrollTop: height*0.05 }, 'slow')
+        }
+    }, (e) => {
+        e.preventDefault();
+    })
 
     var toolbox;
   
@@ -48,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
   
         if (repo === 'all') {
-  
+
             toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
                     .then(displayIssuesAndFtoAuthors('.first-timers-only'));
   
@@ -62,11 +72,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Makes the toggle contributors list button click
                     d.click();
                     toolbox.dropdownInit();
+                    // Fetch stale issues
+                    toolbox.showStaleIssues(org, repo);
                 }
             })
   
         } else {
-  
+
             toolbox.api.Issues
                    .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
                    .then(displayIssuesAndFtoAuthors('.first-timers-only'));
@@ -82,6 +94,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Makes the toggle contributors list button click
                     d.click();
                     toolbox.dropdownInit();
+                    // Fetch stale issues
+                    toolbox.showStaleIssues(org, repo);
                 }
             })
         }
