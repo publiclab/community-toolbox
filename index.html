@@ -19,6 +19,7 @@
     <script src="examples/demo.js"></script>
     <script src="examples/themes.js"></script>
     <script src="src/scripts/configure.js"></script>
+    <script src="examples/copyToClipboard.js"></script>
 
   </head>
 
@@ -169,6 +170,14 @@
       <p>These people took some time out of their busy schedule to help in welcoming newcomers by creating FTO issues: </p>
 
       <div class="fto-authors"></div>
+      
+      <h2 id="stale-head">Stale Issues</h2>
+
+      <p>Here are some stale issues across all of our repositories which might utilize your help. Once you've completed the <span class="issue-label-for-newcomer">first-timer-only</span> and/or <span id="help-wanted-label">help-wanted</span> issues, you can take a look here to help someone else. Also, issue labels are always helpful while deciding to work on any issue.</p>
+      <p class="text-center"><i>( this list contains issues which haven't been updated for the past 10 days )</i></p>
+      <div class="stale-container">
+        <div class="stale"></div>
+      </div>
 
 
       <h2 class="recent-contributors-head">Recent Contributors</h2>
@@ -179,10 +188,12 @@
 
 
       <h2 class="contributors-head">Contributors</h2>
-
+      
+      <div title="copy to clipboard" id="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+      
       <p>This project was made possible by many contributors, including the following GitHub users:</p>
-
-      <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars text-center"></p></div>
+      
+      <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p id="contrib-names" class="usernames"></p><hr /><p class="avatars text-center"></p></div>
 	
 	  <div class="row" id="connectwithus">
 		<h2 class="text-center d-block">Connect with us</h2>

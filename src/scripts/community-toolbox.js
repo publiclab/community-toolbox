@@ -15,6 +15,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var recentContribsUtil = require('../utils/recentContribsUtil')
   var autoCompleteUtil = require('../utils/autocomplete')
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
+  var issuesUtil = require('../utils/staleIssuesUtil')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -206,6 +207,13 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   }
 
 
+  function showStaleIssues(org, repo) {
+    return issuesUtil.getStaleIssues(org, repo).then((data)=>{
+      if(data!=null && data!=undefined) {
+        issuesUI.insertStale(data, '.stale');
+      }
+    })
+  }
 
 
 
@@ -222,13 +230,14 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     getIssuesForRepo: getIssuesForRepo,
     getIssuesForOrg: getIssuesForOrg,
     showRecentContributors: showRecentContributors,
-    getCommitsForRepo: getCommitsForRepo, // storeAllContributorsInDatabase: storeAllContributorsInDatabase,
+    getCommitsForRepo: getCommitsForRepo,
     showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
     displayIssuesForRepo: displayIssuesForRepo,
     initialize: initialize,
     dropdownInit: dropdownInit,
-    ftoAuthorsUI: ftoAuthorsUI
+    ftoAuthorsUI: ftoAuthorsUI,
+    showStaleIssues: showStaleIssues
   }
 
 }
