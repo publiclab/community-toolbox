@@ -11,31 +11,30 @@ function storeAllRecentContribsInDb(org, repo) {
 	let queryTime = d.toISOString();
 	return model_utils.getItem('repos').then((repos) => {
 		return model_utils.getItem('recent-present').then((result)=> {
-		  if(result!=null && result!=undefined) {
+		if(result!=null && result!=undefined) {
 			return result;
-		  }
-		  else {
+		}
+		else {
 			if(repos!=null || repos!=undefined) {
-			  return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
-					  .then((result) => {
-						model_utils.setItem('recent-present', 'true');
-						  return result;
-					  })
+				return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
+				.then((result) => {
+					model_utils.setItem('recent-present', 'true');
+						return result;
+					})
 			} else {
-			  fetchRepoUtil.getAllRepos(org).then((repos) => {
+				fetchRepoUtil.getAllRepos(org).then((repos) => {
 				if(repos!=null || repos!=undefined) {
-				  return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
-						  .then((result) => {
-							model_utils.setItem('recent-present', 'true');
-							return result;
-						  })
+					return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
+					.then((result) => {
+						model_utils.setItem('recent-present', 'true');
+						return result;
+					})
 				}
 			  });
 			}
 		  }
 		});
 	})
-	
 }
 
 
