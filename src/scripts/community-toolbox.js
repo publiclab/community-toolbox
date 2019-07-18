@@ -17,7 +17,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
-  var leaderboardUtil = require('../utils/leaderboardUtil')
 
 
   const requestP = require('request-promise')

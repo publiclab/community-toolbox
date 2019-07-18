@@ -95,19 +95,6 @@ h1, h2, .section h3 {
     margin-top: 2em;
 }
 
-.stale-container {
-    padding: 10px;
-    background-color: rgba(221, 221, 221, 0.493);
-    border-radius: 10px;
-
-}
-
-.stale {
-    overflow: scroll;
-    height: 1000px;
-}
-
-
 .fto-authors {
     padding: 19px;
     margin-bottom: 20px;
@@ -239,27 +226,28 @@ h1, h2, .section h3 {
     box-shadow: 0.1px 0.1px 0.1px 0.1px #e2abab;
 }
 
-.l-container {
-    min-height: 20px;
-  }
-  
-.leaderboard {
-    border: 1px solid #e3e3e3;
-    border-radius: 4px;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
-    padding: 19px;
-    text-align: center;
-}
 
 .pics img, .avatars img {
     margin: 5px 5px;
 }
 
+/* STALE ISSUES LIST */
+
 .stale-container {
     margin-bottom: 20px;
 }
 
+.stale-container {
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
 
+}
+
+.stale {
+    overflow: scroll;
+    height: 1000px;
+}
 
 /* MEDIA QUERIES */
 

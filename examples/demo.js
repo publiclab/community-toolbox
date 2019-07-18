@@ -117,6 +117,11 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             toolbox.filter(org, 'mostrecentfirst');
         })
+        
+        $('#leaderboard').click((e)=> {
+            e.preventDefault();
+            toolbox.filter(org, 'leaderboard');
+        })
 
         $(".past").click((e) => {
             e.preventDefault();

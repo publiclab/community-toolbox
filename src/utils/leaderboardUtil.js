@@ -27,6 +27,18 @@ function within_this_week(date) {
   return false;
 }
 
+function fetchWeeklyContribs(res) {
+  let contribs = [];
+  res.map((last_month, index) => {
+    let commit_date = last_month['commit']['committer']['date'];
+    let check = within_this_week(commit_date);
+    if (check) {
+      contribs.push(last_month);
+    }
+  })
+  return contribs;
+}
+
 function createLeaderboard(org, repo, recencyLabel) {
   let leaderMap = new Map([]);
   let contribs = [];
@@ -36,13 +48,7 @@ function createLeaderboard(org, repo, recencyLabel) {
     if (data == null || data == undefined) {
       return model_utils.getItem(`${repo}-month-leaderboard`).then((res) => {
         if (res != null && res != undefined) {
-          res.map((last_month, index) => {
-            let commit_date = last_month['commit']['committer']['date'];
-            let check = within_this_week(commit_date);
-            if (check) {
-              contribs.push(last_month);
-            }
-          })
+          contribs = fetchWeeklyContribs(res);
           model_utils.setItem(`${repo}-week-leaderboard`, contribs);
           return contribs;
         }
@@ -51,11 +57,20 @@ function createLeaderboard(org, repo, recencyLabel) {
     return data;
   })
   .then((data) => {
-    console.log("data = ", data);
     if(data==null || data==undefined) {
-      console.log("The repo you're requesting the leaderboard of is not the part of our recent contributors storage, check recent-repo-month-commits!!! ")
-      return;
+      console.log("The repo you're requesting the leaderboard of is not the part of our recent contributors storage, working on it... ")
+      return model_utils.getItem(`recent-${repo}-month-commits`).then((res) => {
+        if(res!=null && res!=undefined) {
+          model_utils.setItem(`${repo}-month-leaderboard`, res);
+          contribs = fetchWeeklyContribs(res);
+          model_utils.setItem(`${repo}-week-leaderboard`, contribs);
+          return contribs;
+        }
+      })
     }
+    return data;
+  })
+  .then((data) => {
     data.map(function mappingToCommiters(dataItem, i) {
       let temp = leaderMap.get(dataItem.author.login);
       if (temp < 0 || temp == undefined || temp == null) {
@@ -64,7 +79,7 @@ function createLeaderboard(org, repo, recencyLabel) {
       temp += 1;
       leaderMap.set(dataItem.author.login, temp);
     })
-
+  
     const sortedMap = new Map([...leaderMap.entries()].sort((a, b) => b[1] - a[1]));
     leaderboardUI.renderLeaderboard(sortedMap);
   })
