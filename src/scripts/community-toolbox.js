@@ -8,14 +8,14 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var crud = require('../models/crud')
   var issuesUI = require('../UI/issuesUI')
   var model_utils = require('../models/utils')
-  var fetchReposUtil = require('../utils/fetchRepoUtil')
+  var fetchReposUtil = require('../utils/repoUtil/fetchRepoUtil')
   var contributorsUI = require('../UI/contributorsUI')
-  var contributorsUtil = require('../utils/contributorsUtil')
+  var contributorsUtil = require('../utils/contribsUtil/main')
   var recentContributorsUI = require('../UI/recentContributorsUI')
-  var recentContribsUtil = require('../utils/recentContribsUtil')
   var autoCompleteUtil = require('../utils/autocomplete')
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
+  var recentContribsUtil = require('../utils/recentContribsUtil/main')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -90,7 +90,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   // This function is responsible for showing contributors
   // on a multi-repository view
   function showAllContributors(org) {
-    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
         // Flushes contributors list from the database after every single day
@@ -110,7 +110,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
             if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
   
-                contributorsUtil.storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
+                contributorsUtil.fetchAllContribsInDb(org).then(function gotAllContributors(AllContributors) {
                 // Provides fetched contributors list to UI function for rendering it
                 // to the user
                 contributorsUI.insertContributors(AllContributors);
@@ -134,7 +134,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
-    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
         // Flushes repoContributors from the database after every single day
@@ -153,7 +153,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           model_utils.getItem(repo).then((repoContributors) => {
             // If we don't have repoContributors in the database, we fetch them from Github
             if (repoContributors == null || repoContributors == undefined) {
-              contributorsUtil.fetchRepoContributorsUtil(org, repo)
+              contributorsUtil.repoContribsUtil(org, repo)
               .then(function gotRepoContributorsInStorage (contributors) {
                 contributorsUI.insertContributors(contributors);
                 return;
@@ -177,16 +177,16 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
   // Function for fetching and showing recent contributors
   function showRecentContributors(org, repo, recencyLabel) {
-    return contributorsUtil.storeAllRecentContribsInitially(org, repo).then((result)=>{
+    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo).then((result)=>{
       if(recencyLabel==='month') {
-        return recentContribsUtil.getCommitsLastMonth(org, repo)
+        return recentContribsUtil.fetchContribsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(commits);
                 return;
               });
       } else {
-        return recentContribsUtil.getCommitsLastWeek(org, repo)
+        return recentContribsUtil.fetchContribsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);

@@ -1,4 +1,4 @@
-let model_utils = require('../models/utils')
+let model_utils = require('../../models/utils')
 
 // Fetches all the publiclab's repositories
 function getAllRepos(org) {
