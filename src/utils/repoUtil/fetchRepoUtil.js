@@ -10,6 +10,8 @@ function getAllRepos(org) {
           .then(function gotRepos(data) {
             if(data.status=='200') {
               return data.json();
+            }else {
+              throw "Couldn't fetch repositories :(";
             }
           })
           .then(function mapToEachRepo(results) {
@@ -22,6 +24,9 @@ function getAllRepos(org) {
             // Storing the repos in the database
             model_utils.setItem('repos', repos);
             return(repos);
+          })
+          .catch((err) => {
+            throw err;
           })
   }
 

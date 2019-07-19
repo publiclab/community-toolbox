@@ -81690,11 +81690,13 @@ function insertIssue(issue, el) {
 
 
 function insertStale(issues, selector) {
-  let issuesLen = issues.length;
-  $('#stale-head').html('Stale Issues ('+issuesLen+'+)');
-  issues.forEach(function (issue) {
-    insertIssue(issue, selector);
-  })
+  // if(issues!=null && issues!=undefined ) {
+  //   let issuesLen = issues.length;
+  //   $('#stale-head').html('Stale Issues ('+issuesLen+'+)');
+  //   issues.forEach(function (issue) {
+  //     insertIssue(issue, selector);
+  //   })
+  // }
 }
 
 
@@ -82050,30 +82052,35 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                 return fetchReposUtil.getAllRepos(org)
                   .then((resp) => {
                       resolve(true);
-                  });
+                  })
+                  .catch((err) => {
+                    Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+                  })
               }
               resolve(true);
             });
-          });
+          })
       });
-    }
+  }
 
 
   function dropdownInit() {
-    return model_utils.getItem('repos').then((res) => {
+    return model_utils.getItem('repos')
+    .then((res) => {
       if(res!=null && res!=undefined) {
         autoCompleteUtil.generateAutocomplete(res);
       }else {
         console.log("not working");
       }
-    });
+    })
   }
 
 
   // This function is responsible for showing contributors
   // on a multi-repository view
   function showAllContributors(org) {
-    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org)
+    .then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
         // Flushes contributors list from the database after every single day
@@ -82093,18 +82100,22 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
             if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
   
-                contributorsUtil.fetchAllContribsInDb(org).then(function gotAllContributors(AllContributors) {
-                // Provides fetched contributors list to UI function for rendering it
-                // to the user
-                contributorsUI.insertContributors(AllContributors);
-              })
-            } 
+                contributorsUtil.fetchAllContribsInDb(org)
+                .then(function gotAllContributors(AllContributors) {
+                  // Provides fetched contributors list to UI function for rendering it
+                  // to the user
+                  contributorsUI.insertContributors(AllContributors);
+                })
+                .catch((err) => {
+                  throw err;
+                })
+            }
             // If stored data is not null and undefined, process it
             else {
               contributorsUI.insertContributors(AllContributors);
             }
           })
-        });
+        })
       }
       // If execution goes here, it means that there's probably something wrong 
       // in the storeAllContributorsInDatabase function
@@ -82112,12 +82123,16 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         console.log("Something went wrong while fetching all contributors :(");
       }
     })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
 
   // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
-    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org)
+    .then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
         // Flushes repoContributors from the database after every single day
@@ -82141,6 +82156,9 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                 contributorsUI.insertContributors(contributors);
                 return;
               })
+              .catch((err) => {
+                throw err;
+              })
             }
             // If we have repoContributors in the database, we save a network call :)
             else {
@@ -82155,46 +82173,63 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         console.log(`Something went wrong while getting ${repo} contributors :(`);
       }
     })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
 
   // Function for fetching and showing recent contributors
   function showRecentContributors(org, repo, recencyLabel) {
-    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo).then((result)=>{
+    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo)
+    .then((result) => {
       if(recencyLabel==='month') {
         return recentContribsUtil.fetchContribsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(commits);
                 return;
-              });
+              })
+              .catch((err) => {
+                throw err;
+              })
       } else {
         return recentContribsUtil.fetchContribsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);
                 return;
-              });
+              })
+              .catch((err) => {
+                throw err;
+              })
       }
-    });
+    })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
   function displayIssuesForRepo(org, repo, label, selector) {
     toolbox.api.Issues
-           .getIssuesForRepo(org, repo, { qs: { labels: label } })
-           .then(function onGotIssues(issues) {
-             issues.forEach(function(issue) {
-               toolbox.issuesUI.insertIssue(issue, selector);
-             });
-           });
+      .getIssuesForRepo(org, repo, { qs: { labels: label } })
+      .then(function onGotIssues(issues) {
+        issues.forEach(function(issue) {
+          toolbox.issuesUI.insertIssue(issue, selector);
+        });
+      })
   }
 
 
   function showStaleIssues(org, repo) {
-    return issuesUtil.getStaleIssues(org, repo).then((data)=>{
+    return issuesUtil.getStaleIssues(org, repo)
+    .then((data) => {
       if(data!=null && data!=undefined) {
         issuesUI.insertStale(data, '.stale');
       }
+    })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
     })
   }
 
@@ -82274,44 +82309,50 @@ function fetchAllRepoContribs(org, repo) {
     let contributorsArray = [];
 
     return api.Repositories
-           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
-           .then(function gotContribData(contribData) {
-             var headers = contribData;
-             if (headers.hasOwnProperty("link")) {
-                var parsed = parse(headers['link']);
-                if(parsed.last.page!=undefined) {
-                  totalPages = parseInt(parsed.last.page);
-                }
-             } else {
-                 totalPages = 1;
-             }
-             return totalPages;
-           })
-           .then(function gotTotalPages(totalPages) {
-              // This array is used to store all of the promises
-              let promises = [];
-
-              for(let i = 1; i <= totalPages; i++) {
-                var currentPromise = api.Repositories
-                                      .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
-                                      .then(function gotRepoContributors(contributors) {
-                                        if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
-                                            contributors.map((contributor, i) => contributorsArray.push(contributor));
-                                        }
-                                      });
-                // Push currentPromise to promises array
-                promises.push(currentPromise);
+          .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
+          .then(function gotContribData(contribData) {
+            var headers = contribData;
+            if (headers.hasOwnProperty("link")) {
+              var parsed = parse(headers['link']);
+              if(parsed.last.page!=undefined) {
+                totalPages = parseInt(parsed.last.page);
               }
+            } else {
+              totalPages = 1;
+            }
+            return totalPages;
+          })
+          .then(function gotTotalPages(totalPages) {
+            // This array is used to store all of the promises
+            let promises = [];
 
-              // Waits for all of the promises to resolve first, sets localStorage after that...
-              return Promise.all(promises)
-                    .then(()=> {
-                      let now = (new Date).getTime();
-                      model_utils.setItem(repo, contributorsArray);
-                      model_utils.setItem(`${repo}Expiry`, now);
-                      return contributorsArray;
-                    });
-           });
+            for(let i = 1; i <= totalPages; i++) {
+              var currentPromise = api.Repositories
+                                  .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
+                                  .then(function gotRepoContributors(contributors) {
+                                    if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
+                                      contributors.map((contributor, i) => contributorsArray.push(contributor));
+                                    }
+                                  })
+                                  .catch((err) => {
+                                    throw err;
+                                  });
+              // Push currentPromise to promises array
+              promises.push(currentPromise);
+            }
+
+            // Waits for all of the promises to resolve first, sets localStorage after that...
+            return Promise.all(promises)
+              .then(()=> {
+                let now = (new Date).getTime();
+                  model_utils.setItem(repo, contributorsArray);
+                  model_utils.setItem(`${repo}Expiry`, now);
+                  return contributorsArray;
+              });
+          })
+          .catch((err) => {
+            throw err;
+          })
 }
 
 
@@ -82344,6 +82385,9 @@ function fetchRepoContribs(org, repo) {
 				model_utils.setItem(repo, contributorsArray);
 				model_utils.setItem(`${repo}Expiry`, now);
 				return contributorsArray;
+			  })
+			  .catch((err) => {
+				throw err;
 			  })
   }
 
@@ -82385,6 +82429,10 @@ function fetchAllContribsInDb(org) {
   .then((response) => {
     return response;
   })
+  .catch((err) => {
+    console.log("err travelling through fetchAllContribsInDb");
+    throw err;
+  })
 }
 
 
@@ -82392,6 +82440,10 @@ function repoContribsUtil(org, repo) {
   return fetchRepoContribsUtil.fetchRepoContributorsUtil(org, repo)
   .then((response) => {
     return response;
+  })
+  .catch((err) => {
+    console.log("err travelling through repoContribsUtil");
+    throw err;
   })
 }
 
@@ -82417,44 +82469,50 @@ function storeAllContribsInDb(org) {
 	var contributorSet = new Set([]);
 	return new Promise((resolve, reject) => {
 		model_utils.getItem('allContributors').then((allContributors) => {
-		  // If all contributors list is not in the database, it makes a fresh call to Github API
-		  if(allContributors == null || allContributors == undefined || allContributors.length == 0) {
-			  return model_utils.getItem('repos').then((res) => {
+			// If all contributors list is not in the database, it makes a fresh call to Github API
+		  	if(allContributors == null || allContributors == undefined || allContributors.length == 0) {
+				return model_utils.getItem('repos').then((res) => {
 				let splicedRepos = res.splice(0, 20);
 				splicedRepos.map(function mappingToEachRepo(Repo, i) {
 				  let promise = fetchRepoContributorsUtil.fetchRepoContributorsUtil(org, Repo)
-								.then(function gotRepoContributorsInStorage(contributors) {
-								  if(contributors!=undefined && contributors.length>0) {
-									contributors.map((contributor, i)=> {
-									  if(!contributorSet.has(contributor.login)) {
-										contributorSet.add(contributor.login);
-										AllContributors.push(contributor);
-									  }
-									})
-								  }
-								});
-				  promises.push(promise);
+					.then(function gotRepoContributorsInStorage(contributors) {
+						if(contributors!=undefined && contributors.length>0) {
+							contributors.map((contributor, i)=> {
+								if(!contributorSet.has(contributor.login)) {
+									contributorSet.add(contributor.login);
+									AllContributors.push(contributor);
+								}
+							})
+						}
+					})
+					.catch((err) => {
+						throw err;
+					})
+					promises.push(promise);
 				});
 				return Promise.all(promises)
-						.then(()=> {
-							// Storing array containing all the contributors' list across 20 most active
-							// repos to database
-							model_utils.setItem('allContributors', AllContributors);
-							// Saves current time in epoch, used for flushing out the stored data
-							// after 24 hours
-							let currentTime = (new Date).getTime();
-							model_utils.setItem('allContributorsExpiry', currentTime);
-							resolve(AllContributors);
-						})
-			  })
-		  }
-		  // If all contributors list is in the database, it simply returns that as a resolved promise 
-		  else {
-			resolve(allContributors);
-		  }
+					.then(()=> {
+						// Storing array containing all the contributors' list across 20 most active
+						// repos to database
+						model_utils.setItem('allContributors', AllContributors);
+						// Saves current time in epoch, used for flushing out the stored data
+						// after 24 hours
+						let currentTime = (new Date).getTime();
+						model_utils.setItem('allContributorsExpiry', currentTime);
+						resolve(AllContributors);
+					})
+				})
+			}
+			// If all contributors list is in the database, it simply returns that as a resolved promise 
+			else {
+				resolve(allContributors);
+			}
 		})
-	  });
-  }
+		.catch((err) => {
+			reject(err);
+		})
+	});
+}
 
   
 
@@ -82480,6 +82538,8 @@ function fetchAllRecentMonthContribs(org, repos, queryTime) {
                 .then(function gotResponse(response) {
                     if(response.status=="200") {
                         return response.json();
+                    }else {
+                        throw `Couldn't fetch recent contributors for ${repo}`;
                     }
                 })
                 .then(function gotResponseJson(response) {
@@ -82501,7 +82561,10 @@ function fetchAllRecentMonthContribs(org, repos, queryTime) {
                         model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
                     }
                     return true;
-                });
+                })
+                .catch((err) => {
+                    throw err;
+                })
         });
 
     return Promise.all(promises)
@@ -82531,6 +82594,8 @@ function fetchRecentMonthContribs(org, repo, queryTime) {
             .then(function gotResponse(response) {
                 if(response.status=="200") {
                     return response.json();
+                }else {
+                    throw `Couldn't fetch recent contributors for ${repo}`;
                 }
             })
             .then(function gotResponseJson(response) {
@@ -82551,7 +82616,11 @@ function fetchRecentMonthContribs(org, repo, queryTime) {
                     model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
                 }
                 return result;
-            });
+            })
+            .catch((err) => {
+                console.log("throwing from fetchRecentMonthContribs");
+                throw err;
+            })
 }
 
 
@@ -82570,7 +82639,8 @@ let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
 
 // Fetches recent month's commits for a particular repo or all of the repos (10 repos)
 function getContribsLastMonth(org, repo) {
-    return model_utils.getItem('repos').then((repos) => {
+    return model_utils.getItem('repos')
+    .then((repos) => {
         if(repos!=null && repos!=undefined) {
             return model_utils.getItem(`recent-${repo}-month-expiry`)
                 .then((recentCommitsMonthExpiry) => {
@@ -82597,18 +82667,30 @@ function getContribsLastMonth(org, repo) {
                             if(repo==='all') {
                                 return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
-                                    return month_commits;
-                                });
+                                        return month_commits;
+                                    })
+                                    .catch((err) => {
+                                        console.log("throwing from getContribsLastMonth");
+                                        throw err;
+                                    })
                             }
                             else {
                                 return fetchRecentMonthContribs.fetchRecentMonthContribs(org, repo, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
-                                    return month_commits;
-                                })
+                                        return month_commits;
+                                    })
+                                    .catch((err) => {
+                                        console.log("throwing from getContribsLastMonth");
+                                        throw err;
+                                    })
                             }
                         }
                     })
                 })
+                .catch((err) => {
+                    console.log("finally throwing from getContribsLastMonth");
+                    throw err;
+                });
         } else {
             console.log("repos are not there yet!!!");
         }
@@ -82690,6 +82772,10 @@ function fetchContribsLastMonth(org, repo) {
     .then((contribs) => {
         return contribs;
     })
+    .catch((err) => {
+        console.log("finally throwing");
+        throw err;
+    })
 }
 
 function fetchContribsLastWeek(org, repo) {
@@ -82697,12 +82783,20 @@ function fetchContribsLastWeek(org, repo) {
     .then((contribs) => {
         return contribs;
     })
+    .catch((err) => {
+        console.log("finally throwing");
+        throw err;
+    })
 }
 
 function fetchAllRecentContribsInDb(org, repo) {
     return storeAllRecentContribsInDb.storeAllRecentContribsInDb(org, repo)
     .then((response) => {
       return response;
+    })
+    .catch((err) => {
+        console.log("finally throwing");
+        throw err;
     })
 }
 
@@ -82727,33 +82821,43 @@ function storeAllRecentContribsInDb(org, repo) {
 	let d = (new Date);
 	d.setDate(d.getDate() - 30);
 	let queryTime = d.toISOString();
-	return model_utils.getItem('repos').then((repos) => {
+	return model_utils.getItem('repos')
+	.then((repos) => {
 		return model_utils.getItem('recent-present').then((result)=> {
-		  if(result!=null && result!=undefined) {
+		if(result!=null && result!=undefined) {
 			return result;
-		  }
-		  else {
+		}
+		else {
 			if(repos!=null || repos!=undefined) {
-			  return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
-					  .then((result) => {
-						model_utils.setItem('recent-present', 'true');
-						  return result;
-					  })
+				return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
+				.then((result) => {
+					model_utils.setItem('recent-present', 'true');
+					return result;
+				})
+				.catch((err) => {
+					throw err;
+				})
 			} else {
-			  fetchRepoUtil.getAllRepos(org).then((repos) => {
-				if(repos!=null || repos!=undefined) {
-				  return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
-						  .then((result) => {
+				fetchRepoUtil.getAllRepos(org)
+				.then((repos) => {
+					if(repos!=null || repos!=undefined) {
+						return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
+						.then((result) => {
 							model_utils.setItem('recent-present', 'true');
 							return result;
-						  })
-				}
-			  });
+						})
+						.catch((err) => {
+							throw err;
+						})
+					}
+			  	});
 			}
-		  }
+		}
 		});
 	})
-	
+	.catch((err) => {
+		throw err;
+	})
 }
 
 
@@ -82794,6 +82898,8 @@ function getAllRepos(org) {
           .then(function gotRepos(data) {
             if(data.status=='200') {
               return data.json();
+            }else {
+              throw "Couldn't fetch repositories :(";
             }
           })
           .then(function mapToEachRepo(results) {
@@ -82806,6 +82912,9 @@ function getAllRepos(org) {
             // Storing the repos in the database
             model_utils.setItem('repos', repos);
             return(repos);
+          })
+          .catch((err) => {
+            throw err;
           })
   }
 
@@ -82830,30 +82939,35 @@ function getOrgWideIssues(org) {
     })
     .then(() => {
         return model_utils.getItem("staleIssues").then((issues) => {
-            let pages = 5; // we take 2 to stay under API limit
+            let pages = 5; // we take 5 to stay under API limit
             if(issues!=undefined && issues!=null) {
                 return issues;
             }
 
             for(let i=1;i<=pages;i++) {
               let curr = fetch(`https://api.github.com/search/issues?q=is%3Aopen+org%3A${org}+page%3A${i}`)
-                          .then((data) => {
-                            if(data.status=='200') {
-                              return data.json();
-                            }
-                          })
-                          .then(function (data) {
-                            if(data!=null && data!=undefined) {
-                              data.items.map(function mappingToIssues(issue, index) {
-                                  let dateLastUpdated = new Date(`${issue.updated_at}`);
-                                  let lastDate = dateLastUpdated.getTime();
-                                  let today = (new Date).getTime();
-                                  if(Math.ceil(Math.abs(today - lastDate) / (1000*3600*24)) > 10 ) {
-                                      staleIssues.push(issue);
-                                  }
-                              })
-                            }
-                          })
+                            .then((data) => {
+                                if(data.status=='200') {
+                                    return data.json();
+                                }else {
+                                    throw "Couldn't fetch issues";
+                                }
+                            })
+                            .then(function (data) {
+                                if(data!=null && data!=undefined) {
+                                data.items.map(function mappingToIssues(issue, index) {
+                                    let dateLastUpdated = new Date(`${issue.updated_at}`);
+                                    let lastDate = dateLastUpdated.getTime();
+                                    let today = (new Date).getTime();
+                                    if(Math.ceil(Math.abs(today - lastDate) / (1000*3600*24)) > 10 ) {
+                                        staleIssues.push(issue);
+                                    }
+                                })
+                                }
+                            })
+                            .catch((err) => {
+                                throw err;
+                            })
         
         
               totalPromises.push(curr);
@@ -82867,15 +82981,22 @@ function getOrgWideIssues(org) {
             })
         })
     })
+    .catch((err) => {
+        throw err;
+    })
 }
 
 
 
 function getStaleIssues(org, repo) {
-    return getOrgWideIssues(org, repo).then((issues) => {
+    return getOrgWideIssues(org, repo)
+    .then((issues) => {
         if(issues!=undefined && issues!=null) {
             return issues;
         }
+    })
+    .catch((err) => {
+        throw err;
     })
 }
 

@@ -7,6 +7,10 @@ function fetchAllContribsInDb(org) {
   .then((response) => {
     return response;
   })
+  .catch((err) => {
+    console.log("err travelling through fetchAllContribsInDb");
+    throw err;
+  })
 }
 
 
@@ -14,6 +18,10 @@ function repoContribsUtil(org, repo) {
   return fetchRepoContribsUtil.fetchRepoContributorsUtil(org, repo)
   .then((response) => {
     return response;
+  })
+  .catch((err) => {
+    console.log("err travelling through repoContribsUtil");
+    throw err;
   })
 }
 

@@ -67,30 +67,35 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                 return fetchReposUtil.getAllRepos(org)
                   .then((resp) => {
                       resolve(true);
-                  });
+                  })
+                  .catch((err) => {
+                    Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+                  })
               }
               resolve(true);
             });
-          });
+          })
       });
-    }
+  }
 
 
   function dropdownInit() {
-    return model_utils.getItem('repos').then((res) => {
+    return model_utils.getItem('repos')
+    .then((res) => {
       if(res!=null && res!=undefined) {
         autoCompleteUtil.generateAutocomplete(res);
       }else {
         console.log("not working");
       }
-    });
+    })
   }
 
 
   // This function is responsible for showing contributors
   // on a multi-repository view
   function showAllContributors(org) {
-    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org)
+    .then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
         // Flushes contributors list from the database after every single day
@@ -110,18 +115,22 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
             if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
   
-                contributorsUtil.fetchAllContribsInDb(org).then(function gotAllContributors(AllContributors) {
-                // Provides fetched contributors list to UI function for rendering it
-                // to the user
-                contributorsUI.insertContributors(AllContributors);
-              })
-            } 
+                contributorsUtil.fetchAllContribsInDb(org)
+                .then(function gotAllContributors(AllContributors) {
+                  // Provides fetched contributors list to UI function for rendering it
+                  // to the user
+                  contributorsUI.insertContributors(AllContributors);
+                })
+                .catch((err) => {
+                  throw err;
+                })
+            }
             // If stored data is not null and undefined, process it
             else {
               contributorsUI.insertContributors(AllContributors);
             }
           })
-        });
+        })
       }
       // If execution goes here, it means that there's probably something wrong 
       // in the storeAllContributorsInDatabase function
@@ -129,12 +138,16 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         console.log("Something went wrong while fetching all contributors :(");
       }
     })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
 
   // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
-    return contributorsUtil.fetchAllContribsInDb(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org)
+    .then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
         // Flushes repoContributors from the database after every single day
@@ -158,6 +171,9 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                 contributorsUI.insertContributors(contributors);
                 return;
               })
+              .catch((err) => {
+                throw err;
+              })
             }
             // If we have repoContributors in the database, we save a network call :)
             else {
@@ -172,46 +188,63 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         console.log(`Something went wrong while getting ${repo} contributors :(`);
       }
     })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
 
   // Function for fetching and showing recent contributors
   function showRecentContributors(org, repo, recencyLabel) {
-    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo).then((result)=>{
+    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo)
+    .then((result) => {
       if(recencyLabel==='month') {
         return recentContribsUtil.fetchContribsLastMonth(org, repo)
               .then(function gotCommits(commits) {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(commits);
                 return;
-              });
+              })
+              .catch((err) => {
+                throw err;
+              })
       } else {
         return recentContribsUtil.fetchContribsLastWeek(org, repo)
               .then((weekly_contribs) => {
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);
                 return;
-              });
+              })
+              .catch((err) => {
+                throw err;
+              })
       }
-    });
+    })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
   function displayIssuesForRepo(org, repo, label, selector) {
     toolbox.api.Issues
-           .getIssuesForRepo(org, repo, { qs: { labels: label } })
-           .then(function onGotIssues(issues) {
-             issues.forEach(function(issue) {
-               toolbox.issuesUI.insertIssue(issue, selector);
-             });
-           });
+      .getIssuesForRepo(org, repo, { qs: { labels: label } })
+      .then(function onGotIssues(issues) {
+        issues.forEach(function(issue) {
+          toolbox.issuesUI.insertIssue(issue, selector);
+        });
+      })
   }
 
 
   function showStaleIssues(org, repo) {
-    return issuesUtil.getStaleIssues(org, repo).then((data)=>{
+    return issuesUtil.getStaleIssues(org, repo)
+    .then((data) => {
       if(data!=null && data!=undefined) {
         issuesUI.insertStale(data, '.stale');
       }
+    })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
     })
   }
 

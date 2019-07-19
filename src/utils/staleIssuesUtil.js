@@ -14,30 +14,35 @@ function getOrgWideIssues(org) {
     })
     .then(() => {
         return model_utils.getItem("staleIssues").then((issues) => {
-            let pages = 5; // we take 2 to stay under API limit
+            let pages = 5; // we take 5 to stay under API limit
             if(issues!=undefined && issues!=null) {
                 return issues;
             }
 
             for(let i=1;i<=pages;i++) {
               let curr = fetch(`https://api.github.com/search/issues?q=is%3Aopen+org%3A${org}+page%3A${i}`)
-                          .then((data) => {
-                            if(data.status=='200') {
-                              return data.json();
-                            }
-                          })
-                          .then(function (data) {
-                            if(data!=null && data!=undefined) {
-                              data.items.map(function mappingToIssues(issue, index) {
-                                  let dateLastUpdated = new Date(`${issue.updated_at}`);
-                                  let lastDate = dateLastUpdated.getTime();
-                                  let today = (new Date).getTime();
-                                  if(Math.ceil(Math.abs(today - lastDate) / (1000*3600*24)) > 10 ) {
-                                      staleIssues.push(issue);
-                                  }
-                              })
-                            }
-                          })
+                            .then((data) => {
+                                if(data.status=='200') {
+                                    return data.json();
+                                }else {
+                                    throw "Couldn't fetch issues";
+                                }
+                            })
+                            .then(function (data) {
+                                if(data!=null && data!=undefined) {
+                                data.items.map(function mappingToIssues(issue, index) {
+                                    let dateLastUpdated = new Date(`${issue.updated_at}`);
+                                    let lastDate = dateLastUpdated.getTime();
+                                    let today = (new Date).getTime();
+                                    if(Math.ceil(Math.abs(today - lastDate) / (1000*3600*24)) > 10 ) {
+                                        staleIssues.push(issue);
+                                    }
+                                })
+                                }
+                            })
+                            .catch((err) => {
+                                throw err;
+                            })
         
         
               totalPromises.push(curr);
@@ -51,15 +56,22 @@ function getOrgWideIssues(org) {
             })
         })
     })
+    .catch((err) => {
+        throw err;
+    })
 }
 
 
 
 function getStaleIssues(org, repo) {
-    return getOrgWideIssues(org, repo).then((issues) => {
+    return getOrgWideIssues(org, repo)
+    .then((issues) => {
         if(issues!=undefined && issues!=null) {
             return issues;
         }
+    })
+    .catch((err) => {
+        throw err;
     })
 }
 

@@ -9,6 +9,10 @@ function fetchContribsLastMonth(org, repo) {
     .then((contribs) => {
         return contribs;
     })
+    .catch((err) => {
+        console.log("finally throwing");
+        throw err;
+    })
 }
 
 function fetchContribsLastWeek(org, repo) {
@@ -16,12 +20,20 @@ function fetchContribsLastWeek(org, repo) {
     .then((contribs) => {
         return contribs;
     })
+    .catch((err) => {
+        console.log("finally throwing");
+        throw err;
+    })
 }
 
 function fetchAllRecentContribsInDb(org, repo) {
     return storeAllRecentContribsInDb.storeAllRecentContribsInDb(org, repo)
     .then((response) => {
       return response;
+    })
+    .catch((err) => {
+        console.log("finally throwing");
+        throw err;
     })
 }
 

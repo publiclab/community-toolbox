@@ -21,6 +21,9 @@ function fetchRepoContribs(org, repo) {
 				model_utils.setItem(`${repo}Expiry`, now);
 				return contributorsArray;
 			  })
+			  .catch((err) => {
+				throw err;
+			  })
   }
 
   
