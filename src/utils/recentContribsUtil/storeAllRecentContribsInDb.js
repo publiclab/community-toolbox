@@ -9,7 +9,8 @@ function storeAllRecentContribsInDb(org, repo) {
 	let d = (new Date);
 	d.setDate(d.getDate() - 30);
 	let queryTime = d.toISOString();
-	return model_utils.getItem('repos').then((repos) => {
+	return model_utils.getItem('repos')
+	.then((repos) => {
 		return model_utils.getItem('recent-present').then((result)=> {
 		if(result!=null && result!=undefined) {
 			return result;
@@ -19,21 +20,31 @@ function storeAllRecentContribsInDb(org, repo) {
 				return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
 				.then((result) => {
 					model_utils.setItem('recent-present', 'true');
-						return result;
-					})
+					return result;
+				})
+				.catch((err) => {
+					throw err;
+				})
 			} else {
-				fetchRepoUtil.getAllRepos(org).then((repos) => {
-				if(repos!=null || repos!=undefined) {
-					return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
-					.then((result) => {
-						model_utils.setItem('recent-present', 'true');
-						return result;
-					})
-				}
-			  });
+				fetchRepoUtil.getAllRepos(org)
+				.then((repos) => {
+					if(repos!=null || repos!=undefined) {
+						return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
+						.then((result) => {
+							model_utils.setItem('recent-present', 'true');
+							return result;
+						})
+						.catch((err) => {
+							throw err;
+						})
+					}
+			  	});
 			}
-		  }
+		}
 		});
+	})
+	.catch((err) => {
+		throw err;
 	})
 }
 

@@ -5,7 +5,8 @@ let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
 
 // Fetches recent month's commits for a particular repo or all of the repos (10 repos)
 function getContribsLastMonth(org, repo) {
-    return model_utils.getItem('repos').then((repos) => {
+    return model_utils.getItem('repos')
+    .then((repos) => {
         if(repos!=null && repos!=undefined) {
             return model_utils.getItem(`recent-${repo}-month-expiry`)
                 .then((recentCommitsMonthExpiry) => {
@@ -32,18 +33,30 @@ function getContribsLastMonth(org, repo) {
                             if(repo==='all') {
                                 return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
-                                    return month_commits;
-                                });
+                                        return month_commits;
+                                    })
+                                    .catch((err) => {
+                                        console.log("throwing from getContribsLastMonth");
+                                        throw err;
+                                    })
                             }
                             else {
                                 return fetchRecentMonthContribs.fetchRecentMonthContribs(org, repo, queryTime)
                                     .then(function gotRecentCommitsInStorage(month_commits) {
-                                    return month_commits;
-                                })
+                                        return month_commits;
+                                    })
+                                    .catch((err) => {
+                                        console.log("throwing from getContribsLastMonth");
+                                        throw err;
+                                    })
                             }
                         }
                     })
                 })
+                .catch((err) => {
+                    console.log("finally throwing from getContribsLastMonth");
+                    throw err;
+                });
         } else {
             console.log("repos are not there yet!!!");
         }

@@ -14,17 +14,20 @@ function storeAllContribsInDb(org) {
 				return model_utils.getItem('repos').then((res) => {
 				let splicedRepos = res.splice(0, 20);
 				splicedRepos.map(function mappingToEachRepo(Repo, i) {
-				  let promise = fetchRepoContributorsUtil.fetchRepoContributorsUtil(org, Repo)
-					.then(function gotRepoContributorsInStorage(contributors) {
-					if(contributors!=undefined && contributors.length>0) {
-						contributors.map((contributor, i)=> {
-							if(!contributorSet.has(contributor.login)) {
-								contributorSet.add(contributor.login);
-								AllContributors.push(contributor);
-							}
-						})
-					}
-					});
+				  	let promise = fetchRepoContributorsUtil.fetchRepoContributorsUtil(org, Repo)
+				  	.then(function gotRepoContributorsInStorage(contributors) {
+						if(contributors!=undefined && contributors.length>0) {
+							contributors.map((contributor, i)=> {
+								if(!contributorSet.has(contributor.login)) {
+									contributorSet.add(contributor.login);
+									AllContributors.push(contributor);
+								}
+							})
+						}
+					})
+					.catch((err) => {
+						throw err;
+					})
 					promises.push(promise);
 				});
 				return Promise.all(promises)
@@ -38,12 +41,15 @@ function storeAllContribsInDb(org) {
 						model_utils.setItem('allContributorsExpiry', currentTime);
 						resolve(AllContributors);
 					})
-			})
-		}
-		// If all contributors list is in the database, it simply returns that as a resolved promise 
-		else {
-			resolve(allContributors);
-		}
+				})
+			}
+			// If all contributors list is in the database, it simply returns that as a resolved promise 
+			else {
+				resolve(allContributors);
+			}
+		})
+		.catch((err) => {
+			reject(err);
 		})
 	});
 }

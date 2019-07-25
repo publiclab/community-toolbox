@@ -8,6 +8,8 @@ function fetchRecentMonthContribs(org, repo, queryTime) {
             .then(function gotResponse(response) {
                 if(response.status=="200") {
                     return response.json();
+                }else {
+                    throw `Couldn't fetch recent contributors for ${repo}`;
                 }
             })
             .then(function gotResponseJson(response) {
@@ -28,7 +30,11 @@ function fetchRecentMonthContribs(org, repo, queryTime) {
                     model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
                 }
                 return result;
-            });
+            })
+            .catch((err) => {
+                console.log("throwing from fetchRecentMonthContribs");
+                throw err;
+            })
 }
 
 
