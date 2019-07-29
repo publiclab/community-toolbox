@@ -1,4 +1,4 @@
-function generateAutocomplete(repos) {
+function populateNavDropdown(repos) {
     let repoAlreadySelected = urlHash().getUrlHashParameter('r');
     
     // populates the current dropdown selected html
@@ -30,4 +30,4 @@ function generateAutocomplete(repos) {
 
 
 
-module.exports.generateAutocomplete = generateAutocomplete;
+ module.exports.populateNavDropdown = populateNavDropdown;
