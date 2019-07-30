@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -77513,7 +77513,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
