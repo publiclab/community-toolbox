@@ -12,7 +12,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var contributorsUI = require('../UI/contributorsUI')
   var contributorsUtil = require('../utils/contribsUtil/main')
   var recentContributorsUI = require('../UI/recentContributorsUI')
-  var autoCompleteUtil = require('../utils/autocomplete')
+  var navDropdownUtil = require('../utils/navDropdown.js')
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
@@ -83,7 +83,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     return model_utils.getItem('repos')
     .then((res) => {
       if(res!=null && res!=undefined) {
-        autoCompleteUtil.generateAutocomplete(res);
+        navDropdownUtil.populateNavDropdown(res);
       }else {
         console.log("not working");
       }
