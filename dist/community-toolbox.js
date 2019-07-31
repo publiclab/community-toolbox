@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -77513,7 +77513,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -81690,11 +81690,13 @@ function insertIssue(issue, el) {
 
 
 function insertStale(issues, selector) {
-  let issuesLen = issues.length;
-  $('#stale-head').html('Stale Issues ('+issuesLen+'+)');
-  issues.forEach(function (issue) {
-    insertIssue(issue, selector);
-  })
+  // if(issues!=null && issues!=undefined ) {
+  //   let issuesLen = issues.length;
+  //   $('#stale-head').html('Stale Issues ('+issuesLen+'+)');
+  //   issues.forEach(function (issue) {
+  //     insertIssue(issue, selector);
+  //   })
+  // }
 }
 
 
@@ -81995,7 +81997,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var contributorsUI = require('../UI/contributorsUI')
   var contributorsUtil = require('../utils/contribsUtil/main')
   var recentContributorsUI = require('../UI/recentContributorsUI')
-  var navDropdownUtil = require('../utils/navDropdown.js')
+  var autoCompleteUtil = require('../utils/autocomplete')
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
@@ -82066,7 +82068,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     return model_utils.getItem('repos')
     .then((res) => {
       if(res!=null && res!=undefined) {
-        navDropdownUtil.populateNavDropdown(res);
+        autoCompleteUtil.generateAutocomplete(res);
       }else {
         console.log("not working");
       }
@@ -82260,7 +82262,42 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/contribsUtil/main":411,"../utils/navDropdown.js":413,"../utils/recentContribsUtil/main":418,"../utils/repoUtil/fetchRepoUtil":421,"../utils/staleIssuesUtil":422,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/autocomplete":408,"../utils/contribsUtil/main":412,"../utils/recentContribsUtil/main":418,"../utils/repoUtil/fetchRepoUtil":421,"../utils/staleIssuesUtil":422,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
+function generateAutocomplete(repos) {
+    let repoAlreadySelected = urlHash().getUrlHashParameter('r');
+    
+    // populates the current dropdown selected html
+    if(jQuery.isEmptyObject(repoAlreadySelected)) {
+        repoAlreadySelected = "plots2";
+    }else {
+        repoAlreadySelected = (repoAlreadySelected.r == undefined) ? repoAlreadySelected : repoAlreadySelected.r;
+    }
+    $('#dropdownMenuButton').html(repoAlreadySelected);
+
+
+    // populates the dropdown list
+    repos.map((repo,i) => {
+        $('<p>', {
+            class: 'dropdown-items',
+            text: repo
+        }).appendTo('#dropdown-container');
+    });
+
+
+    // click handler for dropdown items 
+    $('.dropdown-items').click((e) => {
+        let repo = e.target.textContent;
+        urlHash().setUrlHashParameter("r", repo);
+        $('#dropdownMenuButton').html(repo);
+        location.reload();
+    })
+}
+
+
+
+module.exports.generateAutocomplete = generateAutocomplete;
+
+},{}],409:[function(require,module,exports){
 let SimpleApi = require("github-api-simple")
 let api = new SimpleApi()
 let model_utils = require('../../models/utils')
@@ -82325,7 +82362,7 @@ function fetchAllRepoContribs(org, repo) {
 module.exports = {
 	fetchAllRepoContribs: fetchAllRepoContribs
 }
-},{"../../models/utils":405,"github-api-simple":151,"parse-link-header":278}],409:[function(require,module,exports){
+},{"../../models/utils":405,"github-api-simple":151,"parse-link-header":278}],410:[function(require,module,exports){
 let SimpleApi = require("github-api-simple")
 let api = new SimpleApi()
 let model_utils = require('../../models/utils')
@@ -82361,7 +82398,7 @@ function fetchRepoContribs(org, repo) {
 module.exports = {
 	fetchRepoContribs: fetchRepoContribs
 }
-},{"../../models/utils":405,"github-api-simple":151}],410:[function(require,module,exports){
+},{"../../models/utils":405,"github-api-simple":151}],411:[function(require,module,exports){
 let fetchAllRepoContribs = require('./fetchAllRepoContribs')
 let fetchRepoContribs = require('./fetchRepoContribs')
 
@@ -82382,7 +82419,7 @@ function fetchRepoContributorsUtil(org, repo) {
 module.exports = {
 	fetchRepoContributorsUtil: fetchRepoContributorsUtil
 }
-},{"./fetchAllRepoContribs":408,"./fetchRepoContribs":409}],411:[function(require,module,exports){
+},{"./fetchAllRepoContribs":409,"./fetchRepoContribs":410}],412:[function(require,module,exports){
 let fetchRepoContribsUtil = require('./fetchRepoContribsUtil')
 let storeAllContribsInDb = require('./storeAllContribsInDb')
 
@@ -82420,7 +82457,7 @@ module.exports = {
 }
 
 
-},{"./fetchRepoContribsUtil":410,"./storeAllContribsInDb":412}],412:[function(require,module,exports){
+},{"./fetchRepoContribsUtil":411,"./storeAllContribsInDb":413}],413:[function(require,module,exports){
 let fetchRepoContributorsUtil = require('./fetchRepoContribsUtil')
 let model_utils = require('../../models/utils')
 
@@ -82437,8 +82474,8 @@ function storeAllContribsInDb(org) {
 				return model_utils.getItem('repos').then((res) => {
 				let splicedRepos = res.splice(0, 20);
 				splicedRepos.map(function mappingToEachRepo(Repo, i) {
-				  	let promise = fetchRepoContributorsUtil.fetchRepoContributorsUtil(org, Repo)
-				  	.then(function gotRepoContributorsInStorage(contributors) {
+				  let promise = fetchRepoContributorsUtil.fetchRepoContributorsUtil(org, Repo)
+					.then(function gotRepoContributorsInStorage(contributors) {
 						if(contributors!=undefined && contributors.length>0) {
 							contributors.map((contributor, i)=> {
 								if(!contributorSet.has(contributor.login)) {
@@ -82484,42 +82521,7 @@ function storeAllContribsInDb(org) {
 module.exports = {
 	storeAllContribsInDb: storeAllContribsInDb
 }
-},{"../../models/utils":405,"./fetchRepoContribsUtil":410}],413:[function(require,module,exports){
-function populateNavDropdown(repos) {
-    let repoAlreadySelected = urlHash().getUrlHashParameter('r');
-    
-    // populates the current dropdown selected html
-    if(jQuery.isEmptyObject(repoAlreadySelected)) {
-        repoAlreadySelected = "plots2";
-    }else {
-        repoAlreadySelected = (repoAlreadySelected.r == undefined) ? repoAlreadySelected : repoAlreadySelected.r;
-    }
-    $('#dropdownMenuButton').html(repoAlreadySelected);
-
-
-    // populates the dropdown list
-    repos.map((repo,i) => {
-        $('<p>', {
-            class: 'dropdown-items',
-            text: repo
-        }).appendTo('#dropdown-container');
-    });
-
-
-    // click handler for dropdown items 
-    $('.dropdown-items').click((e) => {
-        let repo = e.target.textContent;
-        urlHash().setUrlHashParameter("r", repo);
-        $('#dropdownMenuButton').html(repo);
-        location.reload();
-    })
-}
-
-
-
-module.exports.populateNavDropdown = populateNavDropdown;
-
-},{}],414:[function(require,module,exports){
+},{"../../models/utils":405,"./fetchRepoContribsUtil":411}],414:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 
 // Fetches recent month commits for top 10 repositories
