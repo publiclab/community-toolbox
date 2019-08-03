@@ -5,7 +5,6 @@
     var body=document.querySelector('body');
     var toggleButton=document.getElementById('myonoffswitch');
     var toggle = localStorage.getItem('currentToggle');
-    var night_adapt = document.getElementsByClassName('nightmode-adapt')[0];
 
     // Sets images' theme accordingly when the page is loaded
     setTimeout(()=> {
@@ -22,7 +21,8 @@
           images.forEach((image)=>{
               image.style.filter = 'invert(1) grayscale(1)';
               image.style.transitionProperty = 'filter';
-              image.style.transitionDuration = '0.5s'; 
+              image.style.transitionDuration = '0.5s';
+              image.style.transitionTimingFunction = 'linear';
           })
 
           // styles for toggle button
@@ -38,7 +38,8 @@
           images.forEach((image)=>{
               image.style.filter = 'invert(0) grayscale(0)';
               image.style.transitionProperty = 'filter';
-              image.style.transitionDuration = '0.5s';                                                                                                                                                                                                                                          
+              image.style.transitionDuration = '0.5s';
+              image.style.transitionTimingFunction = 'linear';
           })
           
           // styles for toggle button
@@ -46,7 +47,7 @@
           switcher.style.removeProperty('right');
           switcher.style.removeProperty('background-color');
       }
-    }, 1000)
+    }, 2000)
         
     
     // Toggles the theme of the page
@@ -68,7 +69,8 @@
           images.forEach((image)=>{
             image.style.filter = 'invert(0) grayscale(0)';
             body.style.transitionProperty = 'filter';
-	          image.style.transitionDuration = '0.5s';                                                                                                                                                                                                                                           
+            image.style.transitionDuration = '0.5s';
+            image.style.transitionTimingFunction = 'linear';
           })
 
           // styles for toggle button
@@ -86,7 +88,8 @@
           images.forEach((image)=>{
             image.style.filter = 'invert(1) grayscale(1)';
             image.style.transitionProperty = 'filter';
-	          image.style.transitionDuration = '0.5s';                                                                                                                                                                                                                                            
+            image.style.transitionDuration = '0.5s';      
+            image.style.transitionTimingFunction = 'linear';                                                                                                                                                                                                                                      
           })
           
           // styles for toggle button
@@ -95,32 +98,37 @@
           switcher.style.backgroundColor = '#34A7C1';
 
         }
-      }, 100);    
+      }, 300);    
     });
 
 
+    buttonClickCallbackNightTheme = (e) => {
+      e.preventDefault();
+      setTimeout(() => {
+        var recentContribsSectionImgs = document.getElementsByClassName('recent-contributors')[0].getElementsByTagName("img");
+        let check=localStorage.getItem('currentToggle');
+        let images = [...recentContribsSectionImgs ];
+        if(check==="night") {
+            images.forEach((image) => {
+                image.style.filter = 'grayscale(1) invert(1)';
+                image.style.transitionProperty = 'filter';
+                image.style.transitionDuration = '0.5s';
+                image.style.transitionTimingFunction = 'linear';
+            })
+          }else {
+              images.forEach((image) => {
+                image.style.filter = 'grayscale(0) invert(0)';
+                image.style.transitionProperty = 'filter';
+                image.style.transitionDuration = '0.5s';
+                image.style.transitionTimingFunction = 'linear';                                                                                                                                                                                                                                            
+              })
+          }
+      }, 300);
+    }
+
     // Converts images' theme inside recent contributors section according to the mode selected
     // every time the toggle button is clicked
-    night_adapt.addEventListener("click", function (e) {
-        e.preventDefault();
-        setTimeout(() => {
-          var recentContribsSectionImgs = document.getElementsByClassName('recent-contributors')[0].getElementsByTagName("img");
-          let check=localStorage.getItem('currentToggle');
-          let images = [...recentContribsSectionImgs ];
-          if(check==="night") {
-              images.forEach((image) => {
-                  image.style.filter = 'invert(1) grayscale(1)';
-                  image.style.transitionProperty = 'filter';
-                  image.style.transitionDuration = '0.5s';                                                                                                                                                                                                                                            
-              })
-            }else {
-                images.forEach((image) => {
-                  image.style.filter = 'invert(0) grayscale(0)';
-                  image.style.transitionProperty = 'filter';
-                  image.style.transitionDuration = '0.5s';                                                                                                                                                                                                                                            
-                })
-            }
-        }, 100);
-    })
+    $('.past').click((e) => buttonClickCallbackNightTheme(e));
+    $('.sort-options').click((e) => buttonClickCallbackNightTheme(e));
 
 })

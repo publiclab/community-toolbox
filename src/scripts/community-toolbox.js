@@ -16,6 +16,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
+  var filterUtil = require('../utils/filterUtil')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -195,14 +196,17 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 
   // Function for fetching and showing recent contributors
-  function showRecentContributors(org, repo, recencyLabel) {
-    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo)
-    .then((result) => {
-      if(recencyLabel==='month') {
-        return recentContribsUtil.fetchContribsLastMonth(org, repo)
-              .then(function gotCommits(commits) {
+  function showRecentContributors(org, repo, recencyLabel, forMonths=6) {
+    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo).then((result)=>{
+      if(recencyLabel==="month") {
+        return recentContribsUtil.fetchContribsLastMonth(org, repo, forMonths)
+              .then(function gotMonthlyContribs(monthContribs) {
+                // Stores the CURRENTLY ACTIVE recent contribs data which is utilized by filter
+                model_utils.deleteItem('recent-contribs-data').then((res)=> {
+                  model_utils.setItem('recent-contribs-data', monthContribs);
+                })
                 // Push data to UI
-                recentContributorsUI.insertRecentContributors(commits);
+                recentContributorsUI.insertRecentContributors(monthContribs);
                 return;
               })
               .catch((err) => {
@@ -211,6 +215,10 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       } else {
         return recentContribsUtil.fetchContribsLastWeek(org, repo)
               .then((weekly_contribs) => {
+                // Stores the CURRENTLY ACTIVE recent contribs data which is utilized by filter
+                model_utils.deleteItem('recent-contribs-data').then((res)=> {
+                  model_utils.setItem('recent-contribs-data', weekly_contribs);
+                })
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);
                 return;
@@ -224,6 +232,20 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
     })
   }
+  
+
+  function filter(org, type) {
+    model_utils.getItem('recent-contribs-data')
+    .then(function gotData(response) {
+      if(response!=null && response!=undefined) {
+        newResponse = filterUtil.showFilteredData(org, type, response);
+        recentContributorsUI.insertRecentContributors(newResponse);
+      }else {
+        console.log("recent-contribs-data not present in DB! Nothing is filtered!!!");
+      }
+    })
+  }
+
 
   function displayIssuesForRepo(org, repo, label, selector) {
     toolbox.api.Issues
@@ -270,7 +292,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     initialize: initialize,
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
-    showStaleIssues: showStaleIssues
+    showStaleIssues: showStaleIssues,
+    filter: filter
   }
 
 }

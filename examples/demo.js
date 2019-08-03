@@ -39,24 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
   
         toolbox = CommunityToolbox(org, repo);
-  
-        let d = document.getElementById('toggle-contributors');
-        let recency_label = document.getElementById('recency-label');
-        d.addEventListener("click", (e) => {
-            e.preventDefault();
-            if (recencyLabel=="week") {
-                toolbox.showRecentContributors(org, repo, recencyLabel);
-                d.innerHTML = "Show monthly";
-                recency_label.innerHTML = "last week: ";
-                recencyLabel = "month";
-            }else if (recencyLabel=="month") {
-                toolbox.showRecentContributors(org, repo, recencyLabel);
-                d.innerHTML = "Show weekly";
-                recency_label.innerHTML = "last month: ";
-                recencyLabel = "week";
-            }
-        })
-  
+
         if (repo === 'all') {
 
             toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
@@ -67,10 +50,10 @@ document.addEventListener('DOMContentLoaded', function () {
   
             toolbox.initialize(org, repo).then((res)=> {
                 if(res) {
+                    // Fetches and shows recent contributors' list
+                    toolbox.showRecentContributors(org, repo, recencyLabel);
                     // compile and display all contributors for given org
                     toolbox.showAllContributors(org, repo);
-                    // Makes the toggle contributors list button click
-                    d.click();
                     toolbox.dropdownInit();
                     // Fetch stale issues
                     toolbox.showStaleIssues(org, repo);
@@ -89,10 +72,10 @@ document.addEventListener('DOMContentLoaded', function () {
   
             toolbox.initialize(org, repo).then((res)=> {
                 if(res) {
+                    // Fetches and shows recent contributors' list
+                    toolbox.showRecentContributors(org, repo, recencyLabel);
                     // compile and display all contributors for given repo
                     toolbox.showRepoContributors(org, repo);
-                    // Makes the toggle contributors list button click
-                    d.click();
                     toolbox.dropdownInit();
                     // Fetch stale issues
                     toolbox.showStaleIssues(org, repo);
@@ -122,6 +105,37 @@ document.addEventListener('DOMContentLoaded', function () {
               toolbox.ftoAuthorsUI.insertFtoIssueAuthor(ftoAuthArray);  
             }
         }
+
+
+        // EVENT LISTENERS FOR FILTER IN RECENT CONTRIBUTORS SECTION
+        $('#alphabetic').click((e)=> {
+            e.preventDefault();
+            toolbox.filter(org, 'alphabetic');
+          })
+    
+        $('#mostrecentfirst').click((e)=> {
+            e.preventDefault();
+            toolbox.filter(org, 'mostrecentfirst');
+        })
+
+        $(".past").click((e) => {
+            e.preventDefault();
+            let timeSpan = e.target.textContent;
+            $('#dropdownMenuButtonRCS > #content').html(timeSpan);
+            let forMonths = 6;
+            if(timeSpan.includes('Week')) {
+                timeSpan = 'week';
+            }else {
+                let mid = timeSpan.split('Last ')[1].split(' ')[0];
+                timeSpan = 'month';
+                forMonths = mid;
+            }
+            toolbox.showRecentContributors(org, repo, timeSpan, forMonths);
+
+        })
+
+
+
   
     })();
 

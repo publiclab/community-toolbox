@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -77513,7 +77513,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "/media/composer/3D22506F712D3C45/Knowludge/project/community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -81721,8 +81721,8 @@ function insertRecentContributors(AllContributors){
   
     if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
     $('.recent-contributors-head').html('Recent Contributors ('+recentContributors+'+)');
-    $('.recent-contributors > .usernames').html(usernames.join(', '));
-    $('.recent-contributors > .avatars').html(avatars.join(''));
+    $('.recent-contributors-body > .recent-contrib-content-box > .usernames').html(usernames.join(', '));
+    $('.recent-contributors-body > .recent-contrib-content-box > .avatars').html(avatars.join(''));
     insertRecentContributorsExec=true;
   }
   
@@ -81999,6 +81999,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
+  var filterUtil = require('../utils/filterUtil')
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82178,14 +82179,17 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 
   // Function for fetching and showing recent contributors
-  function showRecentContributors(org, repo, recencyLabel) {
-    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo)
-    .then((result) => {
-      if(recencyLabel==='month') {
-        return recentContribsUtil.fetchContribsLastMonth(org, repo)
-              .then(function gotCommits(commits) {
+  function showRecentContributors(org, repo, recencyLabel, forMonths=6) {
+    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo).then((result)=>{
+      if(recencyLabel==="month") {
+        return recentContribsUtil.fetchContribsLastMonth(org, repo, forMonths)
+              .then(function gotMonthlyContribs(monthContribs) {
+                // Stores the CURRENTLY ACTIVE recent contribs data which is utilized by filter
+                model_utils.deleteItem('recent-contribs-data').then((res)=> {
+                  model_utils.setItem('recent-contribs-data', monthContribs);
+                })
                 // Push data to UI
-                recentContributorsUI.insertRecentContributors(commits);
+                recentContributorsUI.insertRecentContributors(monthContribs);
                 return;
               })
               .catch((err) => {
@@ -82194,6 +82198,10 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       } else {
         return recentContribsUtil.fetchContribsLastWeek(org, repo)
               .then((weekly_contribs) => {
+                // Stores the CURRENTLY ACTIVE recent contribs data which is utilized by filter
+                model_utils.deleteItem('recent-contribs-data').then((res)=> {
+                  model_utils.setItem('recent-contribs-data', weekly_contribs);
+                })
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);
                 return;
@@ -82207,6 +82215,20 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
     })
   }
+  
+
+  function filter(org, type) {
+    model_utils.getItem('recent-contribs-data')
+    .then(function gotData(response) {
+      if(response!=null && response!=undefined) {
+        newResponse = filterUtil.showFilteredData(org, type, response);
+        recentContributorsUI.insertRecentContributors(newResponse);
+      }else {
+        console.log("recent-contribs-data not present in DB! Nothing is filtered!!!");
+      }
+    })
+  }
+
 
   function displayIssuesForRepo(org, repo, label, selector) {
     toolbox.api.Issues
@@ -82253,14 +82275,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     initialize: initialize,
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
-    showStaleIssues: showStaleIssues
+    showStaleIssues: showStaleIssues,
+    filter: filter
   }
 
 }
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/contribsUtil/main":411,"../utils/navDropdown.js":413,"../utils/recentContribsUtil/main":418,"../utils/repoUtil/fetchRepoUtil":421,"../utils/staleIssuesUtil":422,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/contribsUtil/main":411,"../utils/filterUtil":413,"../utils/navDropdown.js":414,"../utils/recentContribsUtil/main":420,"../utils/repoUtil/fetchRepoUtil":425,"../utils/staleIssuesUtil":426,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
 let SimpleApi = require("github-api-simple")
 let api = new SimpleApi()
 let model_utils = require('../../models/utils')
@@ -82485,6 +82508,37 @@ module.exports = {
 	storeAllContribsInDb: storeAllContribsInDb
 }
 },{"../../models/utils":405,"./fetchRepoContribsUtil":410}],413:[function(require,module,exports){
+function showFilteredData(org, type, response) {
+    if (type==="alphabetic") {
+        response.sort(function(x, y) {
+            if ((x.author.login).toLowerCase() > (y.author.login).toLowerCase()) {
+                return 1;
+            }else {
+                return -1;
+            }
+        });
+        return response;
+    }
+    else if(type==="mostrecentfirst") {
+        response.sort(function (x,y) {
+            let a = new Date(x.commit.author.date);
+            let b = new Date(y.commit.author.date);
+            if(b>a) {
+                return 1;
+            }else {
+                return -1;
+            }
+        })
+        return response;
+    }
+}
+
+
+
+module.exports = {
+    showFilteredData: showFilteredData
+}
+},{}],414:[function(require,module,exports){
 function populateNavDropdown(repos) {
     let repoAlreadySelected = urlHash().getUrlHashParameter('r');
     
@@ -82519,61 +82573,57 @@ function populateNavDropdown(repos) {
 
 module.exports.populateNavDropdown = populateNavDropdown;
 
-},{}],414:[function(require,module,exports){
+},{}],415:[function(require,module,exports){
 let model_utils = require('../../models/utils');
+let monthsQuery = require('./queryTime')
+let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
+
 
 // Fetches recent month commits for top 10 repositories
 function fetchAllRecentMonthContribs(org, repos, queryTime) {
     let results = [];
     let commitersSet = new Set([]);
     let timeToday = (new Date).getTime();
+    let monthInd = monthsQuery.findMonthInd(queryTime);
 
     // We take only 10 repos just for API quota reasons
     let splicedRepos = repos.splice(0,10);
 
     let promises = splicedRepos.map(function mapToEachRepo(repo, i) {
-        return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
-                .then(function gotResponse(response) {
-                    if(response.status=="200") {
-                        return response.json();
-                    }else {
-                        throw `Couldn't fetch recent contributors for ${repo}`;
-                    }
-                })
-                .then(function gotResponseJson(response) {
-                    if(response!=null) {
-                        let partialResult = [];
-                        response.map(function mappingToCommits(commit, i) {
-                            if(commit.author!=null) {
-                                if(!commitersSet.has(commit.author.login)) {
-                                    commitersSet.add(commit.author.login);
-                                    partialResult.push(commit);
-                                    results.push(commit);
-                                }
-                            }
-                            return true;
-                        });
-                        // Save each repo's commits data to the database
-                        let currTime = (new Date).getTime();
-                        model_utils.setItem(`recent-${repo}-month-commits`, partialResult);
-                        model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
+        return fetchRecentMonthContribs.fetchRecentMonthContribs(org, repo, queryTime)
+        .then((response) => {
+            if(response!=null) {
+                let partialResult = [];
+                response.map(function mappingToCommits(commit, i) {
+                    if(commit.author!=null) {
+                        if(!commitersSet.has(commit.author.login)) {
+                            commitersSet.add(commit.author.login);
+                            partialResult.push(commit);
+                            results.push(commit);
+                        }
                     }
                     return true;
-                })
-                .catch((err) => {
-                    throw err;
-                })
-        });
+                });
+            
+                // Save each repo's commits data to the database
+                let currTime = (new Date).getTime();
+                model_utils.setItem(`recent-${repo}-${monthInd}-month-commits`, partialResult);
+                model_utils.setItem(`recent-${repo}-${monthInd}-month-expiry`, currTime);
+            }
+        })
+        .catch((err) => {
+            throw err;
+        })
+    })
 
     return Promise.all(promises)
-           .then(function promisesResolved() {
-                // Store recentMonthCommits and recentMonthCommitsExpiry in the database
-                model_utils.setItem('recent-all-month-commits', results);
-                model_utils.setItem('recent-all-month-expiry', timeToday);
-                return results;
-            });
+    .then(function promisesResolved() {
+        // Store recentMonthCommits and recentMonthCommitsExpiry in the database
+        model_utils.setItem(`recent-all-${monthInd}-month-commits`, results);
+        model_utils.setItem(`recent-all-${monthInd}-month-expiry`, timeToday);
+        return results;
+    });
 }
-
 
 
 
@@ -82581,44 +82631,62 @@ function fetchAllRecentMonthContribs(org, repos, queryTime) {
 module.exports = {
 	fetchAllRecentMonthContribs: fetchAllRecentMonthContribs
 }
-},{"../../models/utils":405}],415:[function(require,module,exports){
-let model_utils = require('../../models/utils');
+},{"../../models/utils":405,"./fetchRecentMonthContribs":416,"./queryTime":421}],416:[function(require,module,exports){
+let model_utils = require('../../models/utils')
+let monthsQuery = require('./queryTime')
+let withinMonthsOrNot = require('./withinMonthsOrNot')
+let freshFetch = require('./freshFetch')
 
 // Fetches recent month commits for a particular repository 
 function fetchRecentMonthContribs(org, repo, queryTime) {
-    let commitersSet = new Set([]);
-    let result=[];
-    return fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}`)
-            .then(function gotResponse(response) {
-                if(response.status=="200") {
-                    return response.json();
-                }else {
-                    throw `Couldn't fetch recent contributors for ${repo}`;
-                }
-            })
-            .then(function gotResponseJson(response) {
-                if(response!=null) {
-                    response.map(function mappingToCommits(commit, i) {
-                        if(commit.author!=null) {
-                            if(!commitersSet.has(commit.author.login)) {
-                                commitersSet.add(commit.author.login);
-                                result.push(commit);
-                            }
-                        }
-                        return true;
-                    });
+    let contribs = [];
+    let monthsInd = monthsQuery.findMonthInd(queryTime);
 
-                    // Save each repo's commits data to the database
+    return model_utils.getItem(`recent-${repo}-${monthsInd}-month-commits`)
+    .then((stored) => {
+        if(stored!=null && stored!=undefined) {
+            return stored;
+        }
+        else {
+            return model_utils.getItem(`recent-${repo}-6-month-commits`)
+            .then((wholeContribsList) => {
+                if(wholeContribsList!=undefined && wholeContribsList!=null) {
+                    wholeContribsList.map((contributor, index) => {
+                        let commit_date = contributor['commit']['committer']['date'];
+                        let check = withinMonthsOrNot.within_months(commit_date, monthsInd);
+                        if(check) {
+                            contribs.push(contributor);
+                        }
+                    });
+                    // Store recentWeekCommits and recentWeekCommitsExpiry in the database
                     let currTime = (new Date).getTime();
-                    model_utils.setItem(`recent-${repo}-month-commits`, result);
-                    model_utils.setItem(`recent-${repo}-month-expiry`, currTime);
+                    model_utils.setItem(`recent-${repo}-${monthsInd}-month-commits`, contribs);
+                    model_utils.setItem(`recent-${repo}-${monthsInd}-month-expiry`, currTime);
+                    return contribs;
                 }
-                return result;
+                else {
+                    // We don't have any recent month contributors' data for desired repository
+                    // so we need to do all the work now
+                    return freshFetch.freshFetch(org, repo, queryTime)
+                    .then((response) => {
+                        return response;
+                    })
+                    .catch((err) => {
+                        throw err;
+                    })
+                }
             })
             .catch((err) => {
-                console.log("throwing from fetchRecentMonthContribs");
                 throw err;
             })
+            
+        }
+    })
+    .catch((err) => {
+        throw err;
+    })
+
+    
 }
 
 
@@ -82629,23 +82697,73 @@ function fetchRecentMonthContribs(org, repo, queryTime) {
 module.exports = {
 	fetchRecentMonthContribs: fetchRecentMonthContribs
 }
-},{"../../models/utils":405}],416:[function(require,module,exports){
+},{"../../models/utils":405,"./freshFetch":417,"./queryTime":421,"./withinMonthsOrNot":423}],417:[function(require,module,exports){
+let model_utils = require('../../models/utils')
+let monthsQuery = require('./queryTime')
+
+function freshFetch(org, repo, queryTime) {
+	let commitersSet = new Set([]);
+    let result=[];
+	let proms = [];
+	let monthsInd = monthsQuery.findMonthInd(queryTime);
+
+    for(let i=0;i<2;i++) {
+        proms.push(
+            fetch(`https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}&per_page=100&page=${i}`)
+            .then(function gotResponse(response) {
+                if(response.status=="200") {
+                    return response.json();
+                }else {
+                    throw `Couldn't fetch commits for ${repo}`;
+                }
+            })
+            .then(function gotResponseJson(response) {
+                if(response!=null) {
+                    response.map(function mappingToCommits(commit, i) {
+                	if(commit.author!=null) {
+                        if(!commitersSet.has(commit.author.login)) {
+                            commitersSet.add(commit.author.login);
+                            result.push(commit);
+                        }
+                	}
+                	return true;
+                    });
+                }
+            })
+        )
+    }
+
+    return Promise.all(proms)
+    .then(() => {
+        // Save each repo's commits data to the database
+        let currTime = (new Date).getTime();
+        model_utils.setItem(`recent-${repo}-${monthsInd}-month-commits`, result);
+        model_utils.setItem(`recent-${repo}-${monthsInd}-month-expiry`, currTime);
+        return result;
+    })
+}
+
+
+
+module.exports = {
+	freshFetch: freshFetch
+}
+},{"../../models/utils":405,"./queryTime":421}],418:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
 let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
 
 
 // Fetches recent month's commits for a particular repo or all of the repos (10 repos)
-function getContribsLastMonth(org, repo) {
-    return model_utils.getItem('repos')
-    .then((repos) => {
+function getContribsLastMonth(org, repo, forMonths) {
+    return model_utils.getItem('repos').then((repos) => {
         if(repos!=null && repos!=undefined) {
-            return model_utils.getItem(`recent-${repo}-month-expiry`)
+            return model_utils.getItem(`recent-${repo}-${forMonths}-month-expiry`)
                 .then((recentCommitsMonthExpiry) => {
                     let timeToday = (new Date).getTime();
                     // If recentCommits expiry time is 1 day behind the current time, flush them out.
                     if(recentCommitsMonthExpiry!=null && recentCommitsMonthExpiry!=undefined && ((timeToday-recentCommitsMonthExpiry)/1000)>=86400) {
-                        return Promise.all([model_utils.deleteItem(`recent-${repo}-month-commits`), model_utils.deleteItem(`recent-${repo}-month-expiry`)])
+                        return Promise.all([model_utils.deleteItem(`recent-${repo}-${forMonths}-month-commits`), model_utils.deleteItem(`recent-${repo}-${forMonths}-month-expiry`)])
                             .then(() => {
                             return true;
                         })
@@ -82653,14 +82771,15 @@ function getContribsLastMonth(org, repo) {
                     return true;
                 })
                 .then((boolean) => {
-                    return model_utils.getItem(`recent-${repo}-month-commits`).then((result) => {
+                    return model_utils.getItem(`recent-${repo}-${forMonths}-month-commits`).then((result) => {
                         if(result!=null && result!=undefined) {
                             return result;
                         }
                         else {
                             // We make queryTime 1 month behind the current time, to pass it as query in the request
                             let d = (new Date);
-                            d.setDate(d.getDate() - 30);
+                            let temp = forMonths*30;
+                            d.setDate(d.getDate() - temp);
                             let queryTime = d.toISOString();
                             if(repo==='all') {
                                 return fetchAllRecentMonthContribs.fetchAllRecentMonthContribs(org, repos, queryTime)
@@ -82668,7 +82787,6 @@ function getContribsLastMonth(org, repo) {
                                         return month_commits;
                                     })
                                     .catch((err) => {
-                                        console.log("throwing from getContribsLastMonth");
                                         throw err;
                                     })
                             }
@@ -82678,7 +82796,6 @@ function getContribsLastMonth(org, repo) {
                                         return month_commits;
                                     })
                                     .catch((err) => {
-                                        console.log("throwing from getContribsLastMonth");
                                         throw err;
                                     })
                             }
@@ -82686,7 +82803,6 @@ function getContribsLastMonth(org, repo) {
                     })
                 })
                 .catch((err) => {
-                    console.log("finally throwing from getContribsLastMonth");
                     throw err;
                 });
         } else {
@@ -82703,7 +82819,7 @@ function getContribsLastMonth(org, repo) {
 module.exports = {
 	getContribsLastMonth: getContribsLastMonth
 }
-},{"../../models/utils":405,"./fetchAllRecentMonthContribs":414,"./fetchRecentMonthContribs":415}],417:[function(require,module,exports){
+},{"../../models/utils":405,"./fetchAllRecentMonthContribs":415,"./fetchRecentMonthContribs":416}],419:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let getContribsLastMonth = require('./getContribsLastMonth')
 let withinThisWeekOrNot = require('./withinThisWeekOrNot')
@@ -82730,7 +82846,7 @@ function getContribsLastWeek(org, repo) {
                     }
                     else {
                         // We save extra request by filtering commits-made-last-week from commits-made-last month
-                        return getContribsLastMonth.getContribsLastMonth(org, repo)
+                        return getContribsLastMonth.getContribsLastMonth(org, repo, 6)
                                 .then((commits_last_month) => {
                                     commits_last_month.map((commit_last_month, index) => {
                                         let commit_date = commit_last_month['commit']['committer']['date'];
@@ -82758,15 +82874,15 @@ function getContribsLastWeek(org, repo) {
 module.exports = {
 	getContribsLastWeek: getContribsLastWeek
 }
-},{"../../models/utils":405,"./getContribsLastMonth":416,"./withinThisWeekOrNot":420}],418:[function(require,module,exports){
+},{"../../models/utils":405,"./getContribsLastMonth":418,"./withinThisWeekOrNot":424}],420:[function(require,module,exports){
 let getContribsLastMonth = require('./getContribsLastMonth')
 let getContribsLastWeek = require('./getContribsLastWeek')
 let storeAllRecentContribsInDb = require('./storeAllRecentContribsInDb')
 
 
 
-function fetchContribsLastMonth(org, repo) {
-    return getContribsLastMonth.getContribsLastMonth(org, repo)
+function fetchContribsLastMonth(org, repo, forMonths=6) {
+    return getContribsLastMonth.getContribsLastMonth(org, repo, forMonths)
     .then((contribs) => {
         return contribs;
     })
@@ -82807,7 +82923,24 @@ module.exports = {
     fetchAllRecentContribsInDb: fetchAllRecentContribsInDb
 }
 
-},{"./getContribsLastMonth":416,"./getContribsLastWeek":417,"./storeAllRecentContribsInDb":419}],419:[function(require,module,exports){
+},{"./getContribsLastMonth":418,"./getContribsLastWeek":419,"./storeAllRecentContribsInDb":422}],421:[function(require,module,exports){
+function findMonthInd(queryTime) {
+    let timeNow = new Date();
+    let qTime = new Date(`${queryTime}`);
+    let diff = timeNow - qTime;
+    let monthsBack;
+    if (diff > 60e3) {
+        monthsBack = Math.floor((Math.floor(diff / 60e3))/(60*24*30));
+    }
+    
+    return monthsBack;
+}
+  
+
+module.exports = {
+	findMonthInd: findMonthInd
+}
+},{}],422:[function(require,module,exports){
 let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
 let fetchRepoUtil = require('../repoUtil/fetchRepoUtil')
 let model_utils = require('../../models/utils')
@@ -82817,7 +82950,7 @@ let model_utils = require('../../models/utils')
 function storeAllRecentContribsInDb(org, repo) {
 	// We make queryTime 1 month behind the current time, to pass it as query in the request
 	let d = (new Date);
-	d.setDate(d.getDate() - 30);
+	d.setDate(d.getDate() - 180);
 	let queryTime = d.toISOString();
 	return model_utils.getItem('repos')
 	.then((repos) => {
@@ -82865,7 +82998,26 @@ module.exports = {
 	storeAllRecentContribsInDb: storeAllRecentContribsInDb
 }
 
-},{"../../models/utils":405,"../repoUtil/fetchRepoUtil":421,"./fetchAllRecentMonthContribs":414}],420:[function(require,module,exports){
+},{"../../models/utils":405,"../repoUtil/fetchRepoUtil":425,"./fetchAllRecentMonthContribs":415}],423:[function(require,module,exports){
+// Utility function that checks if a given date is behind the current date
+// by 7 or less
+function within_months(date, months) {
+    let current = (new Date).getTime();
+    let past_date = (new Date(`${date}`)).getTime();
+    let measure = Math.ceil(Math.abs(current - past_date) / (1000*3600*24));
+    let lim = 30 * months;
+    if(measure<=lim) {
+        return true;
+    }
+    return false;
+}
+
+
+// EXPORTS
+module.exports = {
+	within_months: within_months
+}
+},{}],424:[function(require,module,exports){
 // Utility function that checks if a given date is behind the current date
 // by 7 or less
 function within_this_week(date) {
@@ -82883,7 +83035,7 @@ function within_this_week(date) {
 module.exports = {
 	within_this_week: within_this_week
 }
-},{}],421:[function(require,module,exports){
+},{}],425:[function(require,module,exports){
 let model_utils = require('../../models/utils')
 
 // Fetches all the publiclab's repositories
@@ -82920,7 +83072,7 @@ function getAllRepos(org) {
 // EXPORTS
 module.exports.getAllRepos = getAllRepos;
 
-},{"../../models/utils":405}],422:[function(require,module,exports){
+},{"../../models/utils":405}],426:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 function getOrgWideIssues(org) {
