@@ -75,8 +75,8 @@ API calls are based on: https://www.npmjs.com/package/github-api-simple
 
 ## Testing
 
-(testing is not yet implemented, but when it is, it'll probably work like this)
+To run tests, execute 
 
-Assuming `tape` is installed via `npm install`:
-
-`npm test`
+```
+npm test
+```
