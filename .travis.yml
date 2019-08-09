@@ -5,6 +5,7 @@ node_js:
   - '10'
 before_install:
   - npm install -g grunt-cli
+  - npm install --save-dev jest-when
 before_script:
   - grunt build
 script: npm test
