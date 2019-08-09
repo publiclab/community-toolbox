@@ -2,7 +2,7 @@ let fetchAllRecentMonthContribs = require('../../src/utils/recentContribsUtil/fe
 let fetchRepoUtil = require('../../src/utils/repoUtil/fetchRepoUtil')
 let model_utils = require('../../src/models/utils')
 let { storeAllRecentContribsInDb } = require('../../src/utils/recentContribsUtil/storeAllRecentContribsInDb')
-let {when} = require('jest-when')
+let when = require('jest-when')
 let { getFakeContribsData, getReposList } = require('../utils')
 
 describe('storeAllRecentContribsInDb.js', () => {
@@ -20,7 +20,7 @@ describe('storeAllRecentContribsInDb.js', () => {
 
 		// 2. getItem function is mocked and its behavior depends on the parameter it is called with
 		model_utils.getItem = jest.fn();
-		when(model_utils.getItem)
+		when.when(model_utils.getItem)
 		.calledWith('repos')
 		.mockReturnValueOnce(() => Promise.resolve(repos))
 

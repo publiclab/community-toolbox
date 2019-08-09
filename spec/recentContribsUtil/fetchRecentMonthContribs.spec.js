@@ -3,7 +3,7 @@ let monthsQuery = require('../../src/utils/recentContribsUtil/queryTime')
 let withinMonthsOrNot = require('../../src/utils/recentContribsUtil/withinMonthsOrNot')
 let freshFetch = require('../../src/utils/recentContribsUtil/freshFetch')
 let { fetchRecentMonthContribs } = require('../../src/utils/recentContribsUtil/fetchRecentMonthContribs')
-let { when } = require('jest-when')
+let when = require('jest-when')
 let { getFakeContribsData } = require('../utils')
 
 
@@ -26,7 +26,7 @@ describe('fetchRecentMonthContribs.js', () => {
 
 		// 2. getItem function is mocked and its behavior depends on the parameter it is called with
 		model_utils.getItem = jest.fn();
-		when(model_utils.getItem)
+		when.when(model_utils.getItem)
 		.calledWith(`recent-${repo}-${monthInd}-month-commits`)
 		.mockReturnValue(() => Promise.resolve(null))
 		

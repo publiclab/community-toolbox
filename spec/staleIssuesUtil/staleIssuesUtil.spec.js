@@ -1,7 +1,7 @@
 // Import required modules
 let staleIssuesUtil = require('../../src/utils/staleIssuesUtil')
 let model_utils = require('../../src/models/utils')
-const { when } = require('jest-when')
+const when = require('jest-when')
 
 describe('staleIssuesUtil.js', () => {
 	let org, repo;
@@ -36,7 +36,7 @@ describe('staleIssuesUtil.js', () => {
 
 		// 2. getItem function is mocked and its behavior depends on the parameter it is called with
 		model_utils.getItem = jest.fn();
-		when(model_utils.getItem)
+		when.when(model_utils.getItem)
 		.calledWith("staleIssues-time").mockReturnValueOnce(() => {
             return new Promise((resolve, reject) => {
 				let curr = (new Date).getTime();

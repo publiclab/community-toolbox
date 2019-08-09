@@ -2,7 +2,7 @@ let model_utils = require('../../src/models/utils')
 let {getContribsLastWeek} = require('../../src/utils/recentContribsUtil/getContribsLastWeek')
 let getContribsLastMonth = require('../../src/utils/recentContribsUtil/getContribsLastMonth')
 let withinThisWeekOrNot = require('../../src/utils/recentContribsUtil/withinThisWeekOrNot')
-let { when } = require('jest-when')
+let when = require('jest-when')
 let { getFakeContribsData } = require('../utils')
 
 
@@ -24,7 +24,7 @@ describe('getContribsLastWeek.js', () => {
 
 		// 2. getItem function is mocked and its behavior depends on the parameter it is called with
 		model_utils.getItem = jest.fn();
-		when(model_utils.getItem)
+		when.when(model_utils.getItem)
 		.calledWith(`recent-${repo}-week-expiry`)
 		.mockReturnValueOnce(() => Promise.resolve(null))
 		.mockReturnValueOnce(() => Promise.resolve(null))
