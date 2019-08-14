@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
         var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
         var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
+        var leaderboardState = urlHash().getUrlHashParameter('s') || 'week';
   
         toolbox = CommunityToolbox(org, repo);
-
         if (repo === 'all') {
 
             toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
@@ -116,6 +116,11 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#mostrecentfirst').click((e)=> {
             e.preventDefault();
             toolbox.filter(org, 'mostrecentfirst');
+        })
+        
+        $('#leaderboard').click((e)=> {
+            e.preventDefault();
+            toolbox.filter(org, 'leaderboard');
         })
 
         $(".past").click((e) => {

@@ -2,7 +2,6 @@ let model_utils = require('../../models/utils')
 let monthsQuery = require('./queryTime')
 
 function freshFetch(org, repo, queryTime) {
-	let commitersSet = new Set([]);
     let result=[];
 	let proms = [];
 	let monthsInd = monthsQuery.findMonthInd(queryTime);
@@ -20,15 +19,10 @@ function freshFetch(org, repo, queryTime) {
             .then(function gotResponseJson(response) {
                 if(response!=null) {
                     response.map(function mappingToCommits(commit, i) {
-                	if(commit.author!=null) {
-                        if(!commitersSet.has(commit.author.login)) {
-                            commitersSet.add(commit.author.login);
-                            result.push(commit);
-                        }
-                	}
-                	return true;
+                        result.push(commit);
                     });
                 }
+                return result;
             })
         )
     }
@@ -48,3 +42,4 @@ function freshFetch(org, repo, queryTime) {
 module.exports = {
 	freshFetch: freshFetch
 }
+

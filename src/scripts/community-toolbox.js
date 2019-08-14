@@ -18,6 +18,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
 
+
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
   var chart = require('./chart');

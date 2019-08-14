@@ -81706,17 +81706,37 @@ module.exports = {
     insertStale: insertStale
 };
 },{"moment":271}],402:[function(require,module,exports){
+
 var insertRecentContributorsExec = false;
+let filterUniqueUtil = require('../utils/filterUniqueContribs')
 
 
 function insertRecentContributors(AllContributors){
+    let usernames, avatars;
     let recentContributors = 0;
-    let usernames = AllContributors.map((commit, i) => {
-      return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
-    })
-    let avatars = AllContributors.map((commit, i) => {
-      return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
-    })
+
+    if(AllContributors instanceof Map) {
+      AllContributors = [ ...AllContributors.entries() ];
+
+      usernames = AllContributors.map((userArray, i) => {
+        return `<a href="https://github.com/${userArray[0]}">@${userArray[0]}</a>`;
+      })
+      avatars = AllContributors.map((userArray, i) => {
+        return `<a href="https://github.com/${userArray[0]}" title="${userArray[0]}"><img width="100px" src="https://avatars.githubusercontent.com/${userArray[0]}"></a>`;
+      })
+    }
+    else {
+      // Removes duplicate data in the recent contributors list
+      AllContributors = filterUniqueUtil.filterUniqueContribs(AllContributors);
+
+      usernames = AllContributors.map((commit, i) => {
+        return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
+      })
+      avatars = AllContributors.map((commit, i) => {
+        return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
+      })
+    }
+  
     recentContributors += AllContributors.length;
   
     if(insertRecentContributorsExec) $('.recent-contributors > .usernames').append(', ');
@@ -81730,7 +81750,7 @@ function insertRecentContributors(AllContributors){
 module.exports = {
   insertRecentContributors: insertRecentContributors,
 };
-},{}],403:[function(require,module,exports){
+},{"../utils/filterUniqueContribs":413}],403:[function(require,module,exports){
 let db;
 let init = require('../models/initialize')
 
@@ -82000,6 +82020,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
+
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82283,7 +82304,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/contribsUtil/main":411,"../utils/filterUtil":413,"../utils/navDropdown.js":414,"../utils/recentContribsUtil/main":420,"../utils/repoUtil/fetchRepoUtil":425,"../utils/staleIssuesUtil":426,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/contribsUtil/main":411,"../utils/filterUtil":414,"../utils/navDropdown.js":415,"../utils/recentContribsUtil/main":421,"../utils/repoUtil/fetchRepoUtil":426,"../utils/staleIssuesUtil":427,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
 let SimpleApi = require("github-api-simple")
 let api = new SimpleApi()
 let model_utils = require('../../models/utils')
@@ -82508,6 +82529,29 @@ module.exports = {
 	storeAllContribsInDb: storeAllContribsInDb
 }
 },{"../../models/utils":405,"./fetchRepoContribsUtil":410}],413:[function(require,module,exports){
+// Given a list of commits which contains repeated commiters, this function extracts
+// a list of unique commiters and returns that
+function filterUniqueContribs(data) {
+	let commitersSet = new Set([]);
+	let result = [];
+
+	data.map(function mappingToCommits(commit, i) {
+		if(commit.author!=null) {
+		    if(!commitersSet.has(commit.author.login)) {
+		        commitersSet.add(commit.author.login);
+				result.push(commit);
+			}
+		}
+	});
+
+	return result;
+}
+
+
+module.exports = {
+	filterUniqueContribs: filterUniqueContribs,
+}
+},{}],414:[function(require,module,exports){
 function showFilteredData(org, type, response) {
     if (type==="alphabetic") {
         response.sort(function(x, y) {
@@ -82531,6 +82575,21 @@ function showFilteredData(org, type, response) {
         })
         return response;
     }
+    else if(type === "leaderboard") {
+        let leaderMap = new Map([]);
+        
+        response.map(function mappingToCommiters(dataItem, i) {
+            let temp = leaderMap.get(dataItem.author.login);
+            if (temp < 0 || temp == undefined || temp == null) {
+              temp = 0;
+            }
+            temp += 1;
+            leaderMap.set(dataItem.author.login, temp);
+          })
+      
+          let sortedMap = new Map([...leaderMap.entries()].sort((a, b) => b[1] - a[1]));
+          return sortedMap;
+    }
 }
 
 
@@ -82538,7 +82597,7 @@ function showFilteredData(org, type, response) {
 module.exports = {
     showFilteredData: showFilteredData
 }
-},{}],414:[function(require,module,exports){
+},{}],415:[function(require,module,exports){
 function populateNavDropdown(repos) {
     let repoAlreadySelected = urlHash().getUrlHashParameter('r');
     
@@ -82573,7 +82632,7 @@ function populateNavDropdown(repos) {
 
 module.exports.populateNavDropdown = populateNavDropdown;
 
-},{}],415:[function(require,module,exports){
+},{}],416:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let monthsQuery = require('./queryTime')
 let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
@@ -82631,7 +82690,7 @@ function fetchAllRecentMonthContribs(org, repos, queryTime) {
 module.exports = {
 	fetchAllRecentMonthContribs: fetchAllRecentMonthContribs
 }
-},{"../../models/utils":405,"./fetchRecentMonthContribs":416,"./queryTime":421}],416:[function(require,module,exports){
+},{"../../models/utils":405,"./fetchRecentMonthContribs":417,"./queryTime":422}],417:[function(require,module,exports){
 let model_utils = require('../../models/utils')
 let monthsQuery = require('./queryTime')
 let withinMonthsOrNot = require('./withinMonthsOrNot')
@@ -82697,12 +82756,11 @@ function fetchRecentMonthContribs(org, repo, queryTime) {
 module.exports = {
 	fetchRecentMonthContribs: fetchRecentMonthContribs
 }
-},{"../../models/utils":405,"./freshFetch":417,"./queryTime":421,"./withinMonthsOrNot":423}],417:[function(require,module,exports){
+},{"../../models/utils":405,"./freshFetch":418,"./queryTime":422,"./withinMonthsOrNot":424}],418:[function(require,module,exports){
 let model_utils = require('../../models/utils')
 let monthsQuery = require('./queryTime')
 
 function freshFetch(org, repo, queryTime) {
-	let commitersSet = new Set([]);
     let result=[];
 	let proms = [];
 	let monthsInd = monthsQuery.findMonthInd(queryTime);
@@ -82720,15 +82778,10 @@ function freshFetch(org, repo, queryTime) {
             .then(function gotResponseJson(response) {
                 if(response!=null) {
                     response.map(function mappingToCommits(commit, i) {
-                	if(commit.author!=null) {
-                        if(!commitersSet.has(commit.author.login)) {
-                            commitersSet.add(commit.author.login);
-                            result.push(commit);
-                        }
-                	}
-                	return true;
+                        result.push(commit);
                     });
                 }
+                return result;
             })
         )
     }
@@ -82748,7 +82801,9 @@ function freshFetch(org, repo, queryTime) {
 module.exports = {
 	freshFetch: freshFetch
 }
-},{"../../models/utils":405,"./queryTime":421}],418:[function(require,module,exports){
+
+
+},{"../../models/utils":405,"./queryTime":422}],419:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
 let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
@@ -82819,7 +82874,7 @@ function getContribsLastMonth(org, repo, forMonths) {
 module.exports = {
 	getContribsLastMonth: getContribsLastMonth
 }
-},{"../../models/utils":405,"./fetchAllRecentMonthContribs":415,"./fetchRecentMonthContribs":416}],419:[function(require,module,exports){
+},{"../../models/utils":405,"./fetchAllRecentMonthContribs":416,"./fetchRecentMonthContribs":417}],420:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let getContribsLastMonth = require('./getContribsLastMonth')
 let withinThisWeekOrNot = require('./withinThisWeekOrNot')
@@ -82874,7 +82929,7 @@ function getContribsLastWeek(org, repo) {
 module.exports = {
 	getContribsLastWeek: getContribsLastWeek
 }
-},{"../../models/utils":405,"./getContribsLastMonth":418,"./withinThisWeekOrNot":424}],420:[function(require,module,exports){
+},{"../../models/utils":405,"./getContribsLastMonth":419,"./withinThisWeekOrNot":425}],421:[function(require,module,exports){
 let getContribsLastMonth = require('./getContribsLastMonth')
 let getContribsLastWeek = require('./getContribsLastWeek')
 let storeAllRecentContribsInDb = require('./storeAllRecentContribsInDb')
@@ -82923,7 +82978,7 @@ module.exports = {
     fetchAllRecentContribsInDb: fetchAllRecentContribsInDb
 }
 
-},{"./getContribsLastMonth":418,"./getContribsLastWeek":419,"./storeAllRecentContribsInDb":422}],421:[function(require,module,exports){
+},{"./getContribsLastMonth":419,"./getContribsLastWeek":420,"./storeAllRecentContribsInDb":423}],422:[function(require,module,exports){
 function findMonthInd(queryTime) {
     let timeNow = new Date();
     let qTime = new Date(`${queryTime}`);
@@ -82940,7 +82995,7 @@ function findMonthInd(queryTime) {
 module.exports = {
 	findMonthInd: findMonthInd
 }
-},{}],422:[function(require,module,exports){
+},{}],423:[function(require,module,exports){
 let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
 let fetchRepoUtil = require('../repoUtil/fetchRepoUtil')
 let model_utils = require('../../models/utils')
@@ -82998,7 +83053,7 @@ module.exports = {
 	storeAllRecentContribsInDb: storeAllRecentContribsInDb
 }
 
-},{"../../models/utils":405,"../repoUtil/fetchRepoUtil":425,"./fetchAllRecentMonthContribs":415}],423:[function(require,module,exports){
+},{"../../models/utils":405,"../repoUtil/fetchRepoUtil":426,"./fetchAllRecentMonthContribs":416}],424:[function(require,module,exports){
 // Utility function that checks if a given date is behind the current date
 // by 7 or less
 function within_months(date, months) {
@@ -83017,7 +83072,7 @@ function within_months(date, months) {
 module.exports = {
 	within_months: within_months
 }
-},{}],424:[function(require,module,exports){
+},{}],425:[function(require,module,exports){
 // Utility function that checks if a given date is behind the current date
 // by 7 or less
 function within_this_week(date) {
@@ -83035,7 +83090,7 @@ function within_this_week(date) {
 module.exports = {
 	within_this_week: within_this_week
 }
-},{}],425:[function(require,module,exports){
+},{}],426:[function(require,module,exports){
 let model_utils = require('../../models/utils')
 
 // Fetches all the publiclab's repositories
@@ -83072,7 +83127,7 @@ function getAllRepos(org) {
 // EXPORTS
 module.exports.getAllRepos = getAllRepos;
 
-},{"../../models/utils":405}],426:[function(require,module,exports){
+},{"../../models/utils":405}],427:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 function getOrgWideIssues(org) {

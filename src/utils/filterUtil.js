@@ -21,6 +21,21 @@ function showFilteredData(org, type, response) {
         })
         return response;
     }
+    else if(type === "leaderboard") {
+        let leaderMap = new Map([]);
+        
+        response.map(function mappingToCommiters(dataItem, i) {
+            let temp = leaderMap.get(dataItem.author.login);
+            if (temp < 0 || temp == undefined || temp == null) {
+              temp = 0;
+            }
+            temp += 1;
+            leaderMap.set(dataItem.author.login, temp);
+          })
+      
+          let sortedMap = new Map([...leaderMap.entries()].sort((a, b) => b[1] - a[1]));
+          return sortedMap;
+    }
 }
 
 
