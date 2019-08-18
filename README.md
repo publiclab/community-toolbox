@@ -49,7 +49,7 @@ https://publiclab.github.io/community-toolbox/examples/embed.html#r=all&l=help-w
 
 ## Developing
 
-To develop and build out Community Toolbox, you'l need to have `npm` installed and to run `npm install` to get all the dependencies. 
+To develop and build out Community Toolbox, you'll need to have `npm` installed and to run `npm install` to get all the dependencies. 
 
 Community Toolbox is built using a Grunt task from the source files in `/src/`, and the compiled file is saved to `/dist/community-toolbox.js`. To build, run `grunt build`. To watch files for changes, and build whenever they occur, run `grunt`. 
 
