@@ -253,13 +253,7 @@ h1, h2, .section h3 {
 
 @media only screen and (max-width: 569px) {
     .links {
-        width: 25%;
         margin: 10px 0;
     }
 }
 
-@media only screen and (max-width: 400px) {
-    .links {
-        width: 50%;
-    }
-}
