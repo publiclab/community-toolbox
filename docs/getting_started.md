@@ -11,7 +11,7 @@ So you're almost there, just some info before you start building amazing things 
 
 ## Developing :rocket: :tada:
 
-### Installation instructions [ [Watch video guide](https://terminalizer.com/view/9a064b551732) ]
+### Installation instructions [ [Watch video guide](https://youtu.be/wkC2AgLiaTM) ]
 
 * Clone or download the repository into any fresh temporary folder.
 
