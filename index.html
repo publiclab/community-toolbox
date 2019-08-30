@@ -6,13 +6,25 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="text/html; charset=UTF8">
+    <!-- For supporting different browsers -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Commmunity Toolbox">
+    <!-- <link rel="apple-touch-icon" href="./images/icons/icon-144-dim.png"> -->
+    <meta name="msapplication-TileImage" content="./images/icons/icon-144.png">
+    <meta name="msapplication-TileColor" content="#fff">
+    <meta name="theme-color" content="#3f51b5">
 
     <title>Community toolbox</title>
     <link rel="shortcut icon"  id="favicon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
-    
+    <link rel="stylesheet" type="text/css" href="./node_modules/node-snackbar/dist/snackbar.min.css" />
+    <link rel="manifest" href="./manifest.json">
+    <script src="./src/scripts/pwainit.js"></script>
+
     
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./node_modules/node-snackbar/dist/snackbar.min.js"></script>
     <script src="node_modules/chart.js/dist/Chart.js"></script>
     <script src="examples/urlHash.js"></script>
     <script src="dist/community-toolbox.js" charset="utf-8"></script>
@@ -27,10 +39,11 @@
 
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="examples/demo.css">
     <link rel="stylesheet" href="examples/themes.css">
 
-
+    
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
     <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
@@ -56,7 +69,7 @@
 
 
         <!-- DROPDOWN STARTS -->
-        <div class="dropdown">
+        <div class="dropdown-Repo dropdown">
           <label for="dropdownMenuButton">Select Repository: </label>
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Select repository
@@ -179,21 +192,87 @@
         <div class="stale"></div>
       </div>
 
-
+      
       <h2 class="recent-contributors-head">Recent Contributors</h2>
       
-      <p style="display: inline;">Below are the list of active contributors <p id="recency-label" style="display: inline;">last week: </p> <a href="#" class="nightmode-adapt"id="toggle-contributors">(Show monthly)</a></p>
+      <div class="recent-contributors">
+        <div style="display: flex; justify-content: space-between">
+          <p>Below is the list of active contributors, </p>
+          <div title="copy to clipboard" class="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+        </div>
+        
+        <div class="well recent-contributors-body">
+          <div class="filter-options">
+              <!-- FILTER DROPDOWN 1 -->
+              <div class="recent-contribs-dropdown dropdown">
+                <div class="dropdown-toggle-RC" id="dropdownMenuButtonRC" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <strong>Sort <span><i class="fa fa-angle-down"></i></span></strong>
+                </div>
+                <div class="dropdown-menu" style="height: auto; width: auto;" aria-labelledby="dropdownMenuButtonRC">
+                  <div class="sort-options" id="alphabetic" style="width: auto; height: 2em; text-align: center; cursor: pointer;">
+                    <p class="dropdown-item sort-items d-inline-block mx-auto">alphabetical</p>
+                  </div>
+                  <div class="sort-options" id="mostrecentfirst" style="width: auto; height: 2em; text-align: center; cursor: pointer;">
+                    <p class="dropdown-item sort-items d-inline-block mx-auto">most recent first</p>
+                  </div>
+                  <div class="sort-options" id="leaderboard" style="width: auto; height: 2em; text-align: center; cursor: pointer;">
+                    <p class="dropdown-item sort-items d-inline-block mx-auto">leaderboard</p>
+                  </div>
+                </div>
+              </div>
+              <!--  -->
 
-      <div class="well recent-contributors"><p class="usernames"></p><hr /><p class="avatars"></p></div>
+              <!-- FILTER DROPDOWN 2 -->
+              <div class="recent-contribs-show-dropdown dropdown">
+                    <label for="dropdownMenuButtonRCS">Show: </label>
+                    <div class="dropdown-toggle-RC" id="dropdownMenuButtonRCS" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span id="content">Last Week</span>
+                      <span><i class="fa fa-angle-down"></i></span>
+                    </div>
 
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonRCS">
+                    <div class="past">
+                      <p class="dropdown-item d-inline-block mx-auto">Last Week</p>
+                    </div>
+                    <div class="past">
+                      <p class="dropdown-item d-inline-block mx-auto">Last 1 Month</p>
+                    </div>
+                    <div class="past">
+                      <p class="dropdown-item d-inline-block mx-auto">Last 2 Months</p>
+                    </div>
+                    <div class="past">
+                      <p class="dropdown-item d-inline-block mx-auto">Last 3 Months</p>
+                    </div>
+                    <div class="past">
+                      <p class="dropdown-item d-inline-block mx-auto">Last 4 Months</p>
+                    </div>
+                    <div class="past">
+                      <p class="dropdown-item d-inline-block mx-auto">Last 5 Months</p>
+                    </div>
+                    <div class="past">
+                      <p class="dropdown-item d-inline-block mx-auto">Last 6 Months</p>
+                    </div>
+                  </div>
+              </div>
+                <!--  -->
+          </div>
+    
+          <div class="recent-contrib-content-box">
+            <p class="usernames"></p><hr /><p class="avatars"></p>
+          </div>
+
+        </div>
+      </div>
 
       <h2 class="contributors-head">Contributors</h2>
-      
-      <div title="copy to clipboard" id="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
-      
-      <p>This project was made possible by many contributors, including the following GitHub users:</p>
-      
-      <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p id="contrib-names" class="usernames"></p><hr /><p class="avatars text-center"></p></div>
+      <div class="contribs">
+        <div style="display: flex; justify-content: space-between">
+          <p>This project was made possible by many contributors, including the following GitHub users:</p>
+          <div title="copy to clipboard" class="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+        </div>
+
+        <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars text-center"></p></div>
+      </div>
 	
 	  <div class="row" id="connectwithus">
 		<h2 class="text-center d-block">Connect with us</h2>
@@ -204,8 +283,8 @@
 		  <a class="col-md-2 links " href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github fa-3x"></i> </a>
 		  <a class="col-md-2 links " href="https://publiclab.org" title="Publiclab Website"><i class="fa fa-globe fa-3x"></i></a>
 	  </div>
-	</div>
-    </div>
+	  </div>
+    </!-->
 
     <footer>
       <div class="row">

@@ -4,7 +4,8 @@
   "description": "Tools to understand and welcome people into a contributor community",
   "main": "src/community-toolbox.js",
   "scripts": {
-    "start": "http-server -c-1 -p 8000"
+    "start": "http-server -c-1 -p 8000",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "chart.js": "~2.8.0",
     "font-awesome": "~4.7.0",
     "jquery": "~3",
+    "node-snackbar": "^0.1.15",
     "parse-link-header": "^1.0.1",
     "urlhash": "~0.1.1"
   },
@@ -32,6 +34,8 @@
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-watch": "^1.1.0",
     "http-server": "^0.11.1",
+    "jest": "^24.8.0",
+    "jest-when": "^2.6.0",
     "matchdep": "^2.0.0",
     "moment": "~2.24.0",
     "tap-spec": "^5.0.0",

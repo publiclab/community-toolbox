@@ -8,14 +8,16 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var crud = require('../models/crud')
   var issuesUI = require('../UI/issuesUI')
   var model_utils = require('../models/utils')
-  var fetchReposUtil = require('../utils/fetchRepoUtil')
+  var fetchReposUtil = require('../utils/repoUtil/fetchRepoUtil')
   var contributorsUI = require('../UI/contributorsUI')
-  var contributorsUtil = require('../utils/contributorsUtil')
+  var contributorsUtil = require('../utils/contribsUtil/main')
   var recentContributorsUI = require('../UI/recentContributorsUI')
-  var recentContribsUtil = require('../utils/recentContribsUtil')
-  var autoCompleteUtil = require('../utils/autocomplete')
+  var navDropdownUtil = require('../utils/navDropdown.js')
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
+  var recentContribsUtil = require('../utils/recentContribsUtil/main')
+  var filterUtil = require('../utils/filterUtil')
+
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -67,30 +69,35 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
                 return fetchReposUtil.getAllRepos(org)
                   .then((resp) => {
                       resolve(true);
-                  });
+                  })
+                  .catch((err) => {
+                    Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+                  })
               }
               resolve(true);
             });
-          });
+          })
       });
-    }
+  }
 
 
   function dropdownInit() {
-    return model_utils.getItem('repos').then((res) => {
+    return model_utils.getItem('repos')
+    .then((res) => {
       if(res!=null && res!=undefined) {
-        autoCompleteUtil.generateAutocomplete(res);
+        navDropdownUtil.populateNavDropdown(res);
       }else {
         console.log("not working");
       }
-    });
+    })
   }
 
 
   // This function is responsible for showing contributors
   // on a multi-repository view
   function showAllContributors(org) {
-    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org)
+    .then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors!=null && allContributors!=undefined && allContributors.length>0) {
         // Flushes contributors list from the database after every single day
@@ -110,18 +117,22 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
             // If the data is not in the database, it gets fetched from storeAllContributorsInDatabase function
             if(AllContributors == null || AllContributors == undefined || AllContributors.length==0) {
   
-                contributorsUtil.storeAllContributorsInDatabase(org).then(function gotAllContributors(AllContributors) {
-                // Provides fetched contributors list to UI function for rendering it
-                // to the user
-                contributorsUI.insertContributors(AllContributors);
-              })
-            } 
+                contributorsUtil.fetchAllContribsInDb(org)
+                .then(function gotAllContributors(AllContributors) {
+                  // Provides fetched contributors list to UI function for rendering it
+                  // to the user
+                  contributorsUI.insertContributors(AllContributors);
+                })
+                .catch((err) => {
+                  throw err;
+                })
+            }
             // If stored data is not null and undefined, process it
             else {
               contributorsUI.insertContributors(AllContributors);
             }
           })
-        });
+        })
       }
       // If execution goes here, it means that there's probably something wrong 
       // in the storeAllContributorsInDatabase function
@@ -129,12 +140,16 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         console.log("Something went wrong while fetching all contributors :(");
       }
     })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
 
   // This function is responsible for showing all the contributors for a particular repository
   function showRepoContributors(org, repo) {
-    return contributorsUtil.storeAllContributorsInDatabase(org).then((allContributors) => {
+    return contributorsUtil.fetchAllContribsInDb(org)
+    .then((allContributors) => {
       // If the stored data is not undefined or null, execution goes here
       if(allContributors != null && allContributors!=undefined && allContributors.length>0) {
         // Flushes repoContributors from the database after every single day
@@ -153,10 +168,13 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
           model_utils.getItem(repo).then((repoContributors) => {
             // If we don't have repoContributors in the database, we fetch them from Github
             if (repoContributors == null || repoContributors == undefined) {
-              contributorsUtil.fetchRepoContributorsUtil(org, repo)
+              contributorsUtil.repoContribsUtil(org, repo)
               .then(function gotRepoContributorsInStorage (contributors) {
                 contributorsUI.insertContributors(contributors);
                 return;
+              })
+              .catch((err) => {
+                throw err;
               })
             }
             // If we have repoContributors in the database, we save a network call :)
@@ -172,46 +190,84 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
         console.log(`Something went wrong while getting ${repo} contributors :(`);
       }
     })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
 
 
   // Function for fetching and showing recent contributors
-  function showRecentContributors(org, repo, recencyLabel) {
-    return contributorsUtil.storeAllRecentContribsInitially(org, repo).then((result)=>{
-      if(recencyLabel==='month') {
-        return recentContribsUtil.getCommitsLastMonth(org, repo)
-              .then(function gotCommits(commits) {
+  function showRecentContributors(org, repo, recencyLabel, forMonths=6) {
+    return recentContribsUtil.fetchAllRecentContribsInDb(org, repo).then((result)=>{
+      if(recencyLabel==="month") {
+        return recentContribsUtil.fetchContribsLastMonth(org, repo, forMonths)
+              .then(function gotMonthlyContribs(monthContribs) {
+                // Stores the CURRENTLY ACTIVE recent contribs data which is utilized by filter
+                model_utils.deleteItem('recent-contribs-data').then((res)=> {
+                  model_utils.setItem('recent-contribs-data', monthContribs);
+                })
                 // Push data to UI
-                recentContributorsUI.insertRecentContributors(commits);
+                recentContributorsUI.insertRecentContributors(monthContribs);
                 return;
-              });
+              })
+              .catch((err) => {
+                throw err;
+              })
       } else {
-        return recentContribsUtil.getCommitsLastWeek(org, repo)
+        return recentContribsUtil.fetchContribsLastWeek(org, repo)
               .then((weekly_contribs) => {
+                // Stores the CURRENTLY ACTIVE recent contribs data which is utilized by filter
+                model_utils.deleteItem('recent-contribs-data').then((res)=> {
+                  model_utils.setItem('recent-contribs-data', weekly_contribs);
+                })
                 // Push data to UI
                 recentContributorsUI.insertRecentContributors(weekly_contribs);
                 return;
-              });
+              })
+              .catch((err) => {
+                throw err;
+              })
       }
-    });
+    })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
   }
+  
+
+  function filter(org, type) {
+    model_utils.getItem('recent-contribs-data')
+    .then(function gotData(response) {
+      if(response!=null && response!=undefined) {
+        newResponse = filterUtil.showFilteredData(org, type, response);
+        recentContributorsUI.insertRecentContributors(newResponse);
+      }else {
+        console.log("recent-contribs-data not present in DB! Nothing is filtered!!!");
+      }
+    })
+  }
+
 
   function displayIssuesForRepo(org, repo, label, selector) {
     toolbox.api.Issues
-           .getIssuesForRepo(org, repo, { qs: { labels: label } })
-           .then(function onGotIssues(issues) {
-             issues.forEach(function(issue) {
-               toolbox.issuesUI.insertIssue(issue, selector);
-             });
-           });
+      .getIssuesForRepo(org, repo, { qs: { labels: label } })
+      .then(function onGotIssues(issues) {
+        issues.forEach(function(issue) {
+          toolbox.issuesUI.insertIssue(issue, selector);
+        });
+      })
   }
 
 
   function showStaleIssues(org, repo) {
-    return issuesUtil.getStaleIssues(org, repo).then((data)=>{
+    return issuesUtil.getStaleIssues(org, repo)
+    .then((data) => {
       if(data!=null && data!=undefined) {
         issuesUI.insertStale(data, '.stale');
       }
+    })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
     })
   }
 
@@ -237,7 +293,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     initialize: initialize,
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
-    showStaleIssues: showStaleIssues
+    showStaleIssues: showStaleIssues,
+    filter: filter
   }
 
 }
