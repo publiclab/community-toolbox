@@ -8,7 +8,7 @@ A platform dedicated to community growth and getting insights on organization-wi
 [![visit here](https://img.shields.io/badge/live_at-URL-yellow)](https://code.publiclab.org/)
 [![GitHub license](https://img.shields.io/github/license/publiclab/community-toolbox)](https://github.com/publiclab/community-toolbox/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/publiclab/community-toolbox)](https://github.com/publiclab/community-toolbox/stargazers)
-[![Newcomers welcome](https://img.shields.io/badge/newcomers-welcome-pink.svg)](https://img.shields.io/badge/newcomers-welcome-pink.svg)
+[![Newcomers welcome](https://img.shields.io/badge/newcomers-welcome-pink.svg)](https://code.publiclab.org)
 
 
 ## Table of Contents
