@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "/home/rishabh570/community-toolbox"
+      "C:\\Projects\\OSS\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "/home/rishabh570/community-toolbox",
+  "_where": "C:\\Projects\\OSS\\community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "/home/rishabh570/community-toolbox"
+      "C:\\Projects\\OSS\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "/home/rishabh570/community-toolbox",
+  "_where": "C:\\Projects\\OSS\\community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "/home/rishabh570/community-toolbox"
+      "C:\\Projects\\OSS\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -77509,11 +77509,13 @@ module.exports={
     "fetchSpec": "2.4.3"
   },
   "_requiredBy": [
-    "/request"
+    "/jsdom",
+    "/request",
+    "/request-promise-native"
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "/home/rishabh570/community-toolbox",
+  "_where": "C:\\Projects\\OSS\\community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -82249,18 +82251,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       }
     })
   }
-
-
-  function displayIssuesForRepo(org, repo, label, selector) {
-    toolbox.api.Issues
-      .getIssuesForRepo(org, repo, { qs: { labels: label } })
-      .then(function onGotIssues(issues) {
-        issues.forEach(function(issue) {
-          toolbox.issuesUI.insertIssue(issue, selector);
-        });
-      })
-  }
-
+  
 
   function showStaleIssues(org, repo) {
     return issuesUtil.getStaleIssues(org, repo)
