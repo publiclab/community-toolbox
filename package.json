@@ -35,7 +35,7 @@
     "grunt-contrib-watch": "^1.1.0",
     "http-server": "^0.11.1",
     "jest": "^24.8.0",
-    "jest-when": "^2.6.0",
+    "jest-when": "^2.7.0",
     "matchdep": "^2.0.0",
     "moment": "~2.24.0",
     "tap-spec": "^5.0.0",
