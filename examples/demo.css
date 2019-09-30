@@ -257,3 +257,20 @@ h1, h2, .section h3 {
     }
 }
 
+/* #261 Hall of Fame */
+
+.hall-of-fame-container {
+    margin-bottom: 20px;
+}
+
+.hall-of-fame-container {
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+
+}
+
+.hall-of-fame {
+    overflow: scroll;
+    height: 300px;
+}
