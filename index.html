@@ -21,7 +21,7 @@
     <link rel="manifest" href="./manifest.json">
     <script src="./src/scripts/pwainit.js"></script>
 
-    
+
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./node_modules/node-snackbar/dist/snackbar.min.js"></script>
@@ -43,13 +43,13 @@
     <link rel="stylesheet" href="examples/demo.css">
     <link rel="stylesheet" href="examples/themes.css">
 
-    
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
     <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
-    
 
-    <div class="container-fluid">
+
+    <div class="container-fluid" style="display: flex;flex-direction: column;align-items: center;">
 
       <header class="text-center">
         <h1>Welcome to <span class=" org-display-name">Public Lab</span>'s coding community!</h1>
@@ -161,7 +161,7 @@
       <p>Once you've completed a <b><span  id="issue-label-for-newcomer">first-timers-only</span></b> issue, there are <a  id="help-wanted-issues" href="https://github.com/publiclab/plots2/labels/help-wanted">plenty of other challenges</a> we'd love to have your help on.</p>
 
       <p>In "<span class=" newcomer-like-issues">candidates</span>" below, there are some issues we think would make good <b><span class=" newcomer-issues">first-timers-only</span></b> issues, but haven't finished formatting. They could make a good second-time contribution!</p>
-	    
+
       <h2 class=" newcomer-like-issues">Candidates</h2>
 
       <p>We put a lot of work into our <span class=" newcomer-issues">first-timer-only</span> issues. But if we haven't been able to prepare any recently, here's a set of <span class=" newcomer-like-issues">candidates</span> we haven't yet had time to prepare, but which have most of the needed information. (Also: Learn how to <a  href="https://publiclab.org/n/13667">help turn these into <span class=" newcomer-issues">first-timers-only</span> issues</a> to help keep welcoming people in!</p>
@@ -183,7 +183,7 @@
       <p>These people took some time out of their busy schedule to help in welcoming newcomers by creating FTO issues: </p>
 
       <div class="fto-authors"></div>
-      
+
       <h2 id="stale-head">Stale Issues</h2>
 
       <p>Here are some stale issues across all of our repositories which might utilize your help. Once you've completed the <span class="issue-label-for-newcomer">first-timer-only</span> and/or <span id="help-wanted-label">help-wanted</span> issues, you can take a look here to help someone else. Also, issue labels are always helpful while deciding to work on any issue.</p>
@@ -192,15 +192,15 @@
         <div class="stale"></div>
       </div>
 
-      
+
       <h2 class="recent-contributors-head">Recent Contributors</h2>
-      
+
       <div class="recent-contributors">
         <div style="display: flex; justify-content: space-between">
           <p>Below is the list of active contributors, </p>
           <div title="copy to clipboard" class="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
-        
+
         <div class="well recent-contributors-body">
           <div class="filter-options">
               <!-- FILTER DROPDOWN 1 -->
@@ -256,7 +256,7 @@
               </div>
                 <!--  -->
           </div>
-    
+
           <div class="recent-contrib-content-box">
             <p class="usernames"></p><hr /><p class="avatars"></p>
           </div>
@@ -273,7 +273,7 @@
 
         <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars text-center"></p></div>
       </div>
-	
+
 	  <div class="row" id="connectwithus">
 		<h2 class="text-center d-block">Connect with us</h2>
 		<!-- <p>You can connect with us on any of these platforms:</p> -->
@@ -288,9 +288,9 @@
 
     <footer>
       <div class="row">
-        <div class="text-center">
+        <div class="text-center" style="width: 100%;">
             <span class="text-center">  Page powered by <a href="https://github.com/publiclab/community-toolbox"><i class="fa fa-github"></i></a>
-        <a href="https://github.com/publiclab/community-toolbox" >Commmunity Toolbox</a> 
+        <a href="https://github.com/publiclab/community-toolbox" >Commmunity Toolbox</a>
         - Open Source
       </span>
         </div>
