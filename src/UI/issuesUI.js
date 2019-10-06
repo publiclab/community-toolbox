@@ -39,11 +39,19 @@ function insertStale(issues, selector) {
   })
 }
 
-
+function insertHallOfFame(issues, selector) {
+  let issuesLen = issues.length;
+  console.log($('#hall-of-fame-head'));
+  $('#hall-of-fame-head').html('Hall of Fame Issues ('+issuesLen+'+)');
+  issues.forEach(function (issue) {
+    insertIssue(issue, selector);
+  })
+}
 
 
 module.exports = {
     generateIssueHtml: generateIssueHtml,
     insertIssue: insertIssue,
-    insertStale: insertStale
+    insertStale: insertStale,
+    insertHallOfFame: insertHallOfFame,
 };

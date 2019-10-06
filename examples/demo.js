@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var org = urlHash().getUrlHashParameter('o') || 'publiclab';
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
         var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
+        var hallOfFameLabel = urlHash().getUrlHashParameter('l') || 'hall-of-fame';
         var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
         var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
         var leaderboardState = urlHash().getUrlHashParameter('s') || 'week';
@@ -44,6 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             toolbox.getIssuesForOrg(org, { qs: { labels: ftoLabel } })
                     .then(displayIssuesAndFtoAuthors('.first-timers-only'));
+
+            toolbox.getIssuesForOrg(org, { qs: { labels: hallOfFameLabel } })
+                    .then(displayHallOfFameIssues('.hall-of-fame'));
   
             toolbox.getIssuesForOrg(org, { qs: { labels: candidateLabel } })
                     .then(displayIssuesAndFtoAuthors('.candidates'));
@@ -57,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     toolbox.dropdownInit();
                     // Fetch stale issues
                     toolbox.showStaleIssues(org, repo);
+                    // Fetch hall-of-fame issues
+                    toolbox.showHallOfFameIssues(org, repo);
                 }
             })
   
@@ -65,6 +71,9 @@ document.addEventListener('DOMContentLoaded', function () {
             toolbox.api.Issues
                    .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
                    .then(displayIssuesAndFtoAuthors('.first-timers-only'));
+
+            toolbox.getIssuesForOrg(org, { qs: { labels: hallOfFameLabel } })
+                   .then(displayHallOfFameIssues('.hall-of-fame'));
   
             toolbox.api.Issues
                    .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
@@ -79,6 +88,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     toolbox.dropdownInit();
                     // Fetch stale issues
                     toolbox.showStaleIssues(org, repo);
+                    // Fetch hall-of-fame issues
+                    //toolbox.showHallOfFameIssues(org, repo, hallOfFameLabel);
                 }
             })
         }
@@ -106,6 +117,24 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        function displayHallOfFameIssues(selector) {
+            let hfoAuthorSet = new Set([]);
+            let hfoAuthArray=[];
+            return function displayHallOfFameIssues(issues) {
+              if (typeof issues === "string") issues = JSON.parse(issues).items;
+
+                issues.forEach(function(issue) {
+                toolbox.issuesUI.insertIssue(issue, selector);
+
+                issue.labels.forEach((hallOfFameLabel) => {
+                  if(hallOfFameLabel.name==="hall-of-fame") {
+                      hfoAuthorSet.add(issue.user.login);
+                      hfoAuthArray.push(issue);
+                  }
+                })
+              })
+            }
+        }
 
         // EVENT LISTENERS FOR FILTER IN RECENT CONTRIBUTORS SECTION
         $('#alphabetic').click((e)=> {
