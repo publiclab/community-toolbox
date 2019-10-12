@@ -238,7 +238,7 @@ h1, h2, .section h3 {
 }
 
 .stale-container {
-    padding: 10px;
+    padding: 20px;
     background-color: rgba(221, 221, 221, 0.493);
     border-radius: 10px;
 
