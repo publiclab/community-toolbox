@@ -1,9 +1,9 @@
-var moment = require('moment');
+let moment = require('moment');
 
 
 
 function generateIssueHtml(title, body, githubUrl, repo) {
-    var repoName = githubUrl.split('/')[4],
+    let repoName = githubUrl.split('/')[4],
         repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
         html = '<div class="panel panel-default">\
       <div class="panel-heading">\
@@ -18,7 +18,7 @@ function generateIssueHtml(title, body, githubUrl, repo) {
   }
   
 function insertIssue(issue, el) {
-    var body = "";
+    let body = "";
     body += "<div style='float:right;' class='labels'>"
     issue.labels.forEach(function(label) {
       body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
