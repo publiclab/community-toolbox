@@ -15,6 +15,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var navDropdownUtil = require('../utils/navDropdown.js')
   var ftoAuthorsUI = require('../UI/ftoAuthorsUI')
   var issuesUtil = require('../utils/staleIssuesUtil')
+  var hallOfFameIssuesUtil = require('../utils/hallOfFameIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
 
@@ -260,6 +261,17 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  function showHallOfFameIssues(org, repo) {
+    return hallOfFameIssuesUtil.getHallOfFameIssues(org, repo)
+    .then((data) => {
+      if(data!=null && data!=undefined) {
+        issuesUI.insertHallOfFame(data, '.hall-of-fame-container');
+      }
+    })
+    .catch((err) => {
+      Snackbar.show({pos: 'top-right', text: err, textColor: "red" , showAction: false});
+    })
+  }
 
 
 
@@ -283,6 +295,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
     showStaleIssues: showStaleIssues,
+    showHallOfFameIssues: showHallOfFameIssues,
     filter: filter
   }
 
