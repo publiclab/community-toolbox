@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "bootstrap": "~3.4.0",
-    "chart.js": "~2.8.0",
+    "chart.js": "~2.9.1",
     "font-awesome": "~4.7.0",
     "jquery": "~3",
     "node-snackbar": "^0.1.15",
