@@ -33,7 +33,8 @@ function getOrgWideIssues (org) {
             `https://api.github.com/search/issues?q=is%3Aopen+org%3A${org}+page%3A${i}`
           )
             .then(data => {
-              if (data.status === '200') {
+              // eslint-disable-next-line eqeqeq
+              if (data.status == '200') {
                 return data.json();
               } else {
                 throw new Error("Couldn't fetch issues");

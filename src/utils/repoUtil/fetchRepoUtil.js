@@ -10,7 +10,8 @@ function getAllRepos (org) {
     `https://api.github.com/users/${org}/repos?sort=pushed&direction=desc&per_page=100`
   )
     .then(function gotRepos (data) {
-      if (data.status === '200') {
+      // eslint-disable-next-line eqeqeq
+      if (data.status == '200') {
         return data.json();
       } else {
         throw new Error("Couldn't fetch repositories :(");

@@ -13,7 +13,8 @@ function freshFetch (org, repo, queryTime) {
         `https://api.github.com/repos/${org}/${repo}/commits?since=${queryTime}&per_page=100&page=${i}`
       )
         .then(function gotResponse (response) {
-          if (response.status === '200') {
+          // eslint-disable-next-line eqeqeq
+          if (response.status == '200') {
             return response.json();
           } else {
             throw new Error(`Couldn't fetch commits for ${repo}`);
