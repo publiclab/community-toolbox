@@ -6,6 +6,7 @@
   "scripts": {
     "start": "http-server -c-1 -p 8000",
     "lint": "./node_modules/.bin/eslint --fix .",
+    "build": "./node_modules/.bin/grunt build",
     "test": "jest"
   },
   "repository": {
