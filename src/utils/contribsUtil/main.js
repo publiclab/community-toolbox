@@ -1,36 +1,30 @@
-let fetchRepoContribsUtil = require('./fetchRepoContribsUtil')
-let storeAllContribsInDb = require('./storeAllContribsInDb')
+const fetchRepoContribsUtil = require('./fetchRepoContribsUtil');
+const storeAllContribsInDb = require('./storeAllContribsInDb');
 
-
-function fetchAllContribsInDb(org) {
+function fetchAllContribsInDb (org) {
   return storeAllContribsInDb.storeAllContribsInDb(org)
-  .then((response) => {
-    return response;
-  })
-  .catch((err) => {
-    console.log("err travelling through fetchAllContribsInDb");
-    throw err;
-  })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log('err travelling through fetchAllContribsInDb');
+      throw err;
+    });
 }
 
-
-function repoContribsUtil(org, repo) {
+function repoContribsUtil (org, repo) {
   return fetchRepoContribsUtil.fetchRepoContributorsUtil(org, repo)
-  .then((response) => {
-    return response;
-  })
-  .catch((err) => {
-    console.log("err travelling through repoContribsUtil");
-    throw err;
-  })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log('err travelling through repoContribsUtil');
+      throw err;
+    });
 }
-
-
-
 
 // EXPORTS
 module.exports = {
-  repoContribsUtil: repoContribsUtil, 
+  repoContribsUtil: repoContribsUtil,
   fetchAllContribsInDb: fetchAllContribsInDb
-}
-
+};
