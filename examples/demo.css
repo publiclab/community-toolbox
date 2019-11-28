@@ -45,10 +45,6 @@ h1, h2, .section h3 {
     z-index: 999;
     display: none;
     cursor: pointer;
-    -moz-transform: rotate(270deg);
-    -webkit-transform: rotate(270deg);
-    -o-transform: rotate(270deg);
-    -ms-transform: rotate(270deg);
     transform: rotate(270deg);
     position: fixed;
     bottom: 50px;
@@ -74,6 +70,8 @@ h1, h2, .section h3 {
 
 #connectwithus {
     margin: auto auto 5em;
+    text-align: center;
+    width: 100%;
 }
 
 #connectwithusbody {
