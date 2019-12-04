@@ -18,7 +18,7 @@ body {
   background: #f8f8fa;
 }
 
-h1, h2, .section h3 {
+h1, h2, .section h3, footer h3 {
   font-family: 'League Spartan';
   color: #445;
   padding-top: 20px;
@@ -245,6 +245,27 @@ h1, h2, .section h3 {
 .stale {
     overflow: scroll;
     height: 1000px;
+}
+
+footer {
+    width: 100%;
+    padding: 40px 10px 50px 10px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    text-align: center;
+}
+
+.footer-content p {
+    display: inline-block;
+    width: 70%;
+}
+
+.footer-content btn {
+    display: block;
+}
+
+.footer-buttondiv {
+    padding-top: 20px;
 }
 
 /* MEDIA QUERIES */
