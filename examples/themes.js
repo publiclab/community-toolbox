@@ -2,9 +2,9 @@
 //      NIGHT MODE LOGIC
 //===============================================================
   $(document).ready(() => {
-    var body=document.querySelector('body');
-    var toggleButton=document.getElementById('myonoffswitch');
-    var toggle = localStorage.getItem('currentToggle');
+    let body=document.querySelector('body');
+    let toggleButton=document.getElementById('myonoffswitch');
+    let toggle = localStorage.getItem('currentToggle');
 
     // Sets images' theme accordingly when the page is loaded
     setTimeout(()=> {
@@ -105,7 +105,7 @@
     buttonClickCallbackNightTheme = (e) => {
       e.preventDefault();
       setTimeout(() => {
-        var recentContribsSectionImgs = document.getElementsByClassName('recent-contributors')[0].getElementsByTagName("img");
+        let recentContribsSectionImgs = document.getElementsByClassName('recent-contributors')[0].getElementsByTagName("img");
         let check=localStorage.getItem('currentToggle');
         let images = [...recentContribsSectionImgs ];
         if(check==="night") {

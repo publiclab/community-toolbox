@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
           
     /*Scroll to top when arrow up clicked BEGIN*/
     $(window).scroll(function() {
-        var height = $(window).scrollTop();
+        let height = $(window).scrollTop();
         if (height > 100) {
             $('#back2Top').fadeIn();
         } else {
@@ -28,16 +28,16 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
     })
 
-    var toolbox;
+    let toolbox;
   
     (function() {
   
-        var org = urlHash().getUrlHashParameter('o') || 'publiclab';
-        var repo = urlHash().getUrlHashParameter('r') || 'plots2';
-        var ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
-        var candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
-        var recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
-        var leaderboardState = urlHash().getUrlHashParameter('s') || 'week';
+        let org = urlHash().getUrlHashParameter('o') || 'publiclab';
+        let repo = urlHash().getUrlHashParameter('r') || 'plots2';
+        let ftoLabel = urlHash().getUrlHashParameter('f') || 'first-timers-only';
+        let candidateLabel = urlHash().getUrlHashParameter('c') || 'fto-candidate';
+        let recencyLabel = urlHash().getUrlHashParameter('l') || 'week';
+        let leaderboardState = urlHash().getUrlHashParameter('s') || 'week';
   
         toolbox = CommunityToolbox(org, repo);
         if (repo === 'all') {

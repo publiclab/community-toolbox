@@ -14,11 +14,11 @@ options = {
 // get list of contributors to a repo in a given time frame
 function getRepoContributors(username, repo, options){
     commits = getCommitsInRange(username, repo, options);   
-    var result = [];
-    var lookup = {};
-    for (var i=0; i<commits.length; i++){
-        var item = commits[i]["commit"]["author"]["name"];
-        var name = item;
+    let result = [];
+    let lookup = {};
+    for (let i=0; i<commits.length; i++){
+        let item = commits[i]["commit"]["author"]["name"];
+        let name = item;
         if(!(name in lookup)){
             lookup[name] = 1;
             result.push(name);
@@ -37,7 +37,7 @@ function getCommitsInRange(username, repo, options){
 
 // send GET request
 function httpGet(url){
-    var xmlHttp = new XMLHttpRequest();
+    let xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", url, false ); // false for synchronous request
     xmlHttp.send( null );
     return xmlHttp.responseText;
