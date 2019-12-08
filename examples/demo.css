@@ -91,6 +91,7 @@ h1, h2, .section h3 {
 #options-bar {
     display: flex;
     margin-top: 2em;
+    width: 100%;
 }
 
 .fto-authors {
