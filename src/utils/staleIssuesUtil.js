@@ -1,5 +1,8 @@
 let model_utils = require('../models/utils')
 
+let repos = model_utils.getItem('repos')
+
+
 function getOrgWideIssues(org) {
     let totalPromises = [];
     let staleIssues = [];
@@ -69,6 +72,17 @@ function getStaleIssues(org, repo) {
         if(issues!=undefined && issues!=null) {
             return issues;
         }
+    }).then((issues)=>{
+        for (i=0; i<repos.length; i++) {
+            issues.items.map(function mappingToIssues(issue, index) {
+                let str = issue.repository_url;
+                let n = str.search(repos[i]);
+                if(n!=-1 & n!=undefined) {
+                    model_utils.setItem(repos[i],issue);
+                }
+            })
+            
+        };
     })
     .catch((err) => {
         throw err;
