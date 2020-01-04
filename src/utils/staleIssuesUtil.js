@@ -1,7 +1,5 @@
 let model_utils = require('../models/utils')
-
 let repos = model_utils.getItem('repos')
-
 
 function getOrgWideIssues(org) {
     let totalPromises = [];
@@ -45,12 +43,9 @@ function getOrgWideIssues(org) {
                             })
                             .catch((err) => {
                                 throw err;
-                            })
-        
-        
+                            })  
               totalPromises.push(curr);
-            }
-                
+            }                
             return Promise.all(totalPromises).then(()=> {
                 let now = (new Date).getTime();
                 model_utils.setItem("staleIssues", staleIssues);
@@ -63,8 +58,6 @@ function getOrgWideIssues(org) {
         throw err;
     })
 }
-
-
 
 function getStaleIssues(org, repo) {
     return getOrgWideIssues(org, repo)
@@ -88,10 +81,6 @@ function getStaleIssues(org, repo) {
         throw err;
     })
 }
-
-
-
-
 
 module.exports = {
     getOrgWideIssues: getOrgWideIssues,
