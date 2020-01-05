@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*Scroll to top when arrow up clicked BEGIN*/
     $(window).scroll(function() {
+        // Setting for back to top button
         let height = $(window).scrollTop();
         if (height > 100) {
             $('#back2Top').fadeIn();
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $("html, body").animate({ scrollTop: 0 }, "slow");
         return false;
     });
-    /*Scroll to top when arrow up clicked END*/
+    
   
     $('.stale').hover((e) => {
         e.preventDefault();
@@ -101,23 +102,24 @@ document.addEventListener('DOMContentLoaded', function () {
   
         } else {
 
-            toolbox.api.Issues
-                   .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
-                   .then(displayIssuesAndFtoAuthors('.first-timers-only'));
+            // toolbox.api.Issues
+            //        .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
+            //        .then(displayIssuesAndFtoAuthors('.first-timers-only'));
   
-            toolbox.api.Issues
-                   .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
-                   .then(displayIssuesAndFtoAuthors('.candidates'));
+            // toolbox.api.Issues
+            //        .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
+            //        .then(displayIssuesAndFtoAuthors('.candidates'));
   
             toolbox.initialize(org, repo).then((res)=> {
                 if(res) {
                     // Fetches and shows recent contributors' list
-                    toolbox.showRecentContributors(org, repo, recencyLabel);
-                    // compile and display all contributors for given repo
-                    toolbox.showRepoContributors(org, repo);
-                    toolbox.dropdownInit();
-                    // Fetch stale issues
-                    toolbox.showStaleIssues(org, repo);
+                    // toolbox.showRecentContributors(org, repo, recencyLabel);
+                    // // compile and display all contributors for given repo
+                    // toolbox.showRepoContributors(org, repo);
+                    // toolbox.dropdownInit();
+                    // // Fetch stale issues
+                    // toolbox.showStaleIssues(org, repo);
+                    toolbox.refreshbar();
                 }
             })
         }

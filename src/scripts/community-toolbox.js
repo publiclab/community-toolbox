@@ -17,6 +17,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
+  var refreshbarUI = require('../UI/refreshbarUI')
 
 
   const requestP = require('request-promise')
@@ -260,6 +261,20 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  function refreshbar() {
+    return fetch('https://api.github.com/rate_limit')
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      refreshbarUI.updateStatus(res);
+    })
+    .catch((err) => {
+      console.log(err);
+      Snackbar.show({pos: 'top-right', text: 'Cannot show refresh bar :(', showAction: false});
+    })
+  }
+
 
 
 
@@ -282,7 +297,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
     showStaleIssues: showStaleIssues,
-    filter: filter
+    filter: filter,
+    refreshbar: refreshbar,
   }
 
 }

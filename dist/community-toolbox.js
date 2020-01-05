@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "D:\\GSOC-19\\community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "D:\\GSOC-19\\community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "D:\\GSOC-19\\community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "D:\\GSOC-19\\community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "D:\\GSOC-19\\community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -77509,12 +77509,13 @@ module.exports={
     "fetchSpec": "2.4.3"
   },
   "_requiredBy": [
+    "/jsdom",
     "/request",
     "/request-promise-native"
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "D:\\GSOC-19\\community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -81645,11 +81646,14 @@ module.exports = {
 };
 },{}],400:[function(require,module,exports){
 function insertFtoIssueAuthor(issueSet) {
+    let usernames=[];
     let avatars=[];
     for(let [key, value] of Object.entries(issueSet)) {
+      usernames.push(`<a href="https://github.com/${value.user.login}">@${value.user.login}</a>`);
       avatars.push(`<a href="https://github.com/${value.user.login}" title="${value.user.login}"><img width="100px" src="${value.user.avatar_url}"></a>`);
     }
-    $('.fto-authors').append(avatars.join(' '));
+    $('.fto-authors > .usernames').html(usernames.join(', '));
+    $('.fto-authors > .avatars').html(avatars.join(' '));
   }
 
 
@@ -81683,7 +81687,7 @@ function insertIssue(issue, el) {
       body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
     });
     body += "</div>";
-    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='margin-right:15px;' >";
+    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='border-radius:100%;background:#ccc;margin-right:15px;' >";
     body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
     body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
     body += " <i class='fa fa-comment-o'></i> " + issue.comments;
@@ -81752,7 +81756,27 @@ function insertRecentContributors(AllContributors){
 module.exports = {
   insertRecentContributors: insertRecentContributors,
 };
-},{"../utils/filterUniqueContribs":413}],403:[function(require,module,exports){
+},{"../utils/filterUniqueContribs":414}],403:[function(require,module,exports){
+function updateStatus(res) {
+	let reqLeft = res['rate']['remaining'];
+	let resetTime = res['rate']['reset'];
+	let currTime = ((new Date()).getTime())/1000;
+	let timeDiff = (resetTime - currTime);
+	timeDiff = Math.floor(Math.floor(timeDiff)/60);
+
+	let target = document.getElementById('refresh-status');
+	if(reqLeft < 60) {
+		target.innerHTML = `${reqLeft}/60 requests left. You can generate the updated stats after ${timeDiff} minutes.`;
+	}
+	else {
+		target.innerHTML = "You can generate the updated stats now!";
+	}
+}
+
+module.exports = {
+	updateStatus: updateStatus
+}
+},{}],404:[function(require,module,exports){
 let db;
 let init = require('../models/initialize')
 
@@ -81857,7 +81881,7 @@ module.exports.getContentFromDb = getContentFromDb;
 module.exports.deleteItemFromDb = deleteItemFromDb;
 module.exports.populateDb = populateDb;
 
-},{"../models/initialize":404}],404:[function(require,module,exports){
+},{"../models/initialize":405}],405:[function(require,module,exports){
 // This function is responsible for setting up the database
 function dbInit() {
     let db;
@@ -81920,7 +81944,7 @@ module.exports = {
 }
 
 
-},{}],405:[function(require,module,exports){
+},{}],406:[function(require,module,exports){
 var model = require('./crud');
 
 
@@ -81949,7 +81973,7 @@ module.exports.setItem = setItem;
 module.exports.getItem = getItem;
 module.exports.deleteItem = deleteItem;
 
-},{"./crud":403}],406:[function(require,module,exports){
+},{"./crud":404}],407:[function(require,module,exports){
 // view-source:http://www.chartjs.org/samples/latest/charts/bar/vertical.html
 function generateChart(args) {
 
@@ -82002,7 +82026,7 @@ function generateChart(args) {
 
 module.exports = generateChart;
 
-},{}],407:[function(require,module,exports){
+},{}],408:[function(require,module,exports){
 
 CommunityToolbox = function CommunityToolbox(org, repo) {
   
@@ -82022,6 +82046,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
+  var refreshbarUI = require('../UI/refreshbarUI')
 
 
   const requestP = require('request-promise')
@@ -82265,6 +82290,20 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  function refreshbar() {
+    return fetch('https://api.github.com/rate_limit')
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      refreshbarUI.updateStatus(res);
+    })
+    .catch((err) => {
+      console.log(err);
+      Snackbar.show({pos: 'top-right', text: 'Cannot show refresh bar :(', showAction: false});
+    })
+  }
+
 
 
 
@@ -82287,14 +82326,15 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
     showStaleIssues: showStaleIssues,
-    filter: filter
+    filter: filter,
+    refreshbar: refreshbar,
   }
 
 }
 
 module.exports = CommunityToolbox;
 
-},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../models/crud":403,"../models/utils":405,"../utils/contribsUtil/main":411,"../utils/filterUtil":414,"../utils/navDropdown.js":415,"../utils/recentContribsUtil/main":421,"../utils/repoUtil/fetchRepoUtil":426,"../utils/staleIssuesUtil":427,"./chart":406,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],408:[function(require,module,exports){
+},{"../UI/contributorsUI":399,"../UI/ftoAuthorsUI":400,"../UI/issuesUI":401,"../UI/recentContributorsUI":402,"../UI/refreshbarUI":403,"../models/crud":404,"../models/utils":406,"../utils/contribsUtil/main":412,"../utils/filterUtil":415,"../utils/navDropdown.js":416,"../utils/recentContribsUtil/main":422,"../utils/repoUtil/fetchRepoUtil":427,"../utils/staleIssuesUtil":428,"./chart":407,"github-api-simple":151,"parse-link-header":278,"request-promise":323}],409:[function(require,module,exports){
 let SimpleApi = require("github-api-simple")
 let api = new SimpleApi()
 let model_utils = require('../../models/utils')
@@ -82359,7 +82399,7 @@ function fetchAllRepoContribs(org, repo) {
 module.exports = {
 	fetchAllRepoContribs: fetchAllRepoContribs
 }
-},{"../../models/utils":405,"github-api-simple":151,"parse-link-header":278}],409:[function(require,module,exports){
+},{"../../models/utils":406,"github-api-simple":151,"parse-link-header":278}],410:[function(require,module,exports){
 let SimpleApi = require("github-api-simple")
 let api = new SimpleApi()
 let model_utils = require('../../models/utils')
@@ -82395,7 +82435,7 @@ function fetchRepoContribs(org, repo) {
 module.exports = {
 	fetchRepoContribs: fetchRepoContribs
 }
-},{"../../models/utils":405,"github-api-simple":151}],410:[function(require,module,exports){
+},{"../../models/utils":406,"github-api-simple":151}],411:[function(require,module,exports){
 let fetchAllRepoContribs = require('./fetchAllRepoContribs')
 let fetchRepoContribs = require('./fetchRepoContribs')
 
@@ -82416,7 +82456,7 @@ function fetchRepoContributorsUtil(org, repo) {
 module.exports = {
 	fetchRepoContributorsUtil: fetchRepoContributorsUtil
 }
-},{"./fetchAllRepoContribs":408,"./fetchRepoContribs":409}],411:[function(require,module,exports){
+},{"./fetchAllRepoContribs":409,"./fetchRepoContribs":410}],412:[function(require,module,exports){
 let fetchRepoContribsUtil = require('./fetchRepoContribsUtil')
 let storeAllContribsInDb = require('./storeAllContribsInDb')
 
@@ -82454,7 +82494,7 @@ module.exports = {
 }
 
 
-},{"./fetchRepoContribsUtil":410,"./storeAllContribsInDb":412}],412:[function(require,module,exports){
+},{"./fetchRepoContribsUtil":411,"./storeAllContribsInDb":413}],413:[function(require,module,exports){
 let fetchRepoContributorsUtil = require('./fetchRepoContribsUtil')
 let model_utils = require('../../models/utils')
 
@@ -82518,7 +82558,7 @@ function storeAllContribsInDb(org) {
 module.exports = {
 	storeAllContribsInDb: storeAllContribsInDb
 }
-},{"../../models/utils":405,"./fetchRepoContribsUtil":410}],413:[function(require,module,exports){
+},{"../../models/utils":406,"./fetchRepoContribsUtil":411}],414:[function(require,module,exports){
 // Given a list of commits which contains repeated commiters, this function extracts
 // a list of unique commiters and returns that
 function filterUniqueContribs(data) {
@@ -82541,7 +82581,7 @@ function filterUniqueContribs(data) {
 module.exports = {
 	filterUniqueContribs: filterUniqueContribs,
 }
-},{}],414:[function(require,module,exports){
+},{}],415:[function(require,module,exports){
 function showFilteredData(org, type, response) {
     if (type==="alphabetic") {
         response.sort(function(x, y) {
@@ -82587,7 +82627,7 @@ function showFilteredData(org, type, response) {
 module.exports = {
     showFilteredData: showFilteredData
 }
-},{}],415:[function(require,module,exports){
+},{}],416:[function(require,module,exports){
 function populateNavDropdown(repos) {
     let repoAlreadySelected = urlHash().getUrlHashParameter('r');
     
@@ -82622,7 +82662,7 @@ function populateNavDropdown(repos) {
 
 module.exports.populateNavDropdown = populateNavDropdown;
 
-},{}],416:[function(require,module,exports){
+},{}],417:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let monthsQuery = require('./queryTime')
 let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
@@ -82680,7 +82720,7 @@ function fetchAllRecentMonthContribs(org, repos, queryTime) {
 module.exports = {
 	fetchAllRecentMonthContribs: fetchAllRecentMonthContribs
 }
-},{"../../models/utils":405,"./fetchRecentMonthContribs":417,"./queryTime":422}],417:[function(require,module,exports){
+},{"../../models/utils":406,"./fetchRecentMonthContribs":418,"./queryTime":423}],418:[function(require,module,exports){
 let model_utils = require('../../models/utils')
 let monthsQuery = require('./queryTime')
 let withinMonthsOrNot = require('./withinMonthsOrNot')
@@ -82746,7 +82786,7 @@ function fetchRecentMonthContribs(org, repo, queryTime) {
 module.exports = {
 	fetchRecentMonthContribs: fetchRecentMonthContribs
 }
-},{"../../models/utils":405,"./freshFetch":418,"./queryTime":422,"./withinMonthsOrNot":424}],418:[function(require,module,exports){
+},{"../../models/utils":406,"./freshFetch":419,"./queryTime":423,"./withinMonthsOrNot":425}],419:[function(require,module,exports){
 let model_utils = require('../../models/utils')
 let monthsQuery = require('./queryTime')
 
@@ -82793,7 +82833,7 @@ module.exports = {
 }
 
 
-},{"../../models/utils":405,"./queryTime":422}],419:[function(require,module,exports){
+},{"../../models/utils":406,"./queryTime":423}],420:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
 let fetchRecentMonthContribs = require('./fetchRecentMonthContribs')
@@ -82864,7 +82904,7 @@ function getContribsLastMonth(org, repo, forMonths) {
 module.exports = {
 	getContribsLastMonth: getContribsLastMonth
 }
-},{"../../models/utils":405,"./fetchAllRecentMonthContribs":416,"./fetchRecentMonthContribs":417}],420:[function(require,module,exports){
+},{"../../models/utils":406,"./fetchAllRecentMonthContribs":417,"./fetchRecentMonthContribs":418}],421:[function(require,module,exports){
 let model_utils = require('../../models/utils');
 let getContribsLastMonth = require('./getContribsLastMonth')
 let withinThisWeekOrNot = require('./withinThisWeekOrNot')
@@ -82919,7 +82959,7 @@ function getContribsLastWeek(org, repo) {
 module.exports = {
 	getContribsLastWeek: getContribsLastWeek
 }
-},{"../../models/utils":405,"./getContribsLastMonth":419,"./withinThisWeekOrNot":425}],421:[function(require,module,exports){
+},{"../../models/utils":406,"./getContribsLastMonth":420,"./withinThisWeekOrNot":426}],422:[function(require,module,exports){
 let getContribsLastMonth = require('./getContribsLastMonth')
 let getContribsLastWeek = require('./getContribsLastWeek')
 let storeAllRecentContribsInDb = require('./storeAllRecentContribsInDb')
@@ -82968,7 +83008,7 @@ module.exports = {
     fetchAllRecentContribsInDb: fetchAllRecentContribsInDb
 }
 
-},{"./getContribsLastMonth":419,"./getContribsLastWeek":420,"./storeAllRecentContribsInDb":423}],422:[function(require,module,exports){
+},{"./getContribsLastMonth":420,"./getContribsLastWeek":421,"./storeAllRecentContribsInDb":424}],423:[function(require,module,exports){
 function findMonthInd(queryTime) {
     let timeNow = new Date();
     let qTime = new Date(`${queryTime}`);
@@ -82985,7 +83025,7 @@ function findMonthInd(queryTime) {
 module.exports = {
 	findMonthInd: findMonthInd
 }
-},{}],423:[function(require,module,exports){
+},{}],424:[function(require,module,exports){
 let fetchAllRecentMonthContribs = require('./fetchAllRecentMonthContribs')
 let fetchRepoUtil = require('../repoUtil/fetchRepoUtil')
 let model_utils = require('../../models/utils')
@@ -83043,7 +83083,7 @@ module.exports = {
 	storeAllRecentContribsInDb: storeAllRecentContribsInDb
 }
 
-},{"../../models/utils":405,"../repoUtil/fetchRepoUtil":426,"./fetchAllRecentMonthContribs":416}],424:[function(require,module,exports){
+},{"../../models/utils":406,"../repoUtil/fetchRepoUtil":427,"./fetchAllRecentMonthContribs":417}],425:[function(require,module,exports){
 // Utility function that checks if a given date is behind the current date
 // by 7 or less
 function within_months(date, months) {
@@ -83062,7 +83102,7 @@ function within_months(date, months) {
 module.exports = {
 	within_months: within_months
 }
-},{}],425:[function(require,module,exports){
+},{}],426:[function(require,module,exports){
 // Utility function that checks if a given date is behind the current date
 // by 7 or less
 function within_this_week(date) {
@@ -83080,7 +83120,7 @@ function within_this_week(date) {
 module.exports = {
 	within_this_week: within_this_week
 }
-},{}],426:[function(require,module,exports){
+},{}],427:[function(require,module,exports){
 let model_utils = require('../../models/utils')
 
 // Fetches all the publiclab's repositories
@@ -83117,7 +83157,7 @@ function getAllRepos(org) {
 // EXPORTS
 module.exports.getAllRepos = getAllRepos;
 
-},{"../../models/utils":405}],427:[function(require,module,exports){
+},{"../../models/utils":406}],428:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
 
@@ -83226,4 +83266,4 @@ module.exports = {
     getStaleIssues: getStaleIssues,
     getRepoStaleIssues: getRepoStaleIssues
 }
-},{"../models/utils":405}]},{},[407]);
+},{"../models/utils":406}]},{},[408]);

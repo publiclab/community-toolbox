@@ -418,6 +418,34 @@ h1, h2, .section h3 {
     max-height: 1000px;
 }
 
+/* REFRESH BAR */
+#refresh-bar {
+    max-width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+    position: sticky;
+    bottom: 20px;
+    width: 100%;
+    border: 1px solid #434644;
+    border-radius: 1em;
+    background-color: rgba(231, 226, 219, 0.548);
+}
+
+#refresh-status {
+    margin: 0;
+    padding: 10px;
+    font-weight: 600;
+    color: rgb(8, 80, 8);
+}
+
+#refresh-button {
+    margin: 5px;
+    border-radius: 1em;
+    background-color: lightgray;
+}
+
+
 /* MEDIA QUERIES */
 
 @media only screen and (max-width: 569px) {
