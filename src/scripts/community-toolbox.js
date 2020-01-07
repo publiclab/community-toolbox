@@ -275,6 +275,12 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  function clearDB() {
+    return model_utils.clearDB().then(() => {
+      return true;
+    });
+  }
+
 
 
 
@@ -299,6 +305,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     showStaleIssues: showStaleIssues,
     filter: filter,
     refreshbar: refreshbar,
+    clearDB: clearDB,
   }
 
 }

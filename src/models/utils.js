@@ -19,9 +19,15 @@ function deleteItem(query) {
 
 }
 
+function clearDB() {
+    return model.clearDB().then(() => {
+        return true;
+    })
+}
 
 
 //  EXPORTS
 module.exports.setItem = setItem;
 module.exports.getItem = getItem;
 module.exports.deleteItem = deleteItem;
+module.exports.clearDB = clearDB;

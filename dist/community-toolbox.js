@@ -81869,6 +81869,18 @@ function deleteItemFromDb(query) {
     })
 }
 
+function clearDB() {
+    return new Promise((resolve, reject) => {
+        console.log("about to clear DB...");
+        let tx = db.transaction(["toolbox"], 'readwrite');
+        let store = tx.objectStore("toolbox");
+        let objStoreReq = store.clear();
+        objStoreReq.onsuccess = function(e) {
+            console.log("Database is cleared!");
+            resolve(true);
+        }
+    })
+}
 
 
 
@@ -81880,6 +81892,7 @@ module.exports.saveContentToDb = saveContentToDb;
 module.exports.getContentFromDb = getContentFromDb;
 module.exports.deleteItemFromDb = deleteItemFromDb;
 module.exports.populateDb = populateDb;
+module.exports.clearDB = clearDB;
 
 },{"../models/initialize":405}],405:[function(require,module,exports){
 // This function is responsible for setting up the database
@@ -81966,12 +81979,18 @@ function deleteItem(query) {
 
 }
 
+function clearDB() {
+    return model.clearDB().then(() => {
+        return true;
+    })
+}
 
 
 //  EXPORTS
 module.exports.setItem = setItem;
 module.exports.getItem = getItem;
 module.exports.deleteItem = deleteItem;
+module.exports.clearDB = clearDB;
 
 },{"./crud":404}],407:[function(require,module,exports){
 // view-source:http://www.chartjs.org/samples/latest/charts/bar/vertical.html
@@ -82304,6 +82323,12 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  function clearDB() {
+    return model_utils.clearDB().then(() => {
+      return true;
+    });
+  }
+
 
 
 
@@ -82328,6 +82353,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     showStaleIssues: showStaleIssues,
     filter: filter,
     refreshbar: refreshbar,
+    clearDB: clearDB,
   }
 
 }

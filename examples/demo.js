@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // toolbox.showRepoContributors(org, repo);
                     // toolbox.dropdownInit();
                     // // Fetch stale issues
-                    // toolbox.showStaleIssues(org, repo);
+                    toolbox.showStaleIssues(org, repo);
                     toolbox.refreshbar();
                 }
             })
@@ -178,6 +178,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             toolbox.showRecentContributors(org, repo, timeSpan, forMonths);
 
+        })
+
+        $('#refresh-button').click((e) => {
+            e.preventDefault();
+            toolbox.clearDB().then(() => {
+                location.reload();
+            })
         })
 
 
