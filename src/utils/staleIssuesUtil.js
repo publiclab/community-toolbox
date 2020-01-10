@@ -1,5 +1,6 @@
 let model_utils = require('../models/utils')
 
+
 function getOrgWideIssues(org) {
     let totalPromises = [];
     let staleIssues = [];
@@ -61,8 +62,6 @@ function getOrgWideIssues(org) {
     })
 }
 
-
-
 function getStaleIssues(org, repo) {
     return getOrgWideIssues(org, repo)
     .then((issues) => {
@@ -75,11 +74,35 @@ function getStaleIssues(org, repo) {
     })
 }
 
-
+function getRepoStaleIssues(org, repo) {
+    let  issueArray = [];
+    return getStaleIssues(org, repo)
+    .then((issues) => {
+        if(issues!=undefined && issues!=null) {
+            return issues;
+        }
+    }).then((issues)=>{
+            issues.map(function mappingToIssues(issue, index) {
+                let str = issue.repository_url;
+                let n = str.search(repo);
+                if(n!=-1 & n!=undefined) {
+                    if(!issueArray.includes(issue)){
+                        issueArray.push(issue);
+                    }
+                }
+            })
+            model_utils.setItem(repo,issueArray);
+            return issueArray;        
+    })
+    .catch((err) => {
+        throw err;
+    })
+}
 
 
 
 module.exports = {
     getOrgWideIssues: getOrgWideIssues,
-    getStaleIssues: getStaleIssues
+    getStaleIssues: getStaleIssues,
+    getRepoStaleIssues: getRepoStaleIssues
 }

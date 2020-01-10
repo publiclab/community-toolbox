@@ -32,14 +32,14 @@ describe('staleIssuesUtil.js', () => {
 		model_utils.getItem = jest.fn();
 		when(model_utils.getItem)
 		.calledWith("staleIssues-time")
-		.mockReturnValueOnce(() => {
+		.mockReturnValue(() => {
             return new Promise((resolve, reject) => {
 				let curr = (new Date).getTime();
                 resolve(curr);
             })
         })
 		.calledWith("staleIssues")
-		.mockReturnValueOnce(() => {
+		.mockReturnValue(() => {
             return new Promise((resolve,reject) => {
                 resolve(null);
             })
@@ -49,6 +49,15 @@ describe('staleIssuesUtil.js', () => {
 
 	// ====================== TESTS ========================
 
+	test('fetches repo stale issues list', () => {
+		return staleIssuesUtil.getRepoStaleIssues(org, repo)
+		.then((data) => {
+			expect(data).toBeDefined();
+			expect(Array.isArray(data)).toBe(true);
+			expect(data.length).toBeGreaterThanOrEqual(0);
+		})
+	})
+
 	it('fetches stale issues list', () => {
 		return staleIssuesUtil.getStaleIssues(org, repo)
 		.then((data) => {
@@ -57,6 +66,7 @@ describe('staleIssuesUtil.js', () => {
 			expect(data.length).toBeGreaterThanOrEqual(0);
 		})
 	})
+
 
 
 })
