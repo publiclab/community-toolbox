@@ -153,7 +153,7 @@ h1, h2, .section h3 {
     height: 100%;
 }
 .recent-contribs-dropdown {
-    width: 10%;
+    margin-right: 10px;
     text-align: center;
 }
 .recent-contribs-show-dropdown {
