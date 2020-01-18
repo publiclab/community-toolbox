@@ -91,7 +91,7 @@ function getRepoStaleIssues(org, repo) {
                     }
                 }
             })
-            model_utils.setItem(repo,issueArray);
+            model_utils.setItem('stale-issues-'+repo,issueArray);
             return issueArray;        
     })
     .catch((err) => {

@@ -249,7 +249,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   
 
   function showStaleIssues(org, repo) {
-    return issuesUtil.getStaleIssues(org, repo)
+    return issuesUtil.getRepoStaleIssues(org, repo)
     .then((data) => {
       if(data!=null && data!=undefined) {
         issuesUI.insertStale(data, '.stale');

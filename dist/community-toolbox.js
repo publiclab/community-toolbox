@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "C:\\Projects\\OSS\\community-toolbox"
+      "D:\\public-lab\\community-toolbox-main\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "C:\\Projects\\OSS\\community-toolbox",
+  "_where": "D:\\public-lab\\community-toolbox-main\\community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "C:\\Projects\\OSS\\community-toolbox"
+      "D:\\public-lab\\community-toolbox-main\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "C:\\Projects\\OSS\\community-toolbox",
+  "_where": "D:\\public-lab\\community-toolbox-main\\community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "C:\\Projects\\OSS\\community-toolbox"
+      "D:\\public-lab\\community-toolbox-main\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -77515,7 +77515,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "C:\\Projects\\OSS\\community-toolbox",
+  "_where": "D:\\public-lab\\community-toolbox-main\\community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -81684,6 +81684,7 @@ function insertIssue(issue, el) {
       body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
     });
     body += "</div>";
+    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='margin-right:15px;' >";
     body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
     body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
     body += " <i class='fa fa-comment-o'></i> " + issue.comments;
@@ -82254,7 +82255,7 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   
 
   function showStaleIssues(org, repo) {
-    return issuesUtil.getStaleIssues(org, repo)
+    return issuesUtil.getRepoStaleIssues(org, repo)
     .then((data) => {
       if(data!=null && data!=undefined) {
         issuesUI.insertStale(data, '.stale');
@@ -83121,6 +83122,7 @@ module.exports.getAllRepos = getAllRepos;
 },{"../../models/utils":405}],427:[function(require,module,exports){
 let model_utils = require('../models/utils')
 
+
 function getOrgWideIssues(org) {
     let totalPromises = [];
     let staleIssues = [];
@@ -83182,8 +83184,6 @@ function getOrgWideIssues(org) {
     })
 }
 
-
-
 function getStaleIssues(org, repo) {
     return getOrgWideIssues(org, repo)
     .then((issues) => {
@@ -83196,12 +83196,36 @@ function getStaleIssues(org, repo) {
     })
 }
 
-
+function getRepoStaleIssues(org, repo) {
+    let  issueArray = [];
+    return getStaleIssues(org, repo)
+    .then((issues) => {
+        if(issues!=undefined && issues!=null) {
+            return issues;
+        }
+    }).then((issues)=>{
+            issues.map(function mappingToIssues(issue, index) {
+                let str = issue.repository_url;
+                let n = str.search(repo);
+                if(n!=-1 & n!=undefined) {
+                    if(!issueArray.includes(issue)){
+                        issueArray.push(issue);
+                    }
+                }
+            })
+            model_utils.setItem('stale-issues-'+repo,issueArray);
+            return issueArray;        
+    })
+    .catch((err) => {
+        throw err;
+    })
+}
 
 
 
 module.exports = {
     getOrgWideIssues: getOrgWideIssues,
-    getStaleIssues: getStaleIssues
+    getStaleIssues: getStaleIssues,
+    getRepoStaleIssues: getRepoStaleIssues
 }
 },{"../models/utils":405}]},{},[407]);
