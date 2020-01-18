@@ -82284,7 +82284,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     getCommitsForRepo: getCommitsForRepo,
     showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
-    displayIssuesForRepo: displayIssuesForRepo,
     initialize: initialize,
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
