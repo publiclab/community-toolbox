@@ -29,11 +29,11 @@ function getFakeContribsData() {
 function getFakeIssuesList() {
 	return {
 		"items": [
-			{ "updated_at": "2019-08-03T22:34:02Z" },
-			{ "updated_at": "2019-07-26T17:27:09Z" },
-	   		{ "updated_at": "2018-01-23T20:00:10Z" },
-			{ "updated_at": "2019-08-03T18:56:08Z" },
-			{ "updated_at": "2019-07-08T23:37:36Z" }
+			{ "updated_at": "2019-08-03T22:34:02Z", "repository_url" : "https://api.github.com/repos/publiclab/plots2" },
+			{ "updated_at": "2019-07-26T17:27:09Z", "repository_url" : "https://api.github.com/repos/publiclab/plots2" },
+	   		{ "updated_at": "2018-01-23T20:00:10Z", "repository_url" : "https://api.github.com/repos/publiclab/image-sequencer" },
+			{ "updated_at": "2019-08-03T18:56:08Z", "repository_url" : "https://api.github.com/repos/publiclab/image-sequencer" },
+			{ "updated_at": "2019-07-08T23:37:36Z", "repository_url": "https://api.github.com/repos/publiclab/leaflet-blurred-location" }
    		]
 	}
 }
