@@ -11,9 +11,9 @@ function fetchAllRepoContribs(org, repo) {
     return api.Repositories
           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
           .then(function gotContribData(contribData) {
-            var headers = contribData;
+            let headers = contribData;
             if (headers.hasOwnProperty("link")) {
-              var parsed = parse(headers['link']);
+              let parsed = parse(headers['link']);
               if(parsed.last.page!=undefined) {
                 totalPages = parseInt(parsed.last.page);
               }
@@ -27,7 +27,7 @@ function fetchAllRepoContribs(org, repo) {
             let promises = [];
 
             for(let i = 1; i <= totalPages; i++) {
-              var currentPromise = api.Repositories
+              let currentPromise = api.Repositories
                                   .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
                                   .then(function gotRepoContributors(contributors) {
                                     if (contributors!=undefined && (contributors != null || contributors.length > 0)) {

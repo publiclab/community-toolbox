@@ -6,7 +6,7 @@ let model_utils = require('../../models/utils')
 function storeAllContribsInDb(org) {
 	let AllContributors = [];
 	let promises = [];
-	var contributorSet = new Set([]);
+	let contributorSet = new Set([]);
 	return new Promise((resolve, reject) => {
 		model_utils.getItem('allContributors').then((allContributors) => {
 			// If all contributors list is not in the database, it makes a fresh call to Github API
