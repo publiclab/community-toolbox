@@ -27,7 +27,7 @@ So you're almost there, just some info before you start building amazing things 
    
    Update to new version of packages if required in package.json.
    
-* Now go to the folder and open `index.html` in browser.
+* Now go to the folder and run ```npm start``` .
 
 * You are all set now, you can start making changes and see them taking place at `index.html` in the browser (you need to be doing `grunt build` for any changes you make in the `src/` folder).
 
