@@ -7,10 +7,10 @@ function insertContributors(AllContributors){
   
     let totalContributors = 0;
     let usernames = AllContributors.map(function getContributorUsername(c) {
-      return `<a href="https://github.com/@${c.login}">@${c.login}</a>`;
+      return `@${c.login}`;
     });
     let avatars = AllContributors.map(function getContributorAvatarURL(c) {
-      return `<a href="https://github.com/${c.login}" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
+      return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
     });
     totalContributors += AllContributors.length;
     if(insertContributorsExec) $('.contributors > .usernames').append(', ');
