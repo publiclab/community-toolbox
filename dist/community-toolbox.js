@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "D:\\public-lab\\community-toolbox-main\\community-toolbox"
+      "D:\\GSOC-19\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "D:\\public-lab\\community-toolbox-main\\community-toolbox",
+  "_where": "D:\\GSOC-19\\community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "D:\\public-lab\\community-toolbox-main\\community-toolbox"
+      "D:\\GSOC-19\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "D:\\public-lab\\community-toolbox-main\\community-toolbox",
+  "_where": "D:\\GSOC-19\\community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "D:\\public-lab\\community-toolbox-main\\community-toolbox"
+      "D:\\GSOC-19\\community-toolbox"
     ]
   ],
   "_development": true,
@@ -77509,13 +77509,12 @@ module.exports={
     "fetchSpec": "2.4.3"
   },
   "_requiredBy": [
-    "/jsdom",
     "/request",
     "/request-promise-native"
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "D:\\public-lab\\community-toolbox-main\\community-toolbox",
+  "_where": "D:\\GSOC-19\\community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -81626,11 +81625,11 @@ function insertContributors(AllContributors){
     document.getElementById("spinner-icon").style.display = "none";
   
     let totalContributors = 0;
-    var usernames = AllContributors.map(function getContributorUsername(c) {
-      return `@${c.login}`;
+    let usernames = AllContributors.map(function getContributorUsername(c) {
+      return `<a href="https://github.com/${c.login}">@${c.login}</a>`;
     });
-    var avatars = AllContributors.map(function getContributorAvatarURL(c) {
-      return `<a href="#" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
+    let avatars = AllContributors.map(function getContributorAvatarURL(c) {
+      return `<a href="https://github.com/${c.login}" title="${c.login}"><img width="100px" src="${c.avatar_url}"></a>`;
     });
     totalContributors += AllContributors.length;
     if(insertContributorsExec) $('.contributors > .usernames').append(', ');
@@ -81663,7 +81662,7 @@ var moment = require('moment');
 
 
 function generateIssueHtml(title, body, githubUrl, repo) {
-    var repoName = githubUrl.split('/')[4],
+    let repoName = githubUrl.split('/')[4],
         repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
         html = '<div class="panel panel-default">\
       <div class="panel-heading">\
@@ -81678,7 +81677,7 @@ function generateIssueHtml(title, body, githubUrl, repo) {
   }
   
 function insertIssue(issue, el) {
-    var body = "";
+    let body = "";
     body += "<div style='float:right;' class='labels'>"
     issue.labels.forEach(function(label) {
       body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
@@ -81959,7 +81958,7 @@ function generateChart(args) {
   args.label = args.label || "";
   args.title = args.title || "";
 
-  var colors = {
+  let colors = {
     "blue":   "rgb(54, 162, 235)",
     "red":    "rgb(255, 99, 132)",
     "green":  "rgb(75, 192, 192)",
@@ -81968,9 +81967,9 @@ function generateChart(args) {
     "purple": "rgb(153, 102, 255)",
     "yellow": "rgb(255, 205, 86)"
   }
-  var colorNames = Object.keys(colors);
+  let colorNames = Object.keys(colors);
 
-  var barChartData = {
+  let barChartData = {
     // labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [{
       label: args.label,
@@ -81981,8 +81980,8 @@ function generateChart(args) {
     }]
   }
 
-  var ctx = document.getElementById("canvas").getContext("2d");
-  var chart = new Chart(ctx, {
+  let ctx = document.getElementById("canvas").getContext("2d");
+  let chart = new Chart(ctx, {
     type: 'bar',
     data: barChartData,
     options: {
@@ -82309,9 +82308,9 @@ function fetchAllRepoContribs(org, repo) {
     return api.Repositories
           .getRepoContributors(org, repo, {method: "HEAD", qs: { sort: 'pushed', direction: 'desc', per_page: 100 } })
           .then(function gotContribData(contribData) {
-            var headers = contribData;
+            let headers = contribData;
             if (headers.hasOwnProperty("link")) {
-              var parsed = parse(headers['link']);
+              let parsed = parse(headers['link']);
               if(parsed.last.page!=undefined) {
                 totalPages = parseInt(parsed.last.page);
               }
@@ -82325,7 +82324,7 @@ function fetchAllRepoContribs(org, repo) {
             let promises = [];
 
             for(let i = 1; i <= totalPages; i++) {
-              var currentPromise = api.Repositories
+              let currentPromise = api.Repositories
                                   .getRepoContributors(org, repo, { method:"GET", qs: { sort: 'pushed', direction: 'desc', per_page: 100, page:i } })
                                   .then(function gotRepoContributors(contributors) {
                                     if (contributors!=undefined && (contributors != null || contributors.length > 0)) {
@@ -82464,7 +82463,7 @@ let model_utils = require('../../models/utils')
 function storeAllContribsInDb(org) {
 	let AllContributors = [];
 	let promises = [];
-	var contributorSet = new Set([]);
+	let contributorSet = new Set([]);
 	return new Promise((resolve, reject) => {
 		model_utils.getItem('allContributors').then((allContributors) => {
 			// If all contributors list is not in the database, it makes a fresh call to Github API
