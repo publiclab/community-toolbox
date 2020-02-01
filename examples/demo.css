@@ -229,6 +229,7 @@ h1, h2, .section h3 {
 
 .dropdown-Repo {
     margin-left: auto;
+    margin-right: 10px;
 }
 
 #dropdown-container {
@@ -431,18 +432,25 @@ h1, h2, .section h3 {
     border-radius: 1em;
     background-color: rgba(231, 226, 219, 0.548);
 }
-
+/* 
 #refresh-status {
     margin: 0;
     padding: 10px;
     font-weight: 600;
     color: rgb(8, 80, 8);
-}
+} */
 
 #refresh-button {
-    margin: 5px;
-    border-radius: 1em;
-    background-color: lightgray;
+    width: 30px;
+    height: 30px;
+    border-radius: 2em;
+    background-color: #4DBFA6;
+    transition: transform 0.1s ease-out;
+}
+
+#refresh-button:hover {
+    transform: rotate(100deg) scale3d(0.97, 0.99, 0.96);
+    cursor: pointer;
 }
 
 

@@ -17,8 +17,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
-  var refreshbarUI = require('../UI/refreshbarUI')
-
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -261,24 +259,28 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
-  function refreshbar() {
+  function clearDB() {
     return fetch('https://api.github.com/rate_limit')
     .then((res) => {
       return res.json();
     })
     .then((res) => {
-      refreshbarUI.updateStatus(res);
+      let reqLeft = res['rate']['remaining'];
+      let resetTime = res['rate']['reset'];
+      let currTime = ((new Date()).getTime())/1000;
+      let timeDiff = (resetTime - currTime);
+      timeDiff = Math.floor(Math.floor(timeDiff)/60);
+      if(reqLeft >= 60) {
+        return model_utils.clearDB().then(() => {
+          Snackbar.show({pos: 'top-right', text: 'Database is refreshed!', textColor: "green" , showAction: false});
+          return true;
+        })
+      }
+      else {
+        Snackbar.show({pos: 'top-right', text: `You can generate the updated stats after ${timeDiff} minutes.`, textColor: "red" , showAction: false});
+        return false;
+      }
     })
-    .catch((err) => {
-      console.log(err);
-      Snackbar.show({pos: 'top-right', text: 'Cannot show refresh bar :(', showAction: false});
-    })
-  }
-
-  function clearDB() {
-    return model_utils.clearDB().then(() => {
-      return true;
-    });
   }
 
 
@@ -304,7 +306,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     ftoAuthorsUI: ftoAuthorsUI,
     showStaleIssues: showStaleIssues,
     filter: filter,
-    refreshbar: refreshbar,
     clearDB: clearDB,
   }
 

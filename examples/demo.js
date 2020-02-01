@@ -102,24 +102,23 @@ document.addEventListener('DOMContentLoaded', function () {
   
         } else {
 
-            // toolbox.api.Issues
-            //        .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
-            //        .then(displayIssuesAndFtoAuthors('.first-timers-only'));
+            toolbox.api.Issues
+                   .getIssuesForRepo(org, repo, { qs: { labels: ftoLabel } })
+                   .then(displayIssuesAndFtoAuthors('.first-timers-only'));
   
-            // toolbox.api.Issues
-            //        .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
-            //        .then(displayIssuesAndFtoAuthors('.candidates'));
+            toolbox.api.Issues
+                   .getIssuesForRepo(org, repo, { qs: { labels: candidateLabel } })
+                   .then(displayIssuesAndFtoAuthors('.candidates'));
   
             toolbox.initialize(org, repo).then((res)=> {
                 if(res) {
                     // Fetches and shows recent contributors' list
-                    // toolbox.showRecentContributors(org, repo, recencyLabel);
-                    // // compile and display all contributors for given repo
-                    // toolbox.showRepoContributors(org, repo);
-                    // toolbox.dropdownInit();
-                    // // Fetch stale issues
+                    toolbox.showRecentContributors(org, repo, recencyLabel);
+                    // compile and display all contributors for given repo
+                    toolbox.showRepoContributors(org, repo);
+                    toolbox.dropdownInit();
+                    // Fetch stale issues
                     toolbox.showStaleIssues(org, repo);
-                    toolbox.refreshbar();
                 }
             })
         }
@@ -182,8 +181,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         $('#refresh-button').click((e) => {
             e.preventDefault();
-            toolbox.clearDB().then(() => {
-                location.reload();
+            toolbox.clearDB().then((isDBRefreshed) => {
+                if(isDBRefreshed) {
+                    location.reload();
+                }
             })
         })
 
