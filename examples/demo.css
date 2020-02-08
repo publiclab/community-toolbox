@@ -18,6 +18,17 @@ body {
   background: #f8f8fa;
 }
 
+#forkMe-ribbon {
+    width: 10px;
+    height: 10px;
+    float: right;
+}
+
+#container {
+    width: 100%;
+    height: 5px;
+}
+
 h1, h2, .section h3 {
   font-family: 'League Spartan';
   color: #445;
