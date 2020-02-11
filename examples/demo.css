@@ -255,7 +255,29 @@ h1, h2, .section h3 {
 
 .stale {
     overflow: scroll;
-    height: 1000px;
+    max-height: 1000px;
+}
+
+/*First Timers Issues List */
+
+.first-timers-only {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+}
+
+/* Candidates list */
+
+.candidates {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
 }
 
 /* MEDIA QUERIES */
