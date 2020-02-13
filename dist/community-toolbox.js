@@ -81735,7 +81735,7 @@ function insertRecentContributors(AllContributors){
         return `<a href="${commit.author.html_url}">@${commit.author.login}</a>`;
       })
       avatars = AllContributors.map((commit, i) => {
-        return `<a href="${commit.author.html_url}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
+        return `<a href="${commit.author.html_url}" title="${commit.author.login}" class="hvr-Glow"><img width="100px" src="${commit.author.avatar_url}"></a>`;
       })
     }
   
