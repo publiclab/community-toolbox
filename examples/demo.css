@@ -11,12 +11,41 @@
     font-style: normal;
 }
 
-body {
-  padding: 20px;
-  margin: 0 auto 20px;
-  max-width: 1000px;
-  background: #f8f8fa;
+html {
+    scroll-behavior: smooth;
+  }
+
+.sidenav {
+    width: 160px; /* Set the width of the sidebar */
+    z-index: 1; /* Stay on top */
+    left: 0px;
+    margin-top: 38vh;
+    margin-left: 3vh;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    position: absolute;
+    
 }
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #818181;
+    display: block; 
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+  
+.main {
+    padding: 1.5% 18% 20px;
+    background: #f8f8fa;
+    height: 100vh;
+    overflow-y: scroll;
+    width: 100vw;
+}
+
 
 #forkMe-ribbon {
     width: 10px;
