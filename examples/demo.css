@@ -89,7 +89,7 @@ h1, h2, .section h3 {
     margin: auto;
     width: 80%;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     flex-shrink: initial;
 }
 
