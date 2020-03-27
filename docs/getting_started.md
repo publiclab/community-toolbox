@@ -13,13 +13,20 @@ So you're almost there, just some info before you start building amazing things 
 
 ### Installation instructions [ [Watch video guide](https://youtu.be/wkC2AgLiaTM) ]
 
+* Fork our repo from. 
+
+   ``` https://github.com/publiclab/community-toolbox ```
 * Clone or download the repository into any fresh temporary folder.
 
-   ``` git clone https://github.com/publiclab/community-toolbox.git ```
+   ```git clone https://github.com/your_username/community-toolbox.git ```
 
 * Cd into that root folder you just cloned locally.
 
    ``` cd community-toolbox ```
+   
+* Add upstream.
+
+   ``` git remote add upstream https://github.com/publiclab/community-toolbox.git```
 
 * Open terminal in the current folder and to install all dependencies run
 
