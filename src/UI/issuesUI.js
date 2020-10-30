@@ -3,7 +3,7 @@ var moment = require('moment');
 
 
 function generateIssueHtml(title, body, githubUrl, repo) {
-    var repoName = githubUrl.split('/')[4],
+    let repoName = githubUrl.split('/')[4],
         repoUrl = githubUrl.split('/').slice(0, 5).join('/'),
         html = '<div class="panel panel-default">\
       <div class="panel-heading">\
@@ -18,12 +18,13 @@ function generateIssueHtml(title, body, githubUrl, repo) {
   }
   
 function insertIssue(issue, el) {
-    var body = "";
+    let body = "";
     body += "<div style='float:right;' class='labels'>"
     issue.labels.forEach(function(label) {
       body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
     });
     body += "</div>";
+    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='margin-right:15px;' >";
     body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
     body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
     body += " <i class='fa fa-comment-o'></i> " + issue.comments;

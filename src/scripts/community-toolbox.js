@@ -246,21 +246,10 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
       }
     })
   }
-
-
-  function displayIssuesForRepo(org, repo, label, selector) {
-    toolbox.api.Issues
-      .getIssuesForRepo(org, repo, { qs: { labels: label } })
-      .then(function onGotIssues(issues) {
-        issues.forEach(function(issue) {
-          toolbox.issuesUI.insertIssue(issue, selector);
-        });
-      })
-  }
-
+  
 
   function showStaleIssues(org, repo) {
-    return issuesUtil.getStaleIssues(org, repo)
+    return issuesUtil.getRepoStaleIssues(org, repo)
     .then((data) => {
       if(data!=null && data!=undefined) {
         issuesUI.insertStale(data, '.stale');
@@ -289,7 +278,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     getCommitsForRepo: getCommitsForRepo,
     showAllContributors: showAllContributors,
     showRepoContributors: showRepoContributors,
-    displayIssuesForRepo: displayIssuesForRepo,
     initialize: initialize,
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,

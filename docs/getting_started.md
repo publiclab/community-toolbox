@@ -13,13 +13,20 @@ So you're almost there, just some info before you start building amazing things 
 
 ### Installation instructions [ [Watch video guide](https://youtu.be/wkC2AgLiaTM) ]
 
+* Fork our repo from. 
+
+   ``` https://github.com/publiclab/community-toolbox ```
 * Clone or download the repository into any fresh temporary folder.
 
-   ``` git clone https://github.com/publiclab/community-toolbox.git ```
+   ```git clone https://github.com/your_username/community-toolbox.git ```
 
 * Cd into that root folder you just cloned locally.
 
    ``` cd community-toolbox ```
+   
+* Add upstream.
+
+   ``` git remote add upstream https://github.com/publiclab/community-toolbox.git```
 
 * Open terminal in the current folder and to install all dependencies run
 
@@ -27,7 +34,7 @@ So you're almost there, just some info before you start building amazing things 
    
    Update to new version of packages if required in package.json.
    
-* Now go to the folder and open `index.html` in browser.
+* Now go to the folder and run ```npm start``` .
 
 * You are all set now, you can start making changes and see them taking place at `index.html` in the browser (you need to be doing `grunt build` for any changes you make in the `src/` folder).
 

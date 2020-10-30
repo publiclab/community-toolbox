@@ -1,12 +1,8 @@
 /* https://github.com/theleagueof/league-spartan */
 @font-face {
     font-family: 'League Spartan';
-    src: url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.eot');
-    src: url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.eot?#iefix') format('embedded-opentype'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.woff2') format('woff2'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.woff') format('woff'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.ttf') format('truetype'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.svg#league_spartanbold') format('svg');
+      src: url('https://cdn.jsdelivr.net/npm/fontsource-league-spartan@3/files/league-spartan-latin-600-normal.woff2') format('woff2'),
+           url('https://cdn.jsdelivr.net/npm/fontsource-league-spartan@3/files/league-spartan-latin-600-normal.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }
@@ -16,6 +12,17 @@ body {
   margin: 0 auto 20px;
   max-width: 1000px;
   background: #f8f8fa;
+}
+
+#forkMe-ribbon {
+    width: 10px;
+    height: 10px;
+    float: right;
+}
+
+#container {
+    width: 100%;
+    height: 5px;
 }
 
 h1, h2, .section h3 {
@@ -45,10 +52,6 @@ h1, h2, .section h3 {
     z-index: 999;
     display: none;
     cursor: pointer;
-    -moz-transform: rotate(270deg);
-    -webkit-transform: rotate(270deg);
-    -o-transform: rotate(270deg);
-    -ms-transform: rotate(270deg);
     transform: rotate(270deg);
     position: fixed;
     bottom: 50px;
@@ -74,13 +77,15 @@ h1, h2, .section h3 {
 
 #connectwithus {
     margin: auto auto 5em;
+    text-align: center;
+    width: 100%;
 }
 
 #connectwithusbody {
     margin: auto;
     width: 80%;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     flex-shrink: initial;
 }
 
@@ -155,7 +160,7 @@ h1, h2, .section h3 {
     height: 100%;
 }
 .recent-contribs-dropdown {
-    width: 10%;
+    margin-right: 10px;
     text-align: center;
 }
 .recent-contribs-show-dropdown {
@@ -246,20 +251,35 @@ h1, h2, .section h3 {
 
 .stale {
     overflow: scroll;
-    height: 1000px;
+    max-height: 1000px;
+}
+
+/*First Timers Issues List */
+
+.first-timers-only {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+}
+
+/* Candidates list */
+
+.candidates {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
 }
 
 /* MEDIA QUERIES */
 
 @media only screen and (max-width: 569px) {
     .links {
-        width: 25%;
         margin: 10px 0;
-    }
-}
-
-@media only screen and (max-width: 400px) {
-    .links {
-        width: 50%;
     }
 }
