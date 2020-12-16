@@ -81683,7 +81683,7 @@ function insertIssue(issue, el) {
       body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
     });
     body += "</div>";
-    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='margin-right:15px;' >";
+    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='border-radius:100%; background:#ccc; margin-right:15px;' >";
     body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
     body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
     body += " <i class='fa fa-comment-o'></i> " + issue.comments;
