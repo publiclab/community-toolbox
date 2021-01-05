@@ -21,7 +21,7 @@
     <link rel="manifest" href="./manifest.json">
     <script src="./src/scripts/pwainit.js"></script>
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./node_modules/node-snackbar/dist/snackbar.min.js"></script>
@@ -42,7 +42,56 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="examples/demo.css">
     <link rel="stylesheet" href="examples/themes.css">
-
+  <!-- Navbar start -->
+    <nav class="navbar">
+        <img id="logo-img" src="./images/Boots-ground-02.png" alt="publiclab-logo">
+        <ul>
+            <li>
+                <a href="#">LEARN</a>
+                <ul>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/blob/master/README.md">Get Started</a>
+                    </li>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/labels/support'">Assist Someone</a>
+                    </li>
+                    <li><a class="line"
+                            href="https://publiclab.org/notes/warren/10-31-2016/create-a-welcoming-first-timers-only-issue-to-invite-new-software-contributors">Create
+                            Your FTO Issue</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">ISSUES</a>
+                <ul>
+                    <li><a class="line" href="#fto-issue">FTO Issues</a></li>
+                    <li><a class="line" href="#stale-head">Stale Issues</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">PARTICIPANTS</a>
+                <ul>
+                    <li><a class="line" href="#candidate">Candidates</a></li>
+                    <li><a class="line" href="#fto-author">FTO Authors</a></li>
+                    <li><a class="line" href="#contributer">Contributers</a></li>
+                </ul>
+            </li>
+            <li><a class="line" href="https://publiclab.org/chat">CHATROOM</a></li>
+            <li>
+                <a class="line" href="#">MORE</a>
+                <ul>
+                    <li><a class="line" href="https://github.com/publiclab/community-toolbox">Source Code</a></li>
+                    <li><a class="line" href="https://publiclab.org/conduct">Conduct</a></li>
+                    <li><a class="line" href="https://guides.github.com/activities/hello-world/">New To GitHub?</a></li>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/labels/first-timers-only">Selection of
+                            Issues</a></li>
+                    <li><a class="line"
+                            href="https://publiclab.org/notes/warren/11-08-2016/help-public-lab-s-software-grow-by-joining-a-supportive-team">Support</a>
+                    </li>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/labels/help-wanted">Challenges</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <!-- Navbar ends -->
     <div id='container'>
         <div id='forkMe-ribbon'><a href="https://github.com/publiclab/community-toolbox" >
              <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"alt="Fork me on GitHub"></a>
@@ -144,7 +193,7 @@
 
       <br />
 
-      <h2><span class=" newcomer-issues">first timers only</span> issues</h2>
+      <h2><span class=" newcomer-issues" id="fto-issue">first timers only</span> issues</h2>
 
       <p>Here are <a  id="newcomer-issues-link" href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a class=" guidelines-link" href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
 
@@ -158,7 +207,7 @@
 
       <p>In "<span class=" newcomer-like-issues">candidates</span>" below, there are some issues we think would make good <b><span class=" newcomer-issues">first-timers-only</span></b> issues, but haven't finished formatting. They could make a good second-time contribution!</p>
 
-      <h2 class=" newcomer-like-issues">Candidates</h2>
+      <h2 class=" newcomer-like-issues" id="candidate">Candidates</h2>
 
       <p>We put a lot of work into our <span class=" newcomer-issues">first-timer-only</span> issues. But if we haven't been able to prepare any recently, here's a set of <span class=" newcomer-like-issues">candidates</span> we haven't yet had time to prepare, but which have most of the needed information. (Also: Learn how to <a  href="https://publiclab.org/n/13667">help turn these into <span class=" newcomer-issues">first-timers-only</span> issues</a> to help keep welcoming people in!</p>
 
@@ -174,7 +223,7 @@
 
       <hr />
 
-      <h2>FTO Authors</h2>
+      <h2 id="fto-author">FTO Authors</h2>
 
       <p>These people took some time out of their busy schedule to help in welcoming newcomers by creating FTO issues: </p>
 
@@ -262,7 +311,7 @@
         </div>
       </div>
 
-      <h2 class="contributors-head">Contributors</h2>
+      <h2 class="contributors-head" id="contributer">Contributors</h2>
       <div class="contribs">
         <div style="display: flex; justify-content: space-between">
           <p>This project was made possible by many contributors, including the following GitHub users:</p>
