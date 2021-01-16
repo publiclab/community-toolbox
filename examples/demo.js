@@ -11,6 +11,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    /* language section */ 
+    var request = new XMLHttpRequest()
+
+    request.open('GET', 'https://api.github.com/users/publiclab/repos', true);
+
+    request.onload = function () {
+    var data = JSON.parse(this.response);
+    var statusHTML = '';
+    $.each(data, function (i, status) {
+        statusHTML += '<div class="conatiner-language">';
+        statusHTML += '<div class="repo-name"><a href="' + status.html_url + '">' + status.name + '</a></div>';
+        statusHTML += '<divs class="lang-name">' + status.language + '</div>';
+        statusHTML += '</div>';
+    });
+    $('#tbody').html(statusHTML);
+    }
+    request.send();
+    /* langauge section ends */
+
 
     /*Scroll to top when arrow up clicked BEGIN*/
     $(window).scroll(function() {

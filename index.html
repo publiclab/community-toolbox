@@ -32,6 +32,9 @@
     <script src="examples/themes.js"></script>
     <script src="src/scripts/configure.js"></script>
     <script src="examples/copyToClipboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
 
   </head>
 
@@ -61,7 +64,7 @@
             <li>
                 <a href="#">ISSUES</a>
                 <ul>
-                    <li><a class="line" href="#fto-issue">FTO Issues</a></li>
+                    <li><a class="line" href="#fto-issue-D">FTO Issues</a></li>
                     <li><a class="line" href="#stale-head">Stale Issues</a></li>
                 </ul>
             </li>
@@ -70,7 +73,7 @@
                 <ul>
                     <li><a class="line" href="#candidate">Candidates</a></li>
                     <li><a class="line" href="#fto-author">FTO Authors</a></li>
-                    <li><a class="line" href="#contributer">Contributers</a></li>
+                    <li><a class="line" href="#contributor">Contributors</a></li>
                 </ul>
             </li>
             <li><a class="line" href="https://publiclab.org/chat">CHATROOM</a></li>
@@ -192,8 +195,13 @@
       </div>
 
       <br />
+      <!-- Langauge section -->
+      <h2><span id="fto-issue">Languages</span> Uses</h2>
+      <p>This is the section of all the repositories of <a href="https://github.com/publiclab">PUBLIC LAB</a>  we've made especially for first-timers. We're here to help, so just click on it if one looks interesting.</p>
+      <div id="tbody" class="row language "></div>
+      <!-- langauge section ends -->
 
-      <h2><span class=" newcomer-issues" id="fto-issue">first timers only</span> issues</h2>
+      <h2><span class=" newcomer-issues" id="fto-issue-D">first timers only</span> issues</h2>
 
       <p>Here are <a  id="newcomer-issues-link" href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a class=" guidelines-link" href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
 
@@ -311,7 +319,7 @@
         </div>
       </div>
 
-      <h2 class="contributors-head" id="contributer">Contributors</h2>
+      <h2 class="contributors-head" id="contributor">Contributors</h2>
       <div class="contribs">
         <div style="display: flex; justify-content: space-between">
           <p>This project was made possible by many contributors, including the following GitHub users:</p>
