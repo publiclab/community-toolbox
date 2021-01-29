@@ -14,6 +14,96 @@ body {
   background: #f8f8fa;
 }
 
+/* Navbar CSS */
+ 
+nav {
+    z-index: 100;
+}
+
+nav:after {
+    content: '';
+    clear: both;
+    display: table;
+}
+
+nav ul {
+    float: right;
+    list-style: none;
+    margin-right: 40px;
+    position: relative;
+}
+
+
+nav ul li {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+nav ul li a {
+    color: #a1a1a1;
+    text-decoration: none;
+    line-height: 70px;
+    font-size: 15px;
+    padding: 8px 15px;
+}
+
+nav ul li a:hover {
+    text-decoration: none;
+    color: #669dc9;
+    box-shadow: 0 0 5px #669dc9,
+        0 0 5px #669dc9;
+}
+
+nav ul ul li{
+    background-color: #f8f8fa;
+}
+
+nav ul ul li a:hover {
+    color: #34A7C1;
+    box-shadow: none;
+}
+
+nav ul ul {
+    position: absolute;
+    top: 90px;
+    opacity: 0;
+    visibility: hidden;
+    transition: top .3s;
+    border-top: 3px solid #aaa3a3;
+}
+
+nav ul ul ul {
+    border-top: none;
+}
+
+nav ul li:hover>ul {
+    top: 70px;
+    opacity: 1;
+    visibility: visible;
+}
+
+nav ul ul li {
+    position: relative;
+    margin: 0px;
+    width: 200px;
+    float: none;
+    display: list-item;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+ul {
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+nav ul ul li a {
+    line-height: 50px;
+}
+/* Navbar ends  */
+
 #forkMe-ribbon {
     width: 10px;
     height: 10px;

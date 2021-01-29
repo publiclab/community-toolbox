@@ -1,5 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
-          
+    /* Navbar scroll to that perticular section of page */
+    $('.navbar a').on('click', function(e){
+        if(this.hash !== ''){
+            e.preventDefault();
+
+            const hash = this.hash;
+            $('html,body').animate({
+                scrollTop: $(hash).offset().top
+            },800); 
+        }
+    });
+
+
     /*Scroll to top when arrow up clicked BEGIN*/
     $(window).scroll(function() {
         let height = $(window).scrollTop();
