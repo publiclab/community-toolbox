@@ -15,8 +15,8 @@ body {
 }
 
 /* Navbar CSS */
+ 
 nav {
-    background: #f8f8fa;
     z-index: 100;
 }
 
@@ -33,9 +33,9 @@ nav ul {
     position: relative;
 }
 
+
 nav ul li {
     display: inline-block;
-    background: #f8f8fa;
     margin: 0 5px;
 }
 
@@ -54,8 +54,12 @@ nav ul li a:hover {
         0 0 5px #669dc9;
 }
 
+nav ul ul li{
+    background-color: #f8f8fa;
+}
+
 nav ul ul li a:hover {
-    color: #669dc9;
+    color: #34A7C1;
     box-shadow: none;
 }
 
