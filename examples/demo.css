@@ -371,19 +371,14 @@ h1, h2, .section h3 {
     width: 41%;
 }
 .lang-name{
-    /* display: flex; */
     border-radius: 10px;
     margin-left: 20%;
     position: absolute;
     background-color: white;
-    /* min-width: 160px; */
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 5px 5px;
     z-index: 1s;
 }
-/* .conatiner-language:hover .lang-name{
-    display: block;
-} */
 
 /* language section sends */
 
