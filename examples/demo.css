@@ -104,6 +104,17 @@ nav ul ul li a {
 }
 /* Navbar ends  */
 
+/* dependency chart */
+#dependency-div{
+    text-align: center;
+}
+
+.dependency-chart{
+    border-radius: 8px;
+    width: 100%;
+}
+
+
 #forkMe-ribbon {
     width: 10px;
     height: 10px;
