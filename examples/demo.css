@@ -356,31 +356,24 @@ h1, h2, .section h3 {
     font-size: 14px;
     line-height: 1.42857143;
     color: #333;
-    padding: 25px;
+    padding: 27px;
     background-color: white;
     margin-bottom: 20px;
     overflow: scroll;
     font-size: 15px;
     width: 33%;
-    flex-wrap: wrap;
     position: relative;
-    display: inline-block;
+    display: block;
 }
 .repo-name{
-    display: inline-block;
-    width: 41%;
-}
-.lang-name{
-    border-radius: 10px;
-    margin-left: 20%;
-    position: absolute;
-    background-color: white;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    padding: 5px 5px;
-    z-index: 1s;
+    width: 76%;
 }
 
-/* language section sends */
+.badge{
+    border-radius: 5px;
+}
+
+/* language section ends */
 
 /*First Timers Issues List */
 

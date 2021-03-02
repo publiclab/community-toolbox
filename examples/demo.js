@@ -22,12 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
     $.each(data, function (i, status) {
         statusHTML += '<div class="conatiner-language">';
         statusHTML += '<div class="repo-name"><a href="' + status.html_url + '">' + status.name + '</a></div>';
-        statusHTML += '<divs class="lang-name">' + status.language + '</div>';
+        statusHTML += '<span class="badge">' + status.language + '</span>';
         statusHTML += '</div>';
     });
     $('#tbody').html(statusHTML);
     }
+    
     request.send();
+
     /* langauge section ends */
 
 
