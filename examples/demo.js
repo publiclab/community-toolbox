@@ -22,7 +22,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $.each(data, function (i, status) {
         statusHTML += '<div class="conatiner-language">';
         statusHTML += '<div class="repo-name"><a href="' + status.html_url + '">' + status.name + '</a></div>';
+        if(status.language == null){
+            statusHTML += '<span class="badge">' +   'N/A' + '</span>';
+        }else{
         statusHTML += '<span class="badge">' + status.language + '</span>';
+        }
         statusHTML += '</div>';
     });
     $('#tbody').html(statusHTML);
