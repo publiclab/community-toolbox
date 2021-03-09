@@ -15,6 +15,7 @@ body {
 }
 
 /* Navbar CSS */
+
 nav {
     background: #f8f8fa;
     z-index: 100;
@@ -32,6 +33,7 @@ nav ul {
     margin-right: 40px;
     position: relative;
 }
+
 
 nav ul li {
     display: inline-block;
@@ -54,8 +56,17 @@ nav ul li a:hover {
         0 0 5px #669dc9;
 }
 
+
 nav ul ul li a:hover {
     color: #669dc9;
+
+nav ul ul li{
+    background-color: #f8f8fa;
+}
+
+nav ul ul li a:hover {
+    color: #34A7C1;
+
     box-shadow: none;
 }
 
@@ -99,6 +110,19 @@ nav ul ul li a {
     line-height: 50px;
 }
 /* Navbar ends  */
+
+
+
+/* dependency chart */
+#dependency-div{
+    text-align: center;
+}
+
+.dependency-chart{
+    border-radius: 8px;
+    width: 100%;
+}
+
 
 #forkMe-ribbon {
     width: 10px;

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
     /* language section */ 
     var request = new XMLHttpRequest()
 
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     request.send();
 
     /* langauge section ends */
+
 
 
     /*Scroll to top when arrow up clicked BEGIN*/
