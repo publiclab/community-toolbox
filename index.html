@@ -31,6 +31,9 @@
     <script src="examples/themes.js"></script>
     <script src="src/scripts/configure.js"></script>
     <script src="examples/copyToClipboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
 
   </head>
 
@@ -42,6 +45,57 @@
     <link rel="stylesheet" href="examples/demo.css">
     <link rel="stylesheet" href="examples/themes.css">
   <!-- Navbar start -->
+
+    <nav class="navbar">
+        <img id="logo-img" src="./images/Boots-ground-02.png" alt="publiclab-logo">
+        <ul>
+            <li>
+                <a href="#">LEARN</a>
+                <ul>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/blob/master/README.md">Get Started</a>
+                    </li>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/labels/support'">Assist Someone</a>
+                    </li>
+                    <li><a class="line"
+                            href="https://publiclab.org/notes/warren/10-31-2016/create-a-welcoming-first-timers-only-issue-to-invite-new-software-contributors">Create
+                            Your FTO Issue</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">ISSUES</a>
+                <ul>
+                    <li><a class="line" href="#fto-issue-D">FTO Issues</a></li>
+                    <li><a class="line" href="#stale-head">Stale Issues</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">PARTICIPANTS</a>
+                <ul>
+                    <li><a class="line" href="#candidate">Candidates</a></li>
+                    <li><a class="line" href="#fto-author">FTO Authors</a></li>
+                    <li><a class="line" href="#contributor">Contributors</a></li>
+                </ul>
+            </li>
+            <li><a class="line" href="https://publiclab.org/chat">CHATROOM</a></li>
+            <li>
+                <a class="line" href="#">MORE</a>
+                <ul>
+                    <li><a class="line" href="https://github.com/publiclab/community-toolbox">Source Code</a></li>
+                    <li><a class="line" href="https://publiclab.org/conduct">Conduct</a></li>
+                    <li><a class="line" href="https://guides.github.com/activities/hello-world/">New To GitHub?</a></li>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/labels/first-timers-only">Selection of
+                            Issues</a></li>
+                    <li><a class="line"
+                            href="https://publiclab.org/notes/warren/11-08-2016/help-public-lab-s-software-grow-by-joining-a-supportive-team">Support</a>
+                    </li>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/labels/help-wanted">Challenges</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <!-- Navbar ends -->
+
     <div id='container'>
       <div id='forkMe-ribbon'><a href="https://github.com/publiclab/community-toolbox" >
         <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"alt="Fork me on GitHub"></a>
@@ -192,8 +246,13 @@
       </div>
 
       <br />
+      
+
+
+      <h2><span class=" newcomer-issues" id="fto-issue-D">first timers only</span> issues</h2>
 
       <h2><span class=" newcomer-issues" id="fto-issue">first timers only</span> issues</h2>
+
 
       <p>Here are <a  id="newcomer-issues-link" href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a class=" guidelines-link" href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
 
@@ -311,7 +370,11 @@
         </div>
       </div>
 
+
+      <h2 class="contributors-head" id="contributor">Contributors</h2>
+
       <h2 class="contributors-head" id="contributer">Contributors</h2>
+
       <div class="contribs">
         <div style="display: flex; justify-content: space-between">
           <p>This project was made possible by many contributors, including the following GitHub users:</p>
@@ -321,11 +384,19 @@
         <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars text-center"></p></div>
       </div>
 
+
+      <!-- Langauge section -->
+      <h2><span id="fto-issue">Languages</span> Used</h2>
+      <p>This is the section of all the repositories of <a href="https://github.com/publiclab">PUBLIC LAB</a>  we've made especially for first-timers. We're here to help, so just click on it if one looks interesting.</p>
+      <div id="tbody" class="row language "></div>
+      <!-- langauge section ends -->
+
       <!-- Dependency chart  -->
       <div id="dependency-div">
       <img  class="dependency-chart" src="./images/dependency-chart.webp" alt="dependency-chart">
     </div>
     <!-- Dependency chart end -->
+
 
 	  <div class="row" id="connectwithus">
 		<h2 class="text-center d-block">Connect with us</h2>
