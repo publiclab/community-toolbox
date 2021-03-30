@@ -1,9 +1,9 @@
-var string = require("../color-string"),
-    assert = require("assert");
+var string = require("../color-string");
+var assert = require("assert");
 
 
 assert.deepEqual(string.getRgba("#fef"), [255, 238, 255, 1]);
-assert.deepEqual(string.getRgba("#fffFEF"), [255, 255, 239,1]);
+assert.deepEqual(string.getRgba("#fffFEF"), [255, 255, 239, 1]);
 assert.deepEqual(string.getRgba("rgb(244, 233, 100)"), [244, 233, 100, 1]);
 assert.deepEqual(string.getRgba("rgb(100%, 30%, 90%)"), [255, 77, 229, 1]);
 assert.deepEqual(string.getRgba("transparent"), [0, 0, 0, 0]);
@@ -33,6 +33,12 @@ assert.equal(string.getAlpha("hwb(244, 100%, 100%, 0.6)"), 0.6);
 assert.equal(string.getAlpha("hwb(244, 100%, 100%)"), 1);
 
 // alpha
+assert.deepEqual(string.getRgba("#feff"), [255, 238, 255, 1]);
+assert.deepEqual(string.getRgba("#fef0"), [255, 238, 255, 0]);
+assert.deepEqual(string.getRgba("#fefa"), [255, 238, 255, 0.67]);
+assert.deepEqual(string.getRgba("#c814e933"), [200, 20, 233, 0.2]);
+assert.deepEqual(string.getRgba("#c814e900"), [200, 20, 233, 0]);
+assert.deepEqual(string.getRgba("#c814e9ff"), [200, 20, 233, 1]);
 assert.deepEqual(string.getRgba("rgba(200, 20, 233, 0.2)"), [200, 20, 233, 0.2]);
 assert.deepEqual(string.getRgba("rgba(200, 20, 233, 0)"), [200, 20, 233, 0]);
 assert.deepEqual(string.getRgba("rgba(100%, 30%, 90%, 0.2)"), [255, 77, 229, 0.2]);
@@ -43,8 +49,8 @@ assert.deepEqual(string.getHwb("hwb(200, 20%, 33%, 0.2)"), [200, 20, 33, 0.2]);
 assert.deepEqual(string.getRgb("#fef"), [255, 238, 255]);
 assert.deepEqual(string.getRgb("rgba(200, 20, 233, 0.2)"), [200, 20, 233]);
 assert.deepEqual(string.getHsl("hsl(240, 100%, 50.5%)"), [240, 100, 50.5]);
-assert.deepEqual(string.getRgba('rgba(0,0,0,0)'), [0, 0, 0, 0]);
-assert.deepEqual(string.getHsla('hsla(0,0%,0%,0)'), [0, 0, 0, 0]);
+assert.deepEqual(string.getRgba("rgba(0,0,0,0)"), [0, 0, 0, 0]);
+assert.deepEqual(string.getHsla("hsla(0,0%,0%,0)"), [0, 0, 0, 0]);
 assert.deepEqual(string.getHwb("hwb(400, 10%, 200%, 0)"), [360, 10, 100, 0]);
 
 // range
@@ -57,9 +63,20 @@ assert.deepEqual(string.getHwb("hwb(400, 10%, 200%, 10)"), [360, 10, 100, 1]);
 assert.strictEqual(string.getRgba("yellowblue"), undefined);
 assert.strictEqual(string.getRgba("hsl(100, 10%, 10%)"), undefined);
 assert.strictEqual(string.getRgba("hwb(100, 10%, 10%)"), undefined);
+assert.strictEqual(string.getRgba("#1"), undefined);
+assert.strictEqual(string.getRgba("#f"), undefined);
+assert.strictEqual(string.getRgba("#4f"), undefined);
+assert.strictEqual(string.getRgba("#45ab4"), undefined);
+assert.strictEqual(string.getRgba("#45ab45e"), undefined);
 
 // generators
 assert.equal(string.hexString([255, 10, 35]), "#FF0A23");
+assert.equal(string.hexString([255, 10, 35, 1]), "#FF0A23");
+assert.equal(string.hexString([255, 10, 35], 1), "#FF0A23");
+assert.equal(string.hexString([255, 10, 35, 0.3]), "#FF0A234D");
+assert.equal(string.hexString([255, 10, 35], 0.3), "#FF0A234D");
+assert.equal(string.hexString([255, 10, 35, 0]), "#FF0A2300");
+assert.equal(string.hexString([255, 10, 35], 0), "#FF0A2300");
 
 assert.equal(string.rgbString([255, 10, 35]), "rgb(255, 10, 35)");
 assert.equal(string.rgbString([255, 10, 35, 0.3]), "rgba(255, 10, 35, 0.3)");

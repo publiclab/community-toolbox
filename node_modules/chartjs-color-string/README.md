@@ -17,8 +17,10 @@ $ npm install color-string
 ### Parsing
 
 ```js
-colorString.getRgb("#FFF")  // [255, 255, 255]
-colorString.getRgb("blue")  // [0, 0, 255]
+colorString.getRgb("blue")                       // [0, 0, 255]
+colorString.getRgb("#FFF")                       // [255, 255, 255]
+colorString.getRgba("#FFFA")                     //[255, 255, 255, 0.67]}
+colorString.getRgba("#FFFFFFAA")                 // [255, 255, 255, 0.67]}
 
 colorString.getRgba("rgba(200, 60, 60, 0.3)")    // [200, 60, 60, 0.3]
 colorString.getRgba("rgb(200, 200, 200)")        // [200, 200, 200, 1]
@@ -33,6 +35,8 @@ colorString.getAlpha("rgba(200, 0, 12, 0.6)")    // 0.6
 
 ```js
 colorString.hexString([255, 255, 255])   // "#FFFFFF"
+colorString.hexString([0, 0, 255, 0.4])    // "#0000FF66"
+colorString.hexString([0, 0, 255], 0.4)    // "#0000FF66"
 colorString.rgbString([255, 255, 255])   // "rgb(255, 255, 255)"
 colorString.rgbString([0, 0, 255, 0.4])  // "rgba(0, 0, 255, 0.4)"
 colorString.rgbString([0, 0, 255], 0.4)  // "rgba(0, 0, 255, 0.4)"
