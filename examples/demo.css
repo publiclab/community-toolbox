@@ -14,6 +14,113 @@ body {
   background: #f8f8fa;
 }
 
+/* Navbar CSS */
+#logo-img{
+    height: 88px;
+}
+
+nav {
+    z-index: 100;
+}
+
+nav:after {
+    content: '';
+    clear: both;
+    display: table;
+}
+
+nav ul {
+    float: right;
+    list-style: none;
+    margin-right: 40px;
+    position: relative;
+}
+
+
+nav ul li {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+nav ul li a {
+    color: #a1a1a1;
+    text-decoration: none;
+    line-height: 70px;
+    font-size: 15px;
+    padding: 8px 15px;
+}
+
+nav ul li a:hover {
+    text-decoration: none;
+    color: #669dc9;
+    box-shadow: 0 0 5px #669dc9,
+        0 0 5px #669dc9;
+}  
+
+nav ul ul li{
+    background-color: #f8f8fa;
+}
+
+nav ul ul li a:hover {
+    color: #34A7C1;
+
+    box-shadow: none;
+}
+
+nav ul ul {
+    position: absolute;
+    top: 90px;
+    opacity: 0;
+    visibility: hidden;
+    transition: top .3s;
+    border-top: 3px solid #aaa3a3;
+}
+
+nav ul ul ul {
+    border-top: none;
+}
+
+nav ul li:hover>ul {
+    top: 70px;
+    opacity: 1;
+    visibility: visible;
+}
+
+nav ul ul li {
+    position: relative;
+    margin: 0px;
+    width: 200px;
+    float: none;
+    display: list-item;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+ul {
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+nav ul ul li a {
+    line-height: 50px;
+}
+/* Navbar ends  */
+
+
+
+/* dependency chart */
+#dependency-div{
+    text-align: center;
+}
+
+.dependency-chart{
+    border-radius: 8px;
+    width: 100%;
+}
+
+
 #forkMe-ribbon {
     width: 10px;
     height: 10px;
@@ -253,6 +360,41 @@ h1, h2, .section h3 {
     overflow: scroll;
     max-height: 1000px;
 }
+/* Languages list */
+.language{
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.conatiner-language{
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    padding: 27px;
+    background-color: white;
+    margin-bottom: 20px;
+    overflow: scroll;
+    font-size: 15px;
+    width: 33%;
+    position: relative;
+    display: block;
+}
+.repo-name{
+    width: 76%;
+}
+
+.badge{
+    border-radius: 5px;
+}
+
+/* language section ends */
 
 /*First Timers Issues List */
 

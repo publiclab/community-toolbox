@@ -30,7 +30,7 @@
     "browserify": "17.0.0",
     "github-api-simple": "git://github.com/jywarren/github-api-simple.git#patch-2",
     "grunt": "^1.0.3",
-    "grunt-browserify": "^5.0.0",
+    "grunt-browserify": "^6.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-watch": "^1.1.0",
     "http-server": "^0.12.1",
