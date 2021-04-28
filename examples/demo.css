@@ -132,7 +132,7 @@ nav ul ul li a {
     height: 5px;
 }
 
-h1, h2, .section h3 {
+h1, h2, .section h3, h2 a {
   font-family: 'League Spartan';
   color: #445;
   padding-top: 20px;
