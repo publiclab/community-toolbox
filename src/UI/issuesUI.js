@@ -34,7 +34,7 @@ function insertIssue(issue, el) {
 
 function insertStale(issues, selector) {
   let issuesLen = issues.length;
-  $('#stale-head').html('Stale Issues ('+issuesLen+'+)');
+  $('#stale-head').html('<a href="#stale-head">Stale Issues ('+issuesLen+'+)</a>');
   issues.forEach(function (issue) {
     insertIssue(issue, selector);
   })
