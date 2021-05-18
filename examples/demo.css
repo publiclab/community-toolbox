@@ -229,6 +229,7 @@ h1, h2, .section h3 {
 
 .dropdown-Repo {
     margin-left: auto;
+    margin-right: 10px;
 }
 
 #dropdown-container {
@@ -417,6 +418,41 @@ h1, h2, .section h3 {
     overflow: scroll;
     max-height: 1000px;
 }
+
+/* REFRESH BAR */
+#refresh-bar {
+    max-width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+    position: sticky;
+    bottom: 20px;
+    width: 100%;
+    border: 1px solid #434644;
+    border-radius: 1em;
+    background-color: rgba(231, 226, 219, 0.548);
+}
+/* 
+#refresh-status {
+    margin: 0;
+    padding: 10px;
+    font-weight: 600;
+    color: rgb(8, 80, 8);
+} */
+
+#refresh-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 2em;
+    background-color: #4DBFA6;
+    transition: transform 0.1s ease-out;
+}
+
+#refresh-button:hover {
+    transform: rotate(100deg) scale3d(0.97, 0.99, 0.96);
+    cursor: pointer;
+}
+
 
 /* MEDIA QUERIES */
 

@@ -18,7 +18,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
 
-
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
   var chart = require('./chart');
@@ -260,6 +259,30 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  function clearDB() {
+    return fetch('https://api.github.com/rate_limit')
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      let reqLeft = res['rate']['remaining'];
+      let resetTime = res['rate']['reset'];
+      let currTime = ((new Date()).getTime())/1000;
+      let timeDiff = (resetTime - currTime);
+      timeDiff = Math.floor(Math.floor(timeDiff)/60);
+      if(reqLeft >= 60) {
+        return model_utils.clearDB().then(() => {
+          Snackbar.show({pos: 'top-right', text: 'Database is refreshed!', textColor: "green" , showAction: false});
+          return true;
+        })
+      }
+      else {
+        Snackbar.show({pos: 'top-right', text: `You can generate the updated stats after ${timeDiff} minutes.`, textColor: "red" , showAction: false});
+        return false;
+      }
+    })
+  }
+
 
 
 
@@ -282,7 +305,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
     showStaleIssues: showStaleIssues,
-    filter: filter
+    filter: filter,
+    clearDB: clearDB,
   }
 
 }

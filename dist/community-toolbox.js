@@ -26696,7 +26696,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.1",
-      "D:\\GSOC-19\\community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -26722,7 +26722,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
   "_spec": "6.4.1",
-  "_where": "D:\\GSOC-19\\community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27566,7 +27566,7 @@ module.exports={
   "_args": [
     [
       "git://github.com/jywarren/github-api-simple.git#patch-2",
-      "D:\\GSOC-19\\community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -27589,7 +27589,7 @@ module.exports={
   ],
   "_resolved": "git://github.com/jywarren/github-api-simple.git#cb5b7f778ea9c8b65641b64b8c02f43cedf6672e",
   "_spec": "git://github.com/jywarren/github-api-simple.git#patch-2",
-  "_where": "D:\\GSOC-19\\community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Michiel van der Velde",
     "email": "michiel@michielvdvelde.nl"
@@ -77488,7 +77488,7 @@ module.exports={
   "_args": [
     [
       "tough-cookie@2.4.3",
-      "D:\\GSOC-19\\community-toolbox"
+      "/home/rishabh570/community-toolbox"
     ]
   ],
   "_development": true,
@@ -77509,12 +77509,13 @@ module.exports={
     "fetchSpec": "2.4.3"
   },
   "_requiredBy": [
+    "/jsdom",
     "/request",
     "/request-promise-native"
   ],
   "_resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz",
   "_spec": "2.4.3",
-  "_where": "D:\\GSOC-19\\community-toolbox",
+  "_where": "/home/rishabh570/community-toolbox",
   "author": {
     "name": "Jeremy Stashewsky",
     "email": "jstash@gmail.com"
@@ -81645,11 +81646,14 @@ module.exports = {
 };
 },{}],400:[function(require,module,exports){
 function insertFtoIssueAuthor(issueSet) {
+    let usernames=[];
     let avatars=[];
     for(let [key, value] of Object.entries(issueSet)) {
+      usernames.push(`<a href="https://github.com/${value.user.login}">@${value.user.login}</a>`);
       avatars.push(`<a href="https://github.com/${value.user.login}" title="${value.user.login}"><img width="100px" src="${value.user.avatar_url}"></a>`);
     }
-    $('.fto-authors').append(avatars.join(' '));
+    $('.fto-authors > .usernames').html(usernames.join(', '));
+    $('.fto-authors > .avatars').html(avatars.join(' '));
   }
 
 
@@ -81683,7 +81687,7 @@ function insertIssue(issue, el) {
       body += "<a class='label label-default' href='" + label.url + "' style='background:#" + label.color + ";'>" + label.name + "</a> ";
     });
     body += "</div>";
-    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='margin-right:15px;' >";
+    body += "<img src='https://github.com/"+ issue.user.login + '.png' + "' width='45px' height='45px' style='border-radius:100%;background:#ccc;margin-right:15px;' >";
     body += "<b>#" + issue.number + "</b> opened " + moment(issue.updated_at).fromNow() + " ";
     body += "by <a href='https://github.com/" + issue.user.login + "'>" + issue.user.login + "</a>";
     body += " <i class='fa fa-comment-o'></i> " + issue.comments;
@@ -81845,6 +81849,16 @@ function deleteItemFromDb(query) {
     })
 }
 
+function clearDB() {
+    return new Promise((resolve, reject) => {
+        let tx = db.transaction(["toolbox"], 'readwrite');
+        let store = tx.objectStore("toolbox");
+        let objStoreReq = store.clear();
+        objStoreReq.onsuccess = function(e) {
+            resolve(true);
+        }
+    })
+}
 
 
 
@@ -81856,6 +81870,7 @@ module.exports.saveContentToDb = saveContentToDb;
 module.exports.getContentFromDb = getContentFromDb;
 module.exports.deleteItemFromDb = deleteItemFromDb;
 module.exports.populateDb = populateDb;
+module.exports.clearDB = clearDB;
 
 },{"../models/initialize":404}],404:[function(require,module,exports){
 // This function is responsible for setting up the database
@@ -81942,12 +81957,18 @@ function deleteItem(query) {
 
 }
 
+function clearDB() {
+    return model.clearDB().then(() => {
+        return true;
+    })
+}
 
 
 //  EXPORTS
 module.exports.setItem = setItem;
 module.exports.getItem = getItem;
 module.exports.deleteItem = deleteItem;
+module.exports.clearDB = clearDB;
 
 },{"./crud":403}],406:[function(require,module,exports){
 // view-source:http://www.chartjs.org/samples/latest/charts/bar/vertical.html
@@ -82022,7 +82043,6 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
   var issuesUtil = require('../utils/staleIssuesUtil')
   var recentContribsUtil = require('../utils/recentContribsUtil/main')
   var filterUtil = require('../utils/filterUtil')
-
 
   const requestP = require('request-promise')
   var parse = require('parse-link-header')
@@ -82265,6 +82285,30 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     })
   }
 
+  function clearDB() {
+    return fetch('https://api.github.com/rate_limit')
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      let reqLeft = res['rate']['remaining'];
+      let resetTime = res['rate']['reset'];
+      let currTime = ((new Date()).getTime())/1000;
+      let timeDiff = (resetTime - currTime);
+      timeDiff = Math.floor(Math.floor(timeDiff)/60);
+      if(reqLeft >= 60) {
+        return model_utils.clearDB().then(() => {
+          Snackbar.show({pos: 'top-right', text: 'Database is refreshed!', textColor: "green" , showAction: false});
+          return true;
+        })
+      }
+      else {
+        Snackbar.show({pos: 'top-right', text: `You can generate the updated stats after ${timeDiff} minutes.`, textColor: "red" , showAction: false});
+        return false;
+      }
+    })
+  }
+
 
 
 
@@ -82287,7 +82331,8 @@ CommunityToolbox = function CommunityToolbox(org, repo) {
     dropdownInit: dropdownInit,
     ftoAuthorsUI: ftoAuthorsUI,
     showStaleIssues: showStaleIssues,
-    filter: filter
+    filter: filter,
+    clearDB: clearDB,
   }
 
 }

@@ -90,6 +90,16 @@ function deleteItemFromDb(query) {
     })
 }
 
+function clearDB() {
+    return new Promise((resolve, reject) => {
+        let tx = db.transaction(["toolbox"], 'readwrite');
+        let store = tx.objectStore("toolbox");
+        let objStoreReq = store.clear();
+        objStoreReq.onsuccess = function(e) {
+            resolve(true);
+        }
+    })
+}
 
 
 
@@ -101,3 +111,4 @@ module.exports.saveContentToDb = saveContentToDb;
 module.exports.getContentFromDb = getContentFromDb;
 module.exports.deleteItemFromDb = deleteItemFromDb;
 module.exports.populateDb = populateDb;
+module.exports.clearDB = clearDB;

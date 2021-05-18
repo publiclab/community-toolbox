@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*Scroll to top when arrow up clicked BEGIN*/
     $(window).scroll(function() {
+        // Setting for back to top button
         let height = $(window).scrollTop();
         if (height > 100) {
             $('#back2Top').fadeIn();
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $("html, body").animate({ scrollTop: 0 }, "slow");
         return false;
     });
-    /*Scroll to top when arrow up clicked END*/
+    
   
     $('.stale').hover((e) => {
         e.preventDefault();
@@ -176,6 +177,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             toolbox.showRecentContributors(org, repo, timeSpan, forMonths);
 
+        })
+
+        $('#refresh-button').click((e) => {
+            e.preventDefault();
+            toolbox.clearDB().then((isDBRefreshed) => {
+                if(isDBRefreshed) {
+                    location.reload();
+                }
+            })
         })
 
 
