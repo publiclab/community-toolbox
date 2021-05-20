@@ -26,7 +26,7 @@ To embed these on your site, use an `<iframe>` like this:
 For more options, see **Configuration** below.
 
 ## Org-wide issues
-
+Millions of people use the Community Tool Box each year to get help taking action, teaching, and training others in organizing for community development. Dive in to find help assessing community needs and resources, addressing social determinants of health, engaging stakeholders, action planning, building leadership, improving cultural competency, planning an evaluation, and sustaining your efforts over time.
 You can also use Community Toolbox to display issues for a given label across an entire organization. Use `all` for the `r` parameter to get the view of all repositories' data, like this:
 
 ```
