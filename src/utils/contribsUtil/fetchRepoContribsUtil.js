@@ -10,6 +10,9 @@ function fetchRepoContributorsUtil(org, repo) {
 	  }else {
 		resolve(fetchRepoContribs.fetchRepoContribs(org, repo));
 	  }
+	}).catch((err) => {
+		console.log("err travelling through fetchRepoContribsUtil");
+		throw err;
 	})
 }
 
