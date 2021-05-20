@@ -8,7 +8,7 @@ If you have contributed before, **consider leaving this one for someone new**, a
 
 ### 🤔 What you will need to know.
 
-Nothing. This issue is meant to welcome you to Open Source :) We are happy to walk you through the process.
+Nothing. This issue is meant to welcome you to Open Source :) We are happy to walk you through the process and Welcome you to open source community.
 
 ### 📋 Step by Step
 
