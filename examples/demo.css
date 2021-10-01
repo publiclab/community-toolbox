@@ -1,31 +1,463 @@
 /* https://github.com/theleagueof/league-spartan */
 @font-face {
     font-family: 'League Spartan';
-    src: url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.eot');
-    src: url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.eot?#iefix') format('embedded-opentype'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.woff2') format('woff2'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.woff') format('woff'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.ttf') format('truetype'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.svg#league_spartanbold') format('svg');
+      src: url('https://cdn.jsdelivr.net/npm/fontsource-league-spartan@3/files/league-spartan-latin-600-normal.woff2') format('woff2'),
+           url('https://cdn.jsdelivr.net/npm/fontsource-league-spartan@3/files/league-spartan-latin-600-normal.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }
 
 body {
   padding: 20px;
-  margin: 0 auto 200px;
+  margin: 0 auto 20px;
   max-width: 1000px;
   background: #f8f8fa;
 }
 
-h1, h2 {
+/* Navbar CSS */
+#logo-img{
+    height: 88px;
+}
+
+nav {
+    z-index: 100;
+}
+
+nav:after {
+    content: '';
+    clear: both;
+    display: table;
+}
+
+nav ul {
+    float: right;
+    list-style: none;
+    margin-right: 40px;
+    position: relative;
+}
+
+
+nav ul li {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+nav ul li a {
+    color: #a1a1a1;
+    text-decoration: none;
+    line-height: 70px;
+    font-size: 15px;
+    padding: 8px 15px;
+}
+
+nav ul li a:hover {
+    text-decoration: none;
+    color: #669dc9;
+    box-shadow: 0 0 5px #669dc9,
+        0 0 5px #669dc9;
+}  
+
+nav ul ul li{
+    background-color: #f8f8fa;
+}
+
+nav ul ul li a:hover {
+    color: #34A7C1;
+
+    box-shadow: none;
+}
+
+nav ul ul {
+    position: absolute;
+    top: 90px;
+    opacity: 0;
+    visibility: hidden;
+    transition: top .3s;
+    border-top: 3px solid #aaa3a3;
+}
+
+nav ul ul ul {
+    border-top: none;
+}
+
+nav ul li:hover>ul {
+    top: 70px;
+    opacity: 1;
+    visibility: visible;
+}
+
+nav ul ul li {
+    position: relative;
+    margin: 0px;
+    width: 200px;
+    float: none;
+    display: list-item;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+ul {
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+nav ul ul li a {
+    line-height: 50px;
+}
+/* Navbar ends  */
+
+
+
+/* dependency chart */
+#dependency-div{
+    text-align: center;
+}
+
+.dependency-chart{
+    border-radius: 8px;
+    width: 100%;
+}
+
+
+#forkMe-ribbon {
+    width: 10px;
+    height: 10px;
+    float: right;
+}
+
+#container {
+    width: 100%;
+    height: 5px;
+}
+
+h1, h2, .section h3 {
   font-family: 'League Spartan';
   color: #445;
   padding-top: 20px;
   text-align: center;
+  line-height: 1.3em;
+}
+
+.row.section  img {
+  max-width: 90%;
+}
+
+.row.section p {
+  margin-bottom: 30px;
 }
 
 .header {
   text-align: center;
 }
 
+#back2Top {
+    width: 50px;
+    line-height: 40px;
+    overflow: hidden;
+    z-index: 999;
+    display: none;
+    cursor: pointer;
+    transform: rotate(270deg);
+    position: fixed;
+    bottom: 50px;
+    right: 10px;
+    background-color: #DDD;
+    color: #555;
+    text-align: center;
+    font-size: 30px;
+    text-decoration: none;
+    border-radius: 1em;
+    box-shadow: -1.5px 1.5px 1.5px 1.5px lightgrey;
+    transition: box-shadow 150ms;
+}
+
+#back2Top:hover {
+    background-color: #DDF;
+    color: #000;
+    box-shadow: -1px 1px 1px 1px lightgrey;
+}
+#back2Top:active {
+    box-shadow: none;
+}
+
+#connectwithus {
+    margin: auto auto 5em;
+    text-align: center;
+    width: 100%;
+}
+
+#connectwithusbody {
+    margin: auto;
+    width: 80%;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: initial;
+}
+
+.links {
+    width: 20%;
+    margin: 10px;
+    text-align: center;
+}
+
+#options-bar {
+    display: flex;
+    margin-top: 2em;
+}
+
+.fto-authors {
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+}
+
+
+.recent-contrib-content-box {
+    padding: 19px;
+}
+
+.recent-contributors-body {
+    padding: 0;
+}
+
+/* DROPDOWNS */
+
+.dropdown-Repo {
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+#dropdown-container {
+    height: 300px;
+    width: 200px;
+    overflow: scroll;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.dropdown-items {
+    padding: 3px;
+}
+
+.dropdown-items:hover,
+.past p:hover,
+.sort-items:hover {
+    cursor: pointer;
+    background-color: rgba(221, 221, 255, 0.226);
+}
+
+.past {
+    margin-bottom: 5px;
+    height: 1.7em;
+    width: auto;
+    text-align: center;
+}
+
+.past p {
+    margin: 0;
+}
+
+.recent-contribs-show-dropdown,
+.recent-contribs-dropdown {
+    display: inline-block;
+    height: 100%;
+}
+.recent-contribs-dropdown {
+    margin-right: 10px;
+    text-align: center;
+}
+.recent-contribs-show-dropdown {
+    width: 12em;
+}
+
+.dropdown-toggle-RC {
+    display: inline-block;
+    text-align: center;
+    margin-top: 9px;
+}
+
+.dropdown-menu {
+    top: 80%;
+    background-color: #f6f8fa;
+}
+
+#dropdownMenuButtonRCS {
+    font-weight: bolder;
+}
+#dropdownMenuButtonRC,
+#dropdownMenuButtonRCS {
+    font-family: 'Open sans', serif;
+}
+
+#dropdownMenuButtonRC:hover,
+#dropdownMenuButtonRCS:hover {
+    cursor: pointer;
+    color: #111111;
+    font-weight: bold;
+}
+
+.filter-options {
+    border: 1px solid #d1d5da;
+    background-color: #f6f8fa;
+    color: #566069;
+    height: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+
+/* COPY TO CLIPBOARD BUTTON */
+
+.copybutton {
+    width: 30px;
+    height: 25px;
+    /* float: right; */
+    border-radius: 3px;
+    border: none;
+    box-shadow: 1px 1px 1px 1px #e2abab;
+    background-color: #fceeee;
+    transition: box-shadow 0.2s ease;
+}
+
+.copybutton i {
+    margin: 0 3px;
+    padding: 6px;
+}
+
+.copybutton:hover {
+    box-shadow: 0.6px 0.6px 0.5px 0.5px #e2abab;
+    cursor: pointer;
+}
+
+.copybutton:active {
+    box-shadow: 0.1px 0.1px 0.1px 0.1px #e2abab;
+}
+
+
+.pics img, .avatars img {
+    margin: 5px 5px;
+}
+
+/* STALE ISSUES LIST */
+
+.stale-container {
+    margin-bottom: 20px;
+}
+
+.stale-container {
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+
+}
+
+.stale {
+    overflow: scroll;
+    max-height: 1000px;
+}
+/* Languages list */
+.language{
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.conatiner-language{
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    padding: 27px;
+    background-color: white;
+    margin-bottom: 20px;
+    overflow: scroll;
+    font-size: 15px;
+    width: 33%;
+    position: relative;
+    display: block;
+}
+.repo-name{
+    width: 76%;
+}
+
+.badge{
+    border-radius: 5px;
+}
+
+/* language section ends */
+
+/*First Timers Issues List */
+
+.first-timers-only {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+}
+
+/* Candidates list */
+
+.candidates {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+}
+
+/* REFRESH BAR */
+#refresh-bar {
+    max-width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+    position: sticky;
+    bottom: 20px;
+    width: 100%;
+    border: 1px solid #434644;
+    border-radius: 1em;
+    background-color: rgba(231, 226, 219, 0.548);
+}
+/* 
+#refresh-status {
+    margin: 0;
+    padding: 10px;
+    font-weight: 600;
+    color: rgb(8, 80, 8);
+} */
+
+#refresh-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 2em;
+    background-color: #4DBFA6;
+    transition: transform 0.1s ease-out;
+}
+
+#refresh-button:hover {
+    transform: rotate(100deg) scale3d(0.97, 0.99, 0.96);
+    cursor: pointer;
+}
+
+
+/* MEDIA QUERIES */
+
+@media only screen and (max-width: 569px) {
+    .links {
+        margin: 10px 0;
+    }
+}

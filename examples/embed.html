@@ -13,6 +13,7 @@
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../node_modules/urlhash/urlHash.js"></script>
     <script src="../dist/community-toolbox.js" charset="utf-8"></script>
+    <link rel="manifest" href="../manifest.json">
 
   </head>
 
@@ -37,16 +38,27 @@
         var org = urlHash().getUrlHashParameter('o') || 'publiclab';
         var repo = urlHash().getUrlHashParameter('r') || 'plots2';
         var labels = urlHash().getUrlHashParameter('l');
+        var orgLabels = urlHash().getUrlHashParameter('l') || 'first-timers-only';
     
         toolbox = CommunityToolbox(org, repo);
 
-        toolbox.api.Issues
-               .getIssuesForRepo(org, repo, { qs: { labels: labels } })
-               .then(function(issues) {
-                 issues.forEach(function(issue) {
-                   toolbox.ui.insertIssue(issue, '.issues');
+        if(repo==='all') {
+          toolbox.getIssuesForOrg(org, { qs: { labels: orgLabels, per_page: 100 }})
+                 .then(function gotIssuesForOrg(orgIssuesObject) {
+                   let orgIssues = JSON.parse(orgIssuesObject).items;
+                   orgIssues.forEach(function mapToEachIssue(issue) {
+                     toolbox.ui.insertIssue(issue, '.issues');
+                   });
                  });
-               });
+        } else {
+          toolbox.api.Issues
+                .getIssuesForRepo(org, repo, { qs: { labels: labels, per_page: 100 } })
+                .then(function(issues) {
+                  issues.forEach(function(issue) {
+                    toolbox.ui.insertIssue(issue, '.issues');
+                  });
+                });
+        }
 
       })();
 

@@ -1,0 +1,20 @@
+{
+    "name": "Community Toolbox",
+    "short_name": "Community Toolbox",
+    "start_url": "/index.html",
+    "scope": ".",
+    "display": "standalone",
+    "background_color": "#fff",
+    "theme_color": "#3F51B5",
+    "description": "A platform for community growth.",
+    "dir": "ltr",
+    "lang": "en-US",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "./images/icons/icon-144.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        }
+    ]
+}
