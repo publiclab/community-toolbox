@@ -23,7 +23,7 @@
     "font-awesome": "~4.7.0",
     "jquery": "~3",
     "node-snackbar": "^0.1.15",
-    "parse-link-header": "^1.0.1",
+    "parse-link-header": "^2.0.0",
     "urlhash": "~0.1.1"
   },
   "devDependencies": {
