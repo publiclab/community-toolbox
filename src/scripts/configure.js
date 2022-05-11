@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', (e)=> {
         $('#readme-link').attr("href", `${data['README-link']}`)
         $('#chat1').attr("href", `${data['official-chatroom-link']}`)
         $('#chat2').attr("href", `${data['gitter-chatroom-link']}`)
-        $('#createissue').attr("href", `https://github.com/${data['org']}/${data['default-repository']}/issues/new`)
-        $('#support-issues').attr("href", `https://github.com/${data['org']}/${data['default-repository']}/labels/${data['support-issue-label']}'`)
+        $('#createissue').attr("href", `https://github.com/${data['org']}/${data['default-repository']}/issues/new/choose`)
+        $('#support-issues').attr("href", `https://github.com/${data['org']}/${data['default-repository']}/labels/${data['support-issue-label']}`)
         
         $('.newcomer-issues').each(function() {
             $(this).html(`${data['issue-label-for-newcomer']}`)
