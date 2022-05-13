@@ -188,8 +188,10 @@ document.addEventListener('DOMContentLoaded', function () {
             })
         })
 
-
-
+        $('.org-wide-issues').on('click', ()=>{
+            location.href = $('.org-wide-issues').attr("href")
+            location.reload();
+        })
   
     })();
 
