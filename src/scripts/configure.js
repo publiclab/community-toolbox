@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', (e)=> {
         $('#favicon').attr("href", `${data['favicon-link']}`)
         $('#forkMe-ribbon').attr("href", `${data['forkMe-ribbon-link']}`)
         $('#codeofconduct').attr("href", `${data['code-of-conduct-link']}`)
-        $('.org-wide-issues').attr("href", `${data['URL']}/#r=all`)
         $(".org-display-name").each(function() {
             $(this).html(`${data['org-heading-name']}`)
         })
