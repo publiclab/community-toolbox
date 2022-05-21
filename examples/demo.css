@@ -16,7 +16,7 @@ body {
 
 /* Navbar CSS */
 #logo-img{
-    height: 88px;
+    height: 100px;
 }
 
 nav {
@@ -452,7 +452,16 @@ h1, h2, .section h3 {
     transform: rotate(100deg) scale3d(0.97, 0.99, 0.96);
     cursor: pointer;
 }
-
+.sort-options{
+    width: auto;
+    height: 2em;
+    text-align: center;
+    cursor: pointer;
+}
+.side-display{
+    display: flex;
+    justify-content: space-between;
+}
 
 /* MEDIA QUERIES */
 
