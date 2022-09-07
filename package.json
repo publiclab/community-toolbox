@@ -18,7 +18,7 @@
     "url": "https://github.com/publiclab/community-toolbox/issues"
   },
   "dependencies": {
-    "bootstrap": "~3.4.0",
+    "bootstrap": "~5.2.1",
     "chart.js": "~2.9.3",
     "font-awesome": "~4.7.0",
     "jquery": "~3",
