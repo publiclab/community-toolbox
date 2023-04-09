@@ -20,7 +20,7 @@ A platform dedicated to community growth and getting insights on organization-wi
 2. [How to Use](./docs/usage.md)
 
 
-## Project Overview
+## 1. Project Overview
 
 The project structure of community toolbox is majorly divided into two groups,
 - `/examples` contains code responsible for front-end styles and related scripts,
@@ -74,6 +74,6 @@ There are 3 major categories to this:
 ![](./images/UI.png)
 
 
-### Up next
+### Continue next...
 
- - ### [Getting started guide](./docs/getting_started.md)
+### [Getting started guide](./docs/getting_started.md)
