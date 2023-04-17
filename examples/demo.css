@@ -471,3 +471,10 @@ h1, h2, .section h3 {
     }
 }
 
+@media(max-width:420px){
+    #forkMe-ribbon{
+        display: none;
+
+    }
+}
+
