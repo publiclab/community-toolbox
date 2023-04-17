@@ -122,7 +122,7 @@ nav ul ul li a {
 
 
 #forkMe-ribbon {
-    width: 10px;
+    /* width: 10px; */
     height: 10px;
     float: right;
 }
@@ -468,5 +468,12 @@ h1, h2, .section h3 {
 @media only screen and (max-width: 569px) {
     .links {
         margin: 10px 0;
+    }
+}
+
+@media(max-width:416px){
+    #forkMe-ribbon{       /*Removing the forkME Mobile devices */
+        display: none;
+
     }
 }
