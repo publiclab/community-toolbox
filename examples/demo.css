@@ -471,9 +471,3 @@ h1, h2, .section h3 {
     }
 }
 
-@media(max-width:416px){
-    #forkMe-ribbon{       /*Removing the forkME Mobile devices */
-        display: none;
-
-    }
-}
