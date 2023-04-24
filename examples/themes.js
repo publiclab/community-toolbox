@@ -81,7 +81,6 @@
         }else {
           localStorage.setItem('currentToggle', 'night');
           toggle = 'night';
-          alert('niiight');
           body.style.backgroundColor = '#111111';
           body.style.filter = 'invert(1)';
           body.style.transitionProperty = 'filter';
