@@ -4,7 +4,7 @@
   $(document).ready(() => {
     let body=document.querySelector('body');
     let toggleButton=document.getElementById('myonoffswitch');
-    let toggle = localStorage.getItem('currentToggle');
+    let toggle = localStorage.getItem('currentToggle') || 'day';
 
     // Sets images' theme accordingly when the page is loaded
     setTimeout(()=> {
@@ -57,10 +57,10 @@
 
       setTimeout(()=> {
         let images=document.querySelectorAll("img");
-        let check=localStorage.getItem('currentToggle');
         
-        if(check==="night") {
+        if(toggle==="night") {
           localStorage.setItem('currentToggle', 'day');
+          toggle = 'day';
           body.style.backgroundColor = '#f8f8fa';
           body.style.filter = 'invert(0)';
           body.style.transitionProperty = 'filter';
@@ -80,6 +80,8 @@
 
         }else {
           localStorage.setItem('currentToggle', 'night');
+          toggle = 'night';
+          alert('niiight');
           body.style.backgroundColor = '#111111';
           body.style.filter = 'invert(1)';
           body.style.transitionProperty = 'filter';
