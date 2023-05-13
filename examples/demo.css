@@ -1,12 +1,8 @@
 /* https://github.com/theleagueof/league-spartan */
 @font-face {
     font-family: 'League Spartan';
-    src: url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.eot');
-    src: url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.eot?#iefix') format('embedded-opentype'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.woff2') format('woff2'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.woff') format('woff'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.ttf') format('truetype'),
-         url('https://raw.githubusercontent.com/theleagueof/league-spartan/master/_webfonts/leaguespartan-bold.svg#league_spartanbold') format('svg');
+      src: url('https://cdn.jsdelivr.net/npm/fontsource-league-spartan@3/files/league-spartan-latin-600-normal.woff2') format('woff2'),
+           url('https://cdn.jsdelivr.net/npm/fontsource-league-spartan@3/files/league-spartan-latin-600-normal.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }
@@ -16,6 +12,124 @@ body {
   margin: 0 auto 20px;
   max-width: 1000px;
   background: #f8f8fa;
+}
+
+/* Navbar CSS */
+#logo-img{
+    height: 100px;
+}
+
+nav {
+    z-index: 100;
+}
+
+nav:after {
+    content: '';
+    clear: both;
+    display: table;
+}
+
+nav ul {
+    float: right;
+    list-style: none;
+    margin-right: 40px;
+    position: relative;
+}
+
+
+nav ul li {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+nav ul li a {
+    color: #a1a1a1;
+    text-decoration: none;
+    line-height: 70px;
+    font-size: 15px;
+    padding: 8px 15px;
+}
+
+nav ul li a:hover {
+    text-decoration: none;
+    color: #669dc9;
+    box-shadow: 0 0 5px #669dc9,
+        0 0 5px #669dc9;
+}  
+
+nav ul ul li{
+    background-color: #f8f8fa;
+}
+
+nav ul ul li a:hover {
+    color: #34A7C1;
+
+    box-shadow: none;
+}
+
+nav ul ul {
+    position: absolute;
+    top: 90px;
+    opacity: 0;
+    visibility: hidden;
+    transition: top .3s;
+    border-top: 3px solid #aaa3a3;
+}
+
+nav ul ul ul {
+    border-top: none;
+}
+
+nav ul li:hover>ul {
+    top: 70px;
+    opacity: 1;
+    visibility: visible;
+}
+
+nav ul ul li {
+    position: relative;
+    margin: 0px;
+    width: 200px;
+    float: none;
+    display: list-item;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+ul {
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+nav ul ul li a {
+    line-height: 50px;
+}
+/* Navbar ends  */
+
+
+
+/* dependency chart */
+#dependency-div{
+    text-align: center;
+}
+
+.dependency-chart{
+    border-radius: 8px;
+    width: 100%;
+}
+
+
+#forkMe-ribbon {
+    width: 10px;
+    height: 10px;
+    float: right;
+}
+
+#container {
+    width: 100%;
+    height: 5px;
 }
 
 h1, h2, .section h3 {
@@ -78,7 +192,7 @@ h1, h2, .section h3 {
     margin: auto;
     width: 80%;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     flex-shrink: initial;
 }
 
@@ -115,6 +229,7 @@ h1, h2, .section h3 {
 
 .dropdown-Repo {
     margin-left: auto;
+    margin-right: 10px;
 }
 
 #dropdown-container {
@@ -153,7 +268,7 @@ h1, h2, .section h3 {
     height: 100%;
 }
 .recent-contribs-dropdown {
-    width: 10%;
+    margin-right: 10px;
     text-align: center;
 }
 .recent-contribs-show-dropdown {
@@ -244,7 +359,108 @@ h1, h2, .section h3 {
 
 .stale {
     overflow: scroll;
-    height: 1000px;
+    max-height: 1000px;
+}
+/* Languages list */
+.language{
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.conatiner-language{
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    padding: 27px;
+    background-color: white;
+    margin-bottom: 20px;
+    overflow: scroll;
+    font-size: 15px;
+    width: 33%;
+    position: relative;
+    display: block;
+}
+.repo-name{
+    width: 76%;
+}
+
+.badge{
+    border-radius: 5px;
+}
+
+/* language section ends */
+
+/*First Timers Issues List */
+
+.first-timers-only {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+}
+
+/* Candidates list */
+
+.candidates {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.493);
+    border-radius: 10px;
+    overflow: scroll;
+    max-height: 1000px;
+}
+
+/* REFRESH BAR */
+#refresh-bar {
+    max-width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+    position: sticky;
+    bottom: 20px;
+    width: 100%;
+    border: 1px solid #434644;
+    border-radius: 1em;
+    background-color: rgba(231, 226, 219, 0.548);
+}
+/* 
+#refresh-status {
+    margin: 0;
+    padding: 10px;
+    font-weight: 600;
+    color: rgb(8, 80, 8);
+} */
+
+#refresh-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 2em;
+    background-color: #4DBFA6;
+    transition: transform 0.1s ease-out;
+}
+
+#refresh-button:hover {
+    transform: rotate(100deg) scale3d(0.97, 0.99, 0.96);
+    cursor: pointer;
+}
+.sort-options{
+    width: auto;
+    height: 2em;
+    text-align: center;
+    cursor: pointer;
+}
+.side-display{
+    display: flex;
+    justify-content: space-between;
 }
 
 /* MEDIA QUERIES */

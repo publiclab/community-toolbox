@@ -27,10 +27,23 @@ describe('staleIssuesUtil.js', () => {
 
     // Database operations are mocked
 
-    // 1. setItem is mocked
-    modelUtils.setItem = jest.fn(() => {
-      return true;
-    });
+		// 2. getItem function is mocked and its behavior depends on the parameter it is called with
+		model_utils.getItem = jest.fn();
+		when(model_utils.getItem)
+		.calledWith("staleIssues-time")
+		.mockReturnValue(() => {
+            return new Promise((resolve, reject) => {
+				let curr = (new Date).getTime();
+                resolve(curr);
+            })
+        })
+		.calledWith("staleIssues")
+		.mockReturnValue(() => {
+            return new Promise((resolve,reject) => {
+                resolve(null);
+            })
+		})
+	})
 
     // 2. getItem function is mocked and its behavior depends on the parameter it is called with
     modelUtils.getItem = jest.fn();
@@ -52,11 +65,24 @@ describe('staleIssuesUtil.js', () => {
 
   // ====================== TESTS ========================
 
-  it('fetches stale issues list', () => {
-    return staleIssuesUtil.getStaleIssues(org, repo).then(data => {
-      expect(data).toBeDefined();
-      expect(Array.isArray(data)).toBe(true);
-      expect(data.length).toBeGreaterThanOrEqual(0);
-    });
-  });
-});
+	test('fetches repo stale issues list', () => {
+		return staleIssuesUtil.getRepoStaleIssues(org, repo)
+		.then((data) => {
+			expect(data).toBeDefined();
+			expect(Array.isArray(data)).toBe(true);
+			expect(data.length).toBeGreaterThanOrEqual(0);
+		})
+	})
+
+	it('fetches stale issues list', () => {
+		return staleIssuesUtil.getStaleIssues(org, repo)
+		.then((data) => {
+			expect(data).toBeDefined();
+			expect(Array.isArray(data)).toBe(true);
+			expect(data.length).toBeGreaterThanOrEqual(0);
+		})
+	})
+
+
+
+})

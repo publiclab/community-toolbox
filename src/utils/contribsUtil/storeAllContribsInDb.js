@@ -1,29 +1,29 @@
-const fetchRepoContributorsUtil = require('./fetchRepoContribsUtil');
-const modelUtils = require('../../models/utils');
+const fetchRepoContributorsUtil = require("./fetchRepoContribsUtil");
+const modelUtils = require("../../models/utils");
 
 // This runs at the very start of page load and stores all the repositories and all the
 // contributors in the database on initial page load
-function storeAllContribsInDb (org) {
-  const AllContributors = [];
-  const promises = [];
-  var contributorSet = new Set([]);
+function storeAllContribsInDb(org) {
+  let AllContributors = [];
+  let promises = [];
+  let contributorSet = new Set([]);
   return new Promise((resolve, reject) => {
-    modelUtils
-      .getItem('allContributors')
-      .then(allContributors => {
+    model_utils
+      .getItem("allContributors")
+      .then((allContributors) => {
         // If all contributors list is not in the database, it makes a fresh call to Github API
         if (
           allContributors == null ||
-          allContributors === undefined ||
-          allContributors.length === 0
+          allContributors == undefined ||
+          allContributors.length == 0
         ) {
-          return modelUtils.getItem('repos').then(res => {
-            const splicedRepos = res.splice(0, 20);
-            splicedRepos.map(function mappingToEachRepo (Repo, i) {
-              const promise = fetchRepoContributorsUtil
+          return model_utils.getItem("repos").then((res) => {
+            let splicedRepos = res.splice(0, 20);
+            splicedRepos.map(function mappingToEachRepo(Repo, i) {
+              let promise = fetchRepoContributorsUtil
                 .fetchRepoContributorsUtil(org, Repo)
-                .then(function gotRepoContributorsInStorage (contributors) {
-                  if (contributors !== undefined && contributors.length > 0) {
+                .then(function gotRepoContributorsInStorage(contributors) {
+                  if (contributors != undefined && contributors.length > 0) {
                     contributors.map((contributor, i) => {
                       if (!contributorSet.has(contributor.login)) {
                         contributorSet.add(contributor.login);
@@ -32,7 +32,7 @@ function storeAllContribsInDb (org) {
                     });
                   }
                 })
-                .catch(err => {
+                .catch((err) => {
                   throw err;
                 });
               promises.push(promise);
@@ -40,22 +40,21 @@ function storeAllContribsInDb (org) {
             return Promise.all(promises).then(() => {
               // Storing array containing all the contributors' list across 20 most active
               // repos to database
-              modelUtils.setItem('allContributors', AllContributors);
+              model_utils.setItem("allContributors", AllContributors);
               // Saves current time in epoch, used for flushing out the stored data
               // after 24 hours
-              const currentTime = new Date().getTime();
-              modelUtils.setItem('allContributorsExpiry', currentTime);
+              let currentTime = new Date().getTime();
+              model_utils.setItem("allContributorsExpiry", currentTime);
               resolve(AllContributors);
             });
           });
-          // eslint-disable-next-line brace-style
         }
         // If all contributors list is in the database, it simply returns that as a resolved promise
         else {
           resolve(allContributors);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err);
       });
   });
@@ -63,5 +62,5 @@ function storeAllContribsInDb (org) {
 
 // EXPORTS
 module.exports = {
-  storeAllContribsInDb: storeAllContribsInDb
+  storeAllContribsInDb: storeAllContribsInDb,
 };

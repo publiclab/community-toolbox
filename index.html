@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 
   <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="content-type" content="text/html; charset=UTF8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <!-- For supporting different browsers -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -19,8 +19,14 @@
     <link rel="shortcut icon"  id="favicon" type="image/png" href="https://i.publiclab.org/system/images/photos/000/000/354/medium/Boots-ground-02.png"/>
     <link rel="stylesheet" type="text/css" href="./node_modules/node-snackbar/dist/snackbar.min.css" />
     <link rel="manifest" href="./manifest.json">
-    <script src="./src/scripts/pwainit.js"></script>
 
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="examples/demo.css">
+    <link rel="stylesheet" href="examples/themes.css">
+
+    <script src="./src/scripts/pwainit.js"></script>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -32,41 +38,84 @@
     <script src="examples/themes.js"></script>
     <script src="src/scripts/configure.js"></script>
     <script src="examples/copyToClipboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
 
   </head>
 
   <body>
+    <div id='container'>
+      <div id='forkMe-ribbon'><a href="https://github.com/publiclab/community-toolbox" >
+        <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"alt="Fork me on GitHub"></a>
+      </div>
+    </div> 
+    <nav class="navbar">
+        <img id="logo-img" src="./images/Boots-ground-02.png" alt="publiclab-logo" >
+        <ul>
+            <li class="list-i">
+                <a  href="#">LEARN</a>
+                <ul>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/blob/master/README.md">Get Started</a>
+                    </li>
+                    <li><a class="line" href="https://github.com/publiclab/plots2/labels/support">Assist Someone</a>
+                    </li>
+                    <li><a class="line"
+                            href="https://publiclab.org/notes/warren/10-31-2016/create-a-welcoming-first-timers-only-issue-to-invite-new-software-contributors">Create
+                            Your FTO Issue</a></li>
+                    <li><a class="line" href="#dependency-div">Dependency Chart</a></li>
+                </ul>
+            </li>
+            <li class="list-i">
+                <a  href="#">ISSUES</a>
+                <ul>
+                    <li><a class="line" href="#fto-issue-D">FTO Issues</a></li>
+                    <li><a class="line" href="#stale-head">Stale Issues</a></li>
+                </ul>
+            </li>
+            <li class="list-i">
+                <a  href="#">PARTICIPANTS</a>
+                <ul>
+                    <li><a class="line" href="#candidate">Candidates</a></li>
+                    <li><a class="line" href="#fto-author">FTO Authors</a></li>
+                    <li><a class="line" href="#recent-contributor">Recent contributors</a></li>
+                    <li><a class="line" href="#contributor">Contributors</a></li>
+                    <li><a class="line" href="#lang-sec">Languages Used</a></li>
+                </ul>
+            </li>
+            <li class="list-i"><a  class="line" href="https://publiclab.org/chat">CHATROOM</a></li>
+            <li class="list-i">
+                <a  class="line" href="#">MORE</a>
+                <ul>
+                    <li><a class="line" href="https://github.com/publiclab/community-toolbox">Source Code</a></li>
+                    <li><a class="line" href="https://publiclab.org/conduct">Conduct</a></li>
+                    <li><a class="line" href="https://guides.github.com/activities/hello-world/">New To GitHub?</a></li>
+                    <li><a class="line" href="https://github.com/search?q=label%3Afirst-timers-only+is%3Aissue+is%3Aopen+user%3Apubliclab&ref=simplesearch">Selection of
+                            Issues</a></li>
+                    <li><a class="line"
+                            href="https://publiclab.org/notes/warren/11-08-2016/help-public-lab-s-software-grow-by-joining-a-supportive-team">Support</a>
+                    </li>
+                    <li><a class="line" href="https://github.com/search?q=label%3Ahelp-wanted+is%3Aissue+is%3Aopen+user%3Apubliclab&ref=simplesearch">Challenges</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <!-- Navbar ends -->
 
-    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="examples/demo.css">
-    <link rel="stylesheet" href="examples/themes.css">
-
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" />
-    <a id="forkMe-ribbon" class="github-fork-ribbon" href="https://github.com/publiclab/community-toolbox" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
-
-
-    <div class="container-fluid" style="display: flex;flex-direction: column;align-items: center;">
-
+    <div class="container-fluid">
       <header class="text-center">
         <h1>Welcome to <span class=" org-display-name">Public Lab</span>'s coding community!</h1>
       </header>
 
-      <!-- <hr /> -->
-
       <div id="options-bar">
-
         <div class="onoffswitch">
           <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
           <label class="onoffswitch-label" for="myonoffswitch">
-              <span class="onoffswitch-inner"></span>
-              <span class="onoffswitch-switch"></span>
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
           </label>
         </div>
-
 
         <!-- DROPDOWN STARTS -->
         <div class="dropdown-Repo dropdown">
@@ -75,15 +124,21 @@
             Select repository
           </button>
           <div id="dropdown-container" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	    <p class="dropdown-items">all</p>	
           </div>
         </div>
         <!-- DROPDOWN ENDS -->
+        
+        <!-- REFRESH BUTTON -->
+        <p id="refresh-button">
+          <img src="images/refreshbutton.png" alt="Refresh Button" title="Refresh DB" width="30px" height="30px">
+        </p>
 
       </div>
 
       <hr />
 
-      <h4 style="text-align:center;font-weight:bold;">We're so happy to meet you! This page is to welcome new contributors. </h4>
+      <h4 class="text-center"><b>We're so happy to meet you! This page is to welcome new contributors.</b></h4>
 
       <hr />
 
@@ -94,16 +149,16 @@
 
           <p>Our community aspires to be a respectful place. Please read and abide by our <a  id="codeofconduct" href="https://publiclab.org/conduct">Code of Conduct</a>.</p>
 
-	  <p>To explore issues across the entire organization, check out <a  id="org-wide-issues" href="https://code.publiclab.org/#r=all"><span class="org-display-name">Public Lab</span> issues</a>.</p>
+	  <p>To explore issues across the entire organization, check out <a  class="org-wide-issues" href="/#r=all"><span class="org-display-name">Public Lab</span> issues</a>.</p>
         </div>
 
         <div class="col-md-6">
 
-          <p>If you're new, and looking to get involved, you're in the right place. Check out <a  id="readme-link" href="https://github.com/publiclab/plots2/blob/master/README.md">our README</a> to get started.</p>
+          <p>If you're new, and looking to get involved, you're in the right place. Check out <a  id="readme-link" href="https://github.com/publiclab/plots2/blob/main/README.md">our README</a> to get started.</p>
 
           <p>If you're new to GitHub, using branches, or opening pull requests, <a href="https://guides.github.com/activities/hello-world/">read here for an introduction</a>.</p>
 
-          <p>If you have trouble, check out <a  id="chat1" href="https://publiclab.org/chat">our chatroom</a> to ask for help, or you can talk directly with the other contributors on <a  id="chat2" href="https://gitter.im/publiclab/publiclab">our Gitter chatroom</a> or just <a  id="createissue" href="https://github.com/publiclab/plots2/issues/new">open an issue</a> and we'll write back!</p>
+          <p>If you have trouble, check out <a  id="chat1" href="https://publiclab.org/chat">our chatroom</a> to ask for help, or you can talk directly with the other contributors on <a  id="chat2" href="https://gitter.im/publiclab/publiclab">our Gitter chatroom</a> or just <a  id="createissue" href="https://github.com/publiclab/plots2/issues/new/choose">open an issue</a> and we'll write back!</p>
 
 
         </div>
@@ -114,11 +169,11 @@
 
       <h2>Learn our process</h2>
 
-      <p style="text-align: center;">We have a welcoming "workflow" that supports you in getting started, then helps you reach out to welcome someone else in turn!</p>
+      <p class="text-center">We have a welcoming "workflow" that supports you in getting started, then helps you reach out to welcome someone else in turn!</p>
 
       <br />
 
-      <div class="row section" style="text-align: center;">
+      <div class="row section"  class="text-center">
 
         <div class="col-md-4">
 
@@ -147,14 +202,17 @@
       </div>
 
       <br />
+      
 
-      <h2><span class=" newcomer-issues">first timers only</span> issues</h2>
+
+      <h2><span class=" newcomer-issues" id="fto-issue-D">first timers only</span> issues</h2>
+
 
       <p>Here are <a  id="newcomer-issues-link" href="https://github.com/publiclab/plots2/labels/first-timers-only">a selection</a> of issues we've <a class=" guidelines-link" href="https://publiclab.org/n/13667">made especially for first-timers</a>. We're here to help, so just ask if one looks interesting, by leaving a comment!</p>
 
       <div class="row first-timers-only"></div>
 
-      <p>No issues left? See <a href="/#r=all">issues across this org here</a>, and see the almost-as-good "<span class=" newcomer-like-issues">candidates</span>" below. Or learn how to <a href="">prepare new <b><span  id="issue-label-for-newcomer">first-timers-only</span> </b> issues here</a>.</p>
+      <p>No issues left? See <a class="org-wide-issues" href="/#r=all">issues across this org here</a>, and see the almost-as-good "<span class=" newcomer-like-issues">candidates</span>" below. Or learn how to <a href="https://publiclab.org/notes/warren/10-31-2016/create-a-welcoming-first-timers-only-issue-to-invite-new-software-contributors">prepare new <b><span  id="issue-label-for-newcomer">first-timers-only</span> </b> issues here</a>.</p>
 
       <h2 id="whats-next">What's next?</h2>
 
@@ -162,7 +220,7 @@
 
       <p>In "<span class=" newcomer-like-issues">candidates</span>" below, there are some issues we think would make good <b><span class=" newcomer-issues">first-timers-only</span></b> issues, but haven't finished formatting. They could make a good second-time contribution!</p>
 
-      <h2 class=" newcomer-like-issues">Candidates</h2>
+      <h2 class=" newcomer-like-issues" id="candidate">Candidates</h2>
 
       <p>We put a lot of work into our <span class=" newcomer-issues">first-timer-only</span> issues. But if we haven't been able to prepare any recently, here's a set of <span class=" newcomer-like-issues">candidates</span> we haven't yet had time to prepare, but which have most of the needed information. (Also: Learn how to <a  href="https://publiclab.org/n/13667">help turn these into <span class=" newcomer-issues">first-timers-only</span> issues</a> to help keep welcoming people in!</p>
 
@@ -178,11 +236,13 @@
 
       <hr />
 
-      <h2>FTO Authors</h2>
+      <h2 id="fto-author">FTO Authors</h2>
 
       <p>These people took some time out of their busy schedule to help in welcoming newcomers by creating FTO issues: </p>
 
-      <div class="fto-authors"></div>
+      <div class="fto-authors">
+        <p class="usernames"></p><hr /><p class="avatars"></p>
+      </div>
 
       <h2 id="stale-head">Stale Issues</h2>
 
@@ -193,10 +253,10 @@
       </div>
 
 
-      <h2 class="recent-contributors-head">Recent Contributors</h2>
+      <h2 id="recent-contributors" class="recent-contributors-head">Recent Contributors</h2>
 
       <div class="recent-contributors">
-        <div style="display: flex; justify-content: space-between">
+        <div class="side-display">
           <p>Below is the list of active contributors, </p>
           <div title="copy to clipboard" class="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
@@ -209,13 +269,13 @@
                   <strong>Sort <span><i class="fa fa-angle-down"></i></span></strong>
                 </div>
                 <div class="dropdown-menu" style="height: auto; width: auto;" aria-labelledby="dropdownMenuButtonRC">
-                  <div class="sort-options" id="alphabetic" style="width: auto; height: 2em; text-align: center; cursor: pointer;">
+                  <div class="sort-options" id="alphabetic">
                     <p class="dropdown-item sort-items d-inline-block mx-auto">alphabetical</p>
                   </div>
-                  <div class="sort-options" id="mostrecentfirst" style="width: auto; height: 2em; text-align: center; cursor: pointer;">
+                  <div class="sort-options" id="mostrecentfirst">
                     <p class="dropdown-item sort-items d-inline-block mx-auto">most recent first</p>
                   </div>
-                  <div class="sort-options" id="leaderboard" style="width: auto; height: 2em; text-align: center; cursor: pointer;">
+                  <div class="sort-options" id="leaderboard">
                     <p class="dropdown-item sort-items d-inline-block mx-auto">leaderboard</p>
                   </div>
                 </div>
@@ -264,27 +324,40 @@
         </div>
       </div>
 
-      <h2 class="contributors-head">Contributors</h2>
+      <h2 class="contributors-head" id="contributer">Contributors</h2>
+
       <div class="contribs">
-        <div style="display: flex; justify-content: space-between">
+        <div class="side-display">
           <p>This project was made possible by many contributors, including the following GitHub users:</p>
           <div title="copy to clipboard" class="copybutton"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
 
-        <div class="well contributors"><div id="spinner-icon" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars text-center"></p></div>
+        <div class="well contributors"><div id="spinner-icon" class="text-center"><i class="fa fa-spinner fa-spin"></i></div><p class="usernames"></p><hr /><p class="avatars text-center"></p></div>
       </div>
 
+
+      <!-- Langauge section -->
+      <h2 id="lang-sec"><span id="fto-issue">Languages</span> Used</h2>
+      <p>This is the section of all the repositories of <a href="https://github.com/publiclab">PUBLIC LAB</a>  we've made especially for first-timers. We're here to help, so just click on it if one looks interesting.</p>
+      <div id="tbody" class="row language "></div>
+      <!-- langauge section ends -->
+
+      <!-- Dependency chart  -->
+      <div id="dependency-div">
+      <img  class="dependency-chart" src="./images/dependency-chart.webp" alt="dependency-chart">
+    </div>
+    <!-- Dependency chart end -->
+
+
 	  <div class="row" id="connectwithus">
-		<h2 class="text-center d-block">Connect with us</h2>
-		<!-- <p>You can connect with us on any of these platforms:</p> -->
-	  <div id="connectwithusbody">
-		  <a class="col-md-2 links " href="https://www.facebook.com/PublicLab/" title="Facebook" ><i class="fa fa-facebook fa-3x"></i> </a>
-		  <a class="col-md-2 links " href="https://twitter.com/PublicLab?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" title="Twitter" ><i class="fa fa-twitter fa-3x"></i> </a>
-		  <a class="col-md-2 links " href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github fa-3x"></i> </a>
-		  <a class="col-md-2 links " href="https://publiclab.org" title="Publiclab Website"><i class="fa fa-globe fa-3x"></i></a>
-	  </div>
-	  </div>
-    </!-->
+      <h2 class="text-center d-block">Connect with us</h2>
+      <div id="connectwithusbody">
+        <a class="col-md-2 links " href="https://www.facebook.com/PublicLab/" title="Facebook" ><i class="fa fa-facebook fa-3x"></i> </a>
+        <a class="col-md-2 links " href="https://twitter.com/PublicLab?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" title="Twitter" ><i class="fa fa-twitter fa-3x"></i> </a>
+        <a class="col-md-2 links " href="https://github.com/publiclab" title="Organization" ><i class="fa fa-github fa-3x"></i> </a>
+        <a class="col-md-2 links " href="https://publiclab.org" title="Publiclab Website"><i class="fa fa-globe fa-3x"></i></a>
+      </div>
+    </div>
 
     <footer>
       <div class="row">
