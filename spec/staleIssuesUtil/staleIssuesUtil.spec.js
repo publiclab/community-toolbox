@@ -6,7 +6,7 @@ const { when } = require('jest-when');
 const { getFakeIssuesList } = require('../helper');
 
 describe('staleIssuesUtil.js', () => {
-  let org, repo, issuesList;
+  let issuesList;
 
   beforeAll(() => {
     // Initializing variables
@@ -27,62 +27,58 @@ describe('staleIssuesUtil.js', () => {
 
     // Database operations are mocked
 
-		// 2. getItem function is mocked and its behavior depends on the parameter it is called with
-		model_utils.getItem = jest.fn();
-		when(model_utils.getItem)
-		.calledWith("staleIssues-time")
-		.mockReturnValue(() => {
-            return new Promise((resolve, reject) => {
-				let curr = (new Date).getTime();
-                resolve(curr);
-            })
-        })
-		.calledWith("staleIssues")
-		.mockReturnValue(() => {
-            return new Promise((resolve,reject) => {
-                resolve(null);
-            })
-		})
-	})
-
     // 2. getItem function is mocked and its behavior depends on the parameter it is called with
-    modelUtils.getItem = jest.fn();
-    when(modelUtils.getItem)
+    model_utils.getItem = jest.fn();
+    when(model_utils.getItem)
       .calledWith('staleIssues-time')
-      .mockReturnValueOnce(() => {
+      .mockReturnValue(() => {
         return new Promise((resolve, reject) => {
-          const curr = new Date().getTime();
+          const curr = (new Date()).getTime();
           resolve(curr);
         });
       })
       .calledWith('staleIssues')
-      .mockReturnValueOnce(() => {
+      .mockReturnValue(() => {
         return new Promise((resolve, reject) => {
           resolve(null);
         });
       });
   });
 
-  // ====================== TESTS ========================
+  // 2. getItem function is mocked and its behavior depends on the parameter it is called with
+  modelUtils.getItem = jest.fn();
+  when(modelUtils.getItem)
+    .calledWith('staleIssues-time')
+    .mockReturnValueOnce(() => {
+      return new Promise((resolve, reject) => {
+        const curr = new Date().getTime();
+        resolve(curr);
+      });
+    })
+    .calledWith('staleIssues')
+    .mockReturnValueOnce(() => {
+      return new Promise((resolve, reject) => {
+        resolve(null);
+      });
+    });
+});
 
-	test('fetches repo stale issues list', () => {
-		return staleIssuesUtil.getRepoStaleIssues(org, repo)
-		.then((data) => {
-			expect(data).toBeDefined();
-			expect(Array.isArray(data)).toBe(true);
-			expect(data.length).toBeGreaterThanOrEqual(0);
-		})
-	})
+// ====================== TESTS ========================
 
-	it('fetches stale issues list', () => {
-		return staleIssuesUtil.getStaleIssues(org, repo)
-		.then((data) => {
-			expect(data).toBeDefined();
-			expect(Array.isArray(data)).toBe(true);
-			expect(data.length).toBeGreaterThanOrEqual(0);
-		})
-	})
+test('fetches repo stale issues list', () => {
+  return staleIssuesUtil.getRepoStaleIssues(org, repo)
+    .then((data) => {
+      expect(data).toBeDefined();
+      expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBeGreaterThanOrEqual(0);
+    });
+});
 
-
-
-})
+it('fetches stale issues list', () => {
+  return staleIssuesUtil.getStaleIssues(org, repo)
+    .then((data) => {
+      expect(data).toBeDefined();
+      expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBeGreaterThanOrEqual(0);
+    });
+});
