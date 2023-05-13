@@ -1,30 +1,24 @@
 var model = require('./crud');
 
-
-function setItem(queryKey, queryContent) {
-    model.saveContentToDb(queryKey, queryContent);
-    return;
+function setItem (queryKey, queryContent) {
+  model.saveContentToDb(queryKey, queryContent);
 }
 
-function getItem(query) {
-    return model.getContentFromDb(query).then((result) => {
-        return result;
-    });
+function getItem (query) {
+  return model.getContentFromDb(query).then((result) => {
+    return result;
+  });
 }
 
-function deleteItem(query) {
-    return model.deleteItemFromDb(query).then(() => {
-        return;
-    })
-
+function deleteItem (query) {
+  return model.deleteItemFromDb(query).then(() => {});
 }
 
-function clearDB() {
-    return model.clearDB().then(() => {
-        return true;
-    })
+function clearDB () {
+  return model.clearDB().then(() => {
+    return true;
+  });
 }
-
 
 //  EXPORTS
 module.exports.setItem = setItem;

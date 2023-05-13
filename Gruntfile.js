@@ -1,40 +1,38 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
+  grunt.loadNpmTasks('grunt-browserify');
 
-    grunt.loadNpmTasks('grunt-browserify');
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  grunt.initConfig({
 
-    grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
 
-      pkg: grunt.file.readJSON('package.json'),
-
-      watch: {
-          options : {
-              livereload: true
-          },
-          source: {
-              files: [
-                  'src/*/*.js',
-                  'Gruntfile.js'
-              ],
-              tasks: [ 'build:js' ]
-          }
+    watch: {
+      options: {
+        livereload: true
       },
-
-      browserify: {
-          dist: {
-            src: ['src/scripts/community-toolbox.js'],
-            dest: 'dist/community-toolbox.js'
-          }
+      source: {
+        files: [
+          'src/*/*.js',
+          'Gruntfile.js'
+        ],
+        tasks: ['build:js']
       }
+    },
 
-    });
+    browserify: {
+      dist: {
+        src: ['src/scripts/community-toolbox.js'],
+        dest: 'dist/community-toolbox.js'
+      }
+    }
 
-    /* Default (development): Watch files and build on change. */
-    grunt.registerTask('default', ['watch']);
+  });
 
-    grunt.registerTask('build', [
-        'browserify:dist'
-    ]);
+  /* Default (development): Watch files and build on change. */
+  grunt.registerTask('default', ['watch']);
 
+  grunt.registerTask('build', [
+    'browserify:dist'
+  ]);
 };
