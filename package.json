@@ -2,7 +2,7 @@
   "name": "community-toolbox",
   "version": "1.0.0",
   "description": "Tools to understand and welcome people into a contributor community",
-  "main": "src/community-toolbox.js",
+  "main": "src/scripts/community-toolbox.js",
   "scripts": {
     "start": "http-server -c-1 -p 8000",
     "test": "jest"
