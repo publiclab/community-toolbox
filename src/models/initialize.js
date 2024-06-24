@@ -34,6 +34,15 @@ function dbInit() {
             }
     
         }
+        + require('../../node_modules/urlhash/urlHash');
++ let org = urlHash().getUrlHashParameter('o') || 'publiclab';
++ let getReposUtil = require('../utils/getAllContribsUtility')
+
++ window.addEventListener('DOMContentLoaded', () => {
++ getReposUtil.getAllRepos(org);
++ initialize();
++ });
+
     
         // Fires once the database is opened (and onupgradeneeded completes, if
         // onupgradeneeded was called)
