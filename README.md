@@ -2,7 +2,7 @@
 
 ## Community Toolbox
 
-A platform dedicated to community growth and getting insights on organization-wide activities.
+A platform dedicated to community growth and providing insights into organization-wide activities.
 
 [![Code of Conduct](https://img.shields.io/badge/code-of%20conduct-green.svg)](https://publiclab.org/conduct)
 [![first-timers-only-friendly](http://img.shields.io/badge/first--timers--only-friendly-lightgray.svg?style=flat-square)](https://code.publiclab.org#r=all)
