@@ -1,13 +1,14 @@
 Getting Started
 ====
 
-So you're almost there, just some info before you start building amazing things with us,
+This guide walks you through setting up the Community Toolbox project locally so you can start contributing.
 
-- To develop and build out Community Toolbox, you'll need to have `npm` installed. Run `npm install` to get all the dependencies installed.
+## Prerequisites
 
-- Community Toolbox is built using a Grunt task from the source files in `/src/`, and the compiled file is saved to `/dist/community-toolbox.js`. To build, run `grunt build`. To watch files for changes, and build whenever they occur, run `grunt`. 
+Before getting started, make sure you have the following installed on your system:
 
-- Most of the API calls are based on [github-api-simple](https://www.npmjs.com/package/github-api-simple) library.
+- Node.js (includes npm)
+- Git
 
 ## Developing :rocket: :tada:
 
