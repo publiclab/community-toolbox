@@ -2,7 +2,7 @@
 
 ## Community Toolbox
 
-A platform dedicated to community growth and getting insights on organization-wide activities.
+A platform dedicated to community growth and providing insights into organization-wide activities.
 
 [![Code of Conduct](https://img.shields.io/badge/code-of%20conduct-green.svg)](https://publiclab.org/conduct)
 [![first-timers-only-friendly](http://img.shields.io/badge/first--timers--only-friendly-lightgray.svg?style=flat-square)](https://code.publiclab.org#r=all)
@@ -17,12 +17,12 @@ A platform dedicated to community growth and getting insights on organization-wi
 
 1. [Project Overview](#project-overview)
 2. [Getting Started](./docs/getting_started.md)
-2. [How to Use](./docs/usage.md)
+3. [How to Use](./docs/usage.md)
 
 
 ## Project Overview
 
-The project structure of community toolbox is majorly divided into two groups,
+The project structure of community toolbox is primarily divided into two groups:
 - `/examples` contains code responsible for front-end styles and related scripts,
 - `/src` contains the actual code for fetching data and showing it to the user.
 
@@ -41,7 +41,7 @@ Fragment | Contains
 
 ### models
 
-`models/` corresponds to the **Database Layer**. It is responsible for all the operations that happen on the database i.e., create, read and delete operations. The structure of `models/` ensures the segregation of code chunks based on their responsibilities.
+`models/` corresponds to the **Database Layer**. It is responsible for all the operations that happen on the database i.e., create, read, and delete operations. The structure of `models/` ensures the segregation of code chunks based on their responsibilities.
 
 There are 3 major categories to this:
 - Setting up/initializing the database (initialize.js),
@@ -65,7 +65,7 @@ There are 3 major categories to this:
 
 ### UI
 
-`UI/` acts as a **View Layer**, it is responsible for displaying data on the landing page. Data is given to UI functions and its their job to display that data on to the screen. These functions are broken up into different units according to the data they display.
+`UI/` acts as a **View Layer**, it is responsible for displaying data on the landing page. Data is given to UI functions and it's their job to display that data onto the screen. These functions are broken up into different units according to the data they display.
 
 - Data for repository contributors is displayed on the screen with the help of **_contributorsUI.js_**,
 - Similarly, **_recentContributorsUI.js_** shows recent contributors' data on to the page, and likewise other functions show data accordingly.
