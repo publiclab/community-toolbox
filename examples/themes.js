@@ -14,8 +14,8 @@
       
 
       if(toggle=='night') {
-          body.style.backgroundColor = '#111111';
-          body.style.filter = 'invert(1)';
+         
+          document.documentElement.style.filter = 'invert(1)';
           body.style.transitionProperty = 'filter';
           body.style.transitionDuration = '0.5s';
           images.forEach((image)=>{
@@ -31,8 +31,8 @@
           switcher.style.backgroundColor = '#34A7C1';
 
       }else {
-          body.style.backgroundColor = '#f8f8fa';
-          body.style.filter = 'invert(0)';
+          
+          document.documentElement.style.filter = 'invert(0)';
           body.style.transitionProperty = 'filter';
           body.style.transitionDuration = '0.5s';
           images.forEach((image)=>{
@@ -61,8 +61,8 @@
         
         if(check==="night") {
           localStorage.setItem('currentToggle', 'day');
-          body.style.backgroundColor = '#f8f8fa';
-          body.style.filter = 'invert(0)';
+      
+          document.documentElement.style.filter = 'invert(0)';
           body.style.transitionProperty = 'filter';
           body.style.transitionDuration = '0.5s';
           // adding grayscale filter to images
@@ -80,8 +80,8 @@
 
         }else {
           localStorage.setItem('currentToggle', 'night');
-          body.style.backgroundColor = '#111111';
-          body.style.filter = 'invert(1)';
+         
+         document.documentElement.style.filter = 'invert(1)';
           body.style.transitionProperty = 'filter';
           body.style.transitionDuration = '0.5s';
           // adding grayscale filter to images
